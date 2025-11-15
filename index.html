@@ -3,10 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>الدلالة — إعلانات (Admin compatible)</title>
+<title>الدلالة — إعلانات (محسّن — submit fixed)</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-  /* (styles same as before + admin button) */
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
   body{margin:0;background:#f7fbff;color:#0b1320;line-height:1.4}
   .container{max-width:1100px;margin:16px auto;padding:12px}
@@ -65,7 +64,10 @@
   .refBox{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .refCode{background:#f0f9ff;padding:6px 12px;border-radius:10px;color:#0078d7;font-weight:800;letter-spacing:0.8px}
 
-  /* Admin floating button & panel */
+  /* Admin hidden by default; reveal via ?admin=1 or hotkey (Shift+Alt+A) */
+  .adminBtn, .adminPanel { display: none !important; }
+  body.admin-visible .adminBtn, body.admin-visible .adminPanel { display: block !important; }
+
   .adminBtn{position:fixed;right:18px;bottom:18px;background:#111;color:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;z-index:1200}
   .adminPanel{position:fixed;right:18px;bottom:70px;background:#fff;padding:12px;border-radius:10px;box-shadow:0 10px 30px rgba(2,6,23,0.15);z-index:1200;width:320px;max-width:calc(100% - 40px);display:none}
   .adminPanel.open{display:block}
@@ -90,7 +92,7 @@
   </header>
 
   <div class="controls" role="search" aria-label="بحث وتحكم">
-    <div class="search" style="min-width:160px">
+    <div class="search" style="min-width:180px">
       <input id="q" type="search" placeholder="ابحث بالعنوان أو الرمز أو الموقع">
     </div>
     <div style="width:200px">
@@ -116,12 +118,19 @@
           <input id="f_name" placeholder="عنوان الإعلان">
           <textarea id="f_desc" placeholder="وصف" rows="4"></textarea>
           <input id="f_loc" placeholder="الموقع">
-          <input id="f_contact" placeholder="وسيلة التواصل">
+          <input id="f_contact" placeholder="وسيلة التواصل (رقم/واتساب/إيميل)">
           <input id="f_cat" placeholder="التصنيف (مثال: سيارات, عقار...)">
           <div style="display:flex;gap:8px;align-items:center">
             <input id="f_file" type="file" accept="image/*">
             <button id="useCameraBtn" class="btn">استخدام الكاميرا</button>
           </div>
+
+          <!-- Privacy / agreement -->
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="agree" />
+            <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
+          </label>
+
           <div style="display:flex;gap:8px;align-items:center">
             <button id="submitBtn" class="btn">إرسال</button>
             <div id="submitStatus" class="small"></div>
@@ -191,6 +200,7 @@
     <div class="modalFooter">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <a id="modalWhats" class="btn" target="_blank">مشاركة عبر WhatsApp</a>
+        <button id="modalCopyContact" class="btn alt" style="display:none">نسخ التواصل</button>
         <button id="modalEdit" class="btn" style="display:none">تحرير (مسؤول)</button>
         <button id="modalFallback" class="btn alt" style="display:none">عرض JSON للاحتياط</button>
       </div>
@@ -199,11 +209,11 @@
   </div>
 </div>
 
-<!-- admin floating button + panel -->
+<!-- hidden admin UI (revealed with ?admin=1 or Shift+Alt+A) -->
 <button id="adminBtn" class="adminBtn">🔧 Admin</button>
 <div id="adminPanel" class="adminPanel" aria-hidden="true">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <strong>لوحة الإدارة (مبينة)</strong>
+    <strong>لوحة الإدارة (مبنية)</strong>
     <button id="closeAdmin" class="btn alt" style="padding:6px 8px">إغلاق</button>
   </div>
   <input id="admin_repo" placeholder="owner/repo (مثال: user/repo)">
@@ -233,24 +243,20 @@ function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase();
 function readCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}') }catch(e){ return {} } }
 function saveCfg(cfg){ const c=Object.assign({},cfg); delete c.session_pat; delete c.pat; localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
 
-/* session PAT helpers (sessionStorage only) */
+/* session PAT helpers */
 function setSessionPat(v){ if(v){ sessionStorage.setItem('static_session_pat', v); } else { sessionStorage.removeItem('static_session_pat'); } updateAdminUi(); }
 function getSessionPat(){ return sessionStorage.getItem('static_session_pat') || null; }
 function clearSessionPat(){ setSessionPat(null); }
 
-/* admin availability check */
-function adminAvailable(){ const cfg = readCfg(); return !!((cfg.repo && cfg.branch) && (cfg.pat || getSessionPat())); }
+/* reveal admin by ?admin=1 or Shift+Alt+A (session only) */
+(function setupHiddenAdminReveal(){
+  function showAdminForSession(){ document.body.classList.add('admin-visible'); const panel=document.getElementById('adminPanel'); if(panel) panel.classList.add('open'); sessionStorage.setItem('show_admin_ui','1'); loadAdminUi(); }
+  try{ const params=new URLSearchParams(window.location.search); if(params.get('admin')==='1') showAdminForSession(); }catch(e){}
+  if(sessionStorage.getItem('show_admin_ui')==='1') showAdminForSession();
+  window.addEventListener('keydown',(e)=>{ if(e.shiftKey && e.altKey && (e.key==='A' || e.key==='a')){ showAdminForSession(); alert('Admin UI enabled for this session'); }});
+})();
 
-/* ------------------ Robust ghPut (retries + merge) ------------------ */
-/*
-  ghPut: puts JSON content to a repo path (contents API) with retries on SHA mismatches.
-  - pat: token string
-  - repo: owner/repo
-  - path: path in repo
-  - base64content: string (base64 content, not data: prefix)
-  - message: commit message
-  - branch: branch name
-*/
+/* ------------------ ghPut (robust with retry) ------------------ */
 async function ghPut(pat, repo, path, base64content, message, branch='main', maxRetries=4){
   if(!pat) throw new Error('PAT required for write');
   const [owner, repoName] = (repo||'').split('/');
@@ -260,24 +266,14 @@ async function ghPut(pat, repo, path, base64content, message, branch='main', max
   const headers = { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' };
 
   for(let attempt=1; attempt<=maxRetries; attempt++){
-    // fetch metadata to get current sha
     let sha = undefined;
     try{
       const metaResp = await fetch(apiBase + `?ref=${encodeURIComponent(branch)}`, { headers });
-      if(metaResp.status === 200){
-        const metaJson = await metaResp.json();
-        sha = metaJson.sha;
-      } else if(metaResp.status === 404){
-        sha = undefined; // create new
-      } else if(metaResp.status === 401 || metaResp.status === 403){
-        throw new Error('PAT invalid or missing permission');
-      }
-    }catch(e){
-      // if cannot fetch meta, allow attempt to try (maybe creating new); but if last attempt, throw
-      if(attempt === maxRetries) throw e;
-    }
+      if(metaResp.status === 200){ const metaJson = await metaResp.json(); sha = metaJson.sha; }
+      else if(metaResp.status === 404) sha = undefined;
+      else if(metaResp.status === 401 || metaResp.status === 403) throw new Error('PAT invalid or missing permission');
+    }catch(e){ if(attempt === maxRetries) throw e; }
 
-    // prepare body
     const body = { message, content: base64content, branch };
     if(sha) body.sha = sha;
 
@@ -286,44 +282,47 @@ async function ghPut(pat, repo, path, base64content, message, branch='main', max
     let parsed = null;
     try{ parsed = JSON.parse(text); }catch(e){ parsed = null; }
 
-    if(putResp.ok){
-      return parsed;
-    }
+    if(putResp.ok) return parsed;
 
-    const errMsg = (parsed && parsed.message) ? parsed.message.toLowerCase() : text.toLowerCase();
-    // If conflict or sha mismatch, attempt to refetch and retry
-    if((putResp.status === 409 || putResp.status === 422 || errMsg.includes('does not match') || errMsg.includes('sha')) && attempt < maxRetries){
-      // small backoff
-      await new Promise(r => setTimeout(r, 250 * attempt));
-      // continue to next attempt which refetches sha
+    const errMsg = (parsed && parsed.message) ? parsed.message.toLowerCase() : (text||'').toLowerCase();
+    if((putResp.status===409 || putResp.status===422 || errMsg.includes('does not match') || errMsg.includes('sha')) && attempt < maxRetries){
+      await new Promise(r=>setTimeout(r, 250 * attempt));
       continue;
     }
-
-    // auth errors
-    if(putResp.status === 401 || putResp.status === 403){
-      throw new Error('PUT failed: PAT invalid or missing permission: ' + (parsed && parsed.message ? parsed.message : putResp.status));
-    }
-
-    // other fatal error
+    if(putResp.status===401 || putResp.status===403) throw new Error('PUT failed: PAT invalid or missing permission: ' + (parsed && parsed.message ? parsed.message : putResp.status));
     throw new Error('PUT failed: ' + (parsed && parsed.message ? parsed.message : text));
   }
 }
 
-/* helper to get raw JSON from repo path (tries common locations) */
+/* helper: fetch raw JSON from repo (raw.githubusercontent) */
 async function fetchAdsJsonFromRepo(repo, branch='main'){
   const [owner, repoName] = (repo||'').split('/');
+  if(!owner || !repoName) return null;
   const candidates = [
     `https://raw.githubusercontent.com/${owner}/${repoName}/${branch}/static/ads.json`,
     `https://raw.githubusercontent.com/${owner}/${repoName}/${branch}/ads.json`
   ];
   for(const u of candidates){
-    try{
-      const r = await fetch(u, { cache: 'no-cache' });
-      if(!r.ok) continue;
-      return await r.json();
-    }catch(e){ continue; }
+    try{ const r = await fetch(u, { cache: 'no-cache' }); if(!r.ok) continue; return await r.json(); }catch(e){ continue; }
   }
   return null;
+}
+
+/* ------------------ Image optimize ------------------ */
+async function optimizeImageFile(file, conf){
+  const { maxWidth, maxHeight, quality, outputType } = conf;
+  const dataUrl = await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); });
+  const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=dataUrl; });
+  let w = img.width, h = img.height;
+  const scale = Math.min(1, maxWidth/w, maxHeight/h);
+  const tw = Math.round(w * scale), th = Math.round(h * scale);
+  const canvas = document.createElement('canvas'); canvas.width = tw; canvas.height = th;
+  const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img,0,0,tw,th);
+  await new Promise(r=>setTimeout(r,8));
+  const blob = await new Promise(res=>canvas.toBlob(res, outputType, quality));
+  const base64 = await new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result.split(',')[1]); fr.readAsDataURL(blob); });
+  return { blob, base64, size: blob.size };
 }
 
 /* ------------------ Public UI: load/render ads ------------------ */
@@ -336,36 +335,22 @@ const loadMoreBtn = document.getElementById('loadMore');
 
 let showing = 0;
 
-function showSkeleton(){
-  grid.innerHTML = '';
-  for(let i=0;i<6;i++){
-    const sk=document.createElement('div'); sk.className='card';
-    sk.innerHTML = `<div class="media skeleton"></div><div class="body"><div class="skeleton" style="height:18px;width:60%;border-radius:6px"></div><div style="height:12px"></div><div class="skeleton" style="height:12px;width:100%;border-radius:6px"></div></div>`;
-    grid.appendChild(sk);
-  }
-}
+function showSkeleton(){ grid.innerHTML=''; for(let i=0;i<6;i++){ const sk=document.createElement('div'); sk.className='card'; sk.innerHTML = `<div class="media skeleton"></div><div class="body"><div class="skeleton" style="height:18px;width:60%;border-radius:6px"></div><div style="height:12px"></div><div class="skeleton" style="height:12px;width:100%;border-radius:6px"></div></div>`; grid.appendChild(sk);} }
 
 async function loadAds(){
   try{
     showSkeleton();
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
     if(cached && (Date.now() - cached.t < 30_000) && cached.data){ ads = cached.data; renderGrid(ads); buildCategories(); countEl.textContent = `${ads.length} إعلان`; return; }
-
-    // try relative paths (static hosting)
     const paths = ['./static/ads.json','./ads.json','/static/ads.json'];
     let items = null;
-    for(const p of paths){
-      try{ const res = await fetch(p, { cache: 'no-cache' }); if(!res.ok) continue; items = await res.json(); break; }catch(e){ continue; }
-    }
+    for(const p of paths){ try{ const res = await fetch(p, { cache:'no-cache' }); if(!res.ok) continue; items = await res.json(); break; }catch(e){ continue; } }
     if(!items){ grid.innerHTML = '<div style="padding:16px">لا توجد إعلانات.</div>'; countEl.textContent='0 إعلان'; return; }
     ads = Array.isArray(items) ? items : [];
     ads.sort((a,b)=> (new Date(b.created_at||0)) - (new Date(a.created_at||0)));
     localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: ads }));
     renderGrid(ads); buildCategories(); countEl.textContent = `${ads.length} إعلان`;
-  }catch(e){
-    console.error(e);
-    grid.innerHTML = '<div style="padding:16px">تعذّر تحميل الإعلانات.</div>';
-  }
+  }catch(e){ console.error(e); grid.innerHTML = '<div style="padding:16px">تعذّر تحميل الإعلانات.</div>'; }
 }
 
 function renderGrid(list){
@@ -385,31 +370,46 @@ function appendCards(chunk){
     const mediaHtml = thumb ? `<img src="${escapeHtml(thumb)}" loading="lazy" alt="${escapeHtml(a.name||'')}" />` : `<div class="noimg small">لا صورة</div>`;
     const cat = a.category || 'عام';
     const ref = escapeHtml(a.ref_code||a.code||'');
+    const contactDisplay = escapeHtml(a.contact || '-');
     el.innerHTML = `<div class="media">${mediaHtml}</div>
       <div class="body"><div class="title">${escapeHtml(a.name||'')}</div>
       <div class="desc">${escapeHtml(a.description||'')}</div>
-      <div class="meta"><div class="badge">${escapeHtml(cat)}</div><div class="muted">📍 ${escapeHtml(a.location||'')}</div><div style="margin-left:auto" class="muted">${ref}</div></div></div>`;
+      <div class="meta"><div class="badge">${escapeHtml(cat)}</div><div class="muted">📍 ${escapeHtml(a.location||'')}</div><div style="margin-left:auto" class="muted">${ref}</div></div>
+      <div class="meta" style="margin-top:8px;justify-content:space-between;align-items:center;">
+        <div class="small">التواصل: <span class="muted contact-text">${contactDisplay}</span></div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="link-like copy-contact" type="button" title="نسخ جهة الاتصال">نسخ</button>
+        </div>
+      </div></div>`;
     frag.appendChild(el);
-    el.addEventListener('click', ()=> openDetails(a));
+
     const img = el.querySelector('img'); if(img) img.addEventListener('error', ()=> img.style.display='none');
+    el.addEventListener('click', (e)=>{
+      if(e.target && e.target.classList && e.target.classList.contains('copy-contact')) return;
+      openDetails(a);
+    });
+
+    const copyBtn = el.querySelector('.copy-contact');
+    if(copyBtn){
+      copyBtn.addEventListener('click', (ev)=>{
+        ev.stopPropagation();
+        const contact = (a.contact || '').trim();
+        if(!contact){ alert('لا توجد بيانات تواصل للنسخ'); return; }
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(contact).then(()=>{ alert('نسخ: ' + contact); }).catch(()=>{ fallbackCopyPrompt(contact); });
+        } else fallbackCopyPrompt(contact);
+      });
+    }
   });
   grid.appendChild(frag);
 }
 
-loadMoreBtn.addEventListener('click', ()=> {
-  const remaining = ads.slice(showing, showing + PAGE_SIZE);
-  appendCards(remaining);
-  showing += remaining.length;
-  loadMoreBtn.style.display = showing < ads.length ? 'block' : 'none';
-});
+function fallbackCopyPrompt(text){ window.prompt('انسخ جهة الاتصال يدوياً (Ctrl+C):', text); }
 
-function buildCategories(){
-  const s = new Set(); ads.forEach(a=> a.category && s.add(a.category));
-  catFilter.innerHTML = '<option value="">كل الفئات</option>';
-  Array.from(s).sort().forEach(c=> { const o = document.createElement('option'); o.value=c; o.innerText=c; catFilter.appendChild(o); });
-}
+loadMoreBtn.addEventListener('click', ()=>{ const remaining = ads.slice(showing, showing + PAGE_SIZE); appendCards(remaining); showing += remaining.length; loadMoreBtn.style.display = showing < ads.length ? 'block' : 'none'; });
+function buildCategories(){ const s=new Set(); ads.forEach(a=> a.category && s.add(a.category)); catFilter.innerHTML = '<option value="">كل الفئات</option>'; Array.from(s).sort().forEach(c=>{ const o=document.createElement('option'); o.value=c; o.innerText=c; catFilter.appendChild(o); }); }
 
-document.getElementById('refresh').addEventListener('click', ()=> { localStorage.removeItem(CACHE_KEY); loadAds(); });
+document.getElementById('refresh').addEventListener('click', ()=>{ localStorage.removeItem(CACHE_KEY); loadAds(); });
 document.getElementById('q').addEventListener('input', debounce(()=> filterList(), 250));
 catFilter.addEventListener('change', ()=> filterList());
 
@@ -425,7 +425,7 @@ function filterList(){
   countEl.textContent = `${filtered.length} إعلان`;
 }
 
-/* ---------------- Details modal & edit (uses ghPut) ---------------- */
+/* ---------------- Details modal & edit ---------------- */
 const modal=document.getElementById('modal');
 const modalTitle=document.getElementById('modalTitle');
 const modalMeta=document.getElementById('modalMeta');
@@ -440,6 +440,7 @@ const modalCopy=document.getElementById('modalCopy');
 const modalWhats=document.getElementById('modalWhats');
 const modalEdit=document.getElementById('modalEdit');
 const modalFallback=document.getElementById('modalFallback');
+const modalCopyContact=document.getElementById('modalCopyContact');
 const adminEditHint=document.getElementById('adminEditHint');
 
 let currentItem=null;
@@ -463,7 +464,15 @@ function openDetails(item){
     modalMedia.appendChild(img);
   } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
   modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، إعلان جديد برمز ${modalRef.textContent}`)}`;
-  modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ'));
+  modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
+  modalCopyContact.style.display = 'inline-block';
+  modalCopyContact.onclick = ()=> {
+    const contact = (item.contact||'').trim();
+    if(!contact) return alert('لا توجد بيانات تواصل للنسخ');
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(contact).then(()=> alert('نسخ: ' + contact)).catch(()=> fallbackCopyPrompt(contact));
+    else fallbackCopyPrompt(contact);
+  };
+
   if(adminAvailable()){
     modalEdit.style.display='inline-block';
     modalEdit.onclick = ()=> openEditModal(item);
@@ -476,6 +485,7 @@ function openDetails(item){
     adminEditHint.style.display='block';
     adminEditHint.textContent = 'لتعديل: افتح لوحة الإدارة وأدخل repo وPAT الجلسة';
   }
+
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
 }
 document.getElementById('modalClose').addEventListener('click', closeModal);
@@ -483,9 +493,10 @@ modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
 window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
 function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); currentItem=null; }
 
-/* Inline edit modal with safe merge+ghPut */
+/* Inline edit (same pattern as earlier) */
+function adminAvailable(){ const cfg = readCfg(); return !!((cfg.repo && cfg.branch) && (cfg.pat || getSessionPat())); }
+
 function openEditModal(item){
-  // reuse existing modalBody area to inject a simple form
   const form = document.createElement('div'); form.style.display='flex'; form.style.flexDirection='column'; form.style.gap='8px';
   const name = Object.assign(document.createElement('input'),{value:item.name||''});
   const desc = Object.assign(document.createElement('textarea'),{rows:4,value:item.description||''});
@@ -515,14 +526,13 @@ function openEditModal(item){
     const pat = cfg.pat || getSessionPat();
     if(!pat || !cfg.repo){ status.textContent='لا يوجد PAT أو repo مُعدّ'; return; }
     try{
-      saveBtn.disabled = true; status.textContent='جاري الحفظ...';
+      saveBtn.disabled = true; status.textContent = 'جاري الحفظ...';
       const updated = Object.assign({}, item);
       updated.name = name.value.trim();
       updated.description = desc.value.trim();
       updated.location = loc.value.trim();
       updated.contact = contact.value.trim();
       updated.category = cat.value.trim();
-      // image upload first (if any)
       const f = fileInput.files[0];
       if(f){
         const safe = (f.name||'').replace(/[^a-z0-9.\-_]/ig,'_').slice(0,120);
@@ -535,34 +545,23 @@ function openEditModal(item){
         updated.image = `static/images/${fullName}`;
         updated.thumb = `static/images/thumbs/${thumbName}`;
       }
-      // Now merge into latest ads.json fetched from repo (if available), else fallback to cached path
       let latestAds = null;
-      try{
-        latestAds = await fetchAdsJsonFromRepo(cfg.repo, cfg.branch||'main');
-      }catch(e){ latestAds = null; }
-      if(!Array.isArray(latestAds)){
-        // fallback to local cached or current ads
-        latestAds = ads.slice();
-      }
-      // replace or unshift
+      try{ latestAds = await fetchAdsJsonFromRepo(cfg.repo, cfg.branch||'main'); }catch(e){ latestAds = null; }
+      if(!Array.isArray(latestAds)) latestAds = ads.slice();
       const key = updated.ref_code || updated.code;
       const idx = latestAds.findIndex(x => (x.ref_code||x.code) && (x.ref_code===key || x.code===key));
       if(idx >= 0) latestAds[idx] = updated; else latestAds.unshift(updated);
-      // commit using ghPut with retries
       const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(latestAds))));
       await ghPut(pat, cfg.repo, 'static/ads.json', base64, `edit ad ${key}`, cfg.branch || 'main');
       status.textContent='تم الحفظ';
       localStorage.removeItem(CACHE_KEY);
       loadAds();
       form.remove(); modalDescription.style.display='block';
-    }catch(err){
-      console.error(err);
-      status.textContent = 'فشل الحفظ: ' + (err.message || err);
-    } finally { saveBtn.disabled = false; }
+    }catch(err){ console.error(err); status.textContent = 'فشل الحفظ: ' + (err.message || err); } finally { saveBtn.disabled=false; }
   };
 }
 
-/* ---------------- Submission flow ---------------- */
+/* ---------------- Submission flow (fixed validations + PAT selection) ---------------- */
 const submitBtn = document.getElementById('submitBtn');
 const submitStatus = document.getElementById('submitStatus');
 const afterSubmit = document.getElementById('afterSubmit');
@@ -589,32 +588,42 @@ async function uploadProposalToRepo(cfg, payload, file){
 }
 
 submitBtn.addEventListener('click', async ()=>{
-  submitBtn.disabled=true; submitStatus.textContent='جارٍ الإعداد...';
+  if(submitBtn.disabled) return;
+  // basic validation
+  const name = document.getElementById('f_name').value.trim();
+  const desc = document.getElementById('f_desc').value.trim();
+  const contact = document.getElementById('f_contact').value.trim();
+  const agree = document.getElementById('agree').checked;
+  if(!agree){ alert('يجب الموافقة على الشروط قبل الإرسال'); return; }
+  if(!name && !desc){ alert('أدخل عنوانًا أو وصفًا للإعلان'); return; }
+  if(!contact){ if(!confirm('لم تدخل وسيلة تواصل. هل تريد المتابعة بدون تواصل؟')) return; }
+  submitBtn.disabled = true; submitStatus.textContent = 'جارٍ الإعداد...';
   const ref = genRef();
   const data = {
     ref_code: ref,
-    name: document.getElementById('f_name').value.trim(),
-    description: document.getElementById('f_desc').value.trim(),
+    name: name,
+    description: desc,
     location: document.getElementById('f_loc').value.trim(),
-    contact: document.getElementById('f_contact').value.trim(),
+    contact: contact,
     category: document.getElementById('f_cat').value.trim(),
     created_at: new Date().toISOString()
   };
   refCodeEl.textContent = data.ref_code; afterSubmit.style.display='block';
   const file = document.getElementById('f_file').files[0];
+  // config + PAT selection: prefer cfg.pat, else use session pat
   let cfg = {};
-  try { cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch(e){ cfg = {}; }
-  // allow session PAT too (sessionStorage)
-  if((cfg.pat || sessionStorage.getItem('static_session_pat')) && cfg.repo && cfg.allow_public_submissions){
+  try{ cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); }catch(e){ cfg = {}; }
+  const sessionPat = sessionStorage.getItem('static_session_pat');
+  if((cfg.pat || sessionPat) && cfg.repo && cfg.allow_public_submissions){
     submitStatus.textContent = 'إرسال إلى المستودع...';
     try{
       const writeCfg = Object.assign({}, cfg);
-      if(!writeCfg.pat) writeCfg.pat = sessionStorage.getItem('static_session_pat');
+      if(!writeCfg.pat) writeCfg.pat = sessionPat;
       await uploadProposalToRepo(writeCfg, data, file);
       submitStatus.textContent = 'تم الإرسال';
       fallbackBox.style.display='none';
       localStorage.removeItem(CACHE_KEY);
-      loadAds();
+      await loadAds();
     }catch(err){
       console.error(err);
       submitStatus.textContent = 'فشل الإرسال التلقائي';
@@ -622,11 +631,12 @@ submitBtn.addEventListener('click', async ()=>{
       fallbackArea.textContent = JSON.stringify(data,null,2);
     } finally { submitBtn.disabled=false; }
   } else {
-    submitStatus.textContent='الإرسال التلقائي غير مفعّل';
+    submitStatus.textContent = 'الإرسال التلقائي غير مفعّل';
     fallbackBox.style.display='block';
     fallbackArea.textContent = JSON.stringify(data,null,2);
     submitBtn.disabled=false;
   }
+
   // WhatsApp
   try{
     const message = `مرحباً، وصلني إعلان جديد برمز: ${data.ref_code}\nالعنوان: ${data.name||'-'}\nالموقع: ${data.location||'-'}`;
@@ -636,7 +646,7 @@ submitBtn.addEventListener('click', async ()=>{
   }catch(e){ console.warn('wa error', e); }
 });
 
-/* ---------------- Admin panel (session PAT) ---------------- */
+/* ---------------- Admin panel logic ---------------- */
 const adminBtn = document.getElementById('adminBtn');
 const adminPanel = document.getElementById('adminPanel');
 const closeAdmin = document.getElementById('closeAdmin');
@@ -661,19 +671,21 @@ function loadAdminUi(){
   updateAdminUi();
 }
 
-function updateAdminUi(){
-  const hasPat = !!sessionStorage.getItem('static_session_pat') || !!readCfg().pat;
-  setSessionPatBtn.disabled = false;
-  clearSessionPatBtn.disabled = !hasPat;
-}
+function updateAdminUi(){ const hasPat = !!sessionStorage.getItem('static_session_pat') || !!readCfg().pat; setSessionPatBtn.disabled=false; clearSessionPatBtn.disabled = !hasPat; }
 
-setSessionPatBtn.addEventListener('click', ()=>{ const v = admin_session_pat.value.trim(); if(!v) return alert('ألصق PAT'); setSessionPat(v); alert('تم تعيين PAT مؤقتاً (جلسة)'); updateAdminUi(); });
+setSessionPatBtn.addEventListener('click', ()=>{ const v=admin_session_pat.value.trim(); if(!v) return alert('ألصق PAT'); setSessionPat(v); alert('تم تعيين PAT مؤقتاً (جلسة)'); updateAdminUi(); });
 clearSessionPatBtn.addEventListener('click', ()=>{ if(!confirm('مسح PAT الجلسة الآن؟')) return; clearSessionPat(); admin_session_pat.value=''; updateAdminUi(); alert('تم المسح'); });
-saveAdminCfgBtn.addEventListener('click', ()=>{ const repo = admin_repo.value.trim(); const branch = admin_branch.value.trim() || 'main'; const allow = allowPublicEl.checked; if(!repo) return alert('أدخل owner/repo'); saveCfg({ repo, branch, allow_public_submissions: allow }); alert('تم حفظ الإعدادات (بدون PAT)'); loadAdminUi(); loadAds(); });
+saveAdminCfgBtn.addEventListener('click', ()=>{ const repo = admin_repo.value.trim(); const branch = admin_branch.value.trim()||'main'; const allow = allowPublicEl.checked; if(!repo) return alert('أدخل owner/repo'); saveCfg({ repo, branch, allow_public_submissions: allow }); alert('تم حفظ الإعدادات (بدون PAT)'); loadAdminUi(); loadAds(); });
 revokeNoteBtn.addEventListener('click', ()=>{ alert('لإبطال PAT: اذهب إلى GitHub > Settings > Developer settings > Personal access tokens، وابحث عن التوكن وأبطله.'); });
 
-/* ---------------- Init ---------------- */
-(async function init(){ loadAdminUi(); loadAds(); })();
+/* ---------------- init ---------------- */
+(function init(){ // navigation basic
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = { home: document.getElementById('home'), send: document.getElementById('send'), policy: document.getElementById('policy') };
+  navBtns.forEach(b=>b.addEventListener('click', ()=>{ for(const k in sections) sections[k].style.display='none'; sections[b.dataset.target].style.display='block'; navBtns.forEach(n=>n.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); window.scrollTo({top:0,behavior:'smooth'}); }));
+  loadAdminUi();
+  loadAds();
+})();
 </script>
 </body>
 </html>
