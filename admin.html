@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>الدلالة — Admin</title>
+<title>لوحة الإدارة — الدلالة (محدثة)</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
   body{margin:12px;background:#f5f7fb;color:#07203a}
-  .wrap{max-width:1100px;margin:0 auto}
-  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+  .wrap{max-width:1200px;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
   header h1{margin:0;font-size:20px}
   .cfg{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   input,select,textarea,button{font-size:14px}
@@ -24,25 +24,22 @@
   .meta{flex:1}
   .muted{color:#59656f;font-size:13px}
   .actions{display:flex;gap:8px}
-  .detailRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .detailRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
   label.small{font-size:13px;color:#333;min-width:90px}
-  pre{background:#fbfdff;padding:8px;border-radius:6px;overflow:auto}
-
-  /* search input style */
-  .admin-search { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+  pre{background:#fbfdff;padding:8px;border-radius:6px;overflow:auto;max-height:220px}
+  .admin-search { display:flex; gap:8px; align-items:center; margin-bottom:10px; width:100% }
   .admin-search input { flex:1; padding:8px;border-radius:8px;border:1px solid #e6eef8; }
   .admin-search .hint { font-size:13px; color:#666; min-width:160px; text-align:right; }
-
-  /* small helper for matched text highlight */
   .highlight { background: #fff3b0; padding:2px 4px; border-radius:4px; }
-
-  /* responsive tweak for columns */
   @media (max-width:980px){ .cols{grid-template-columns:1fr} }
+  .debug { font-family: monospace; font-size:12px; color:#0b3b5e; background:#eef6ff; padding:8px; border-radius:6px; margin-top:8px; }
+  .smallmuted{font-size:12px;color:#73808a}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header><h1>لوحة الإدارة — الدلالة</h1>
+  <header>
+    <h1>لوحة الإدارة — الدلالة (محدثة)</h1>
     <div class="cfg">
       <input id="cfg_repo" placeholder="owner/repo (مثال: user/repo)" style="width:220px">
       <input id="cfg_branch" placeholder="branch" style="width:80px" value="main">
@@ -53,10 +50,9 @@
     </div>
   </header>
 
-  <!-- SEARCH BAR ADDED -->
   <div class="admin-search panel">
-    <input id="admin_search" placeholder="ابحث بحسب رمز الإعلان (ref) أو العنوان أو الموقع أو التصنيف">
-    <div class="hint">ابحث للعثور على الإعلانات سريعًا</div>
+    <input id="admin_search" placeholder="ابحث بحسب ref أو العنوان أو الموقع أو التصنيف">
+    <div class="hint">ابحث لتصفية الإعلانات محليًا (يعمل بعد تحميل ads.json)</div>
   </div>
 
   <div class="cols">
@@ -66,47 +62,313 @@
         <div class="muted" id="ads_count">تحميل...</div>
       </div>
 
-      <div class="list" id="ads_list" aria-live="polite">
-        <!-- عناصر الإعلانات ستملى هنا بواسطة loadAll() -->
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button id="refreshBtn">تحديث</button>
+        <button id="newAdBtn" class="alt">إضافة إعلان جديد</button>
+        <div style="margin-left:auto" class="smallmuted">Debug logs في الأسفل — افتح Console للمزيد</div>
       </div>
 
+      <div class="list" id="ads_list" aria-live="polite"></div>
+
+      <div class="debug" id="debugBox">سجل التصحيح: لا شيء حتى الآن</div>
     </div>
 
     <div class="panel">
       <strong>تفاصيل / تحرير</strong>
-      <div id="detail" style="margin-top:10px">حدد إعلاناً أو مقترحاً لعرض التفاصيل</div>
+      <div id="detail" style="margin-top:10px">حدد إعلاناً أو اضغط "إضافة إعلان جديد"</div>
 
       <hr style="margin:12px 0">
       <strong>المقترحات الواردة</strong>
-      <div id="proposals_list" class="list" style="margin-top:8px">
-        <!-- مقترحات -->
-      </div>
+      <div id="proposals_list" class="list" style="margin-top:8px"></div>
     </div>
   </div>
 </div>
 
 <script>
-/* ----------------- minimal utilities (matches your main code) ----------------- */
+/* =================== Utilities & config =================== */
+function dbg(...args){
+  try{
+    const el = document.getElementById('debugBox');
+    const t = new Date().toLocaleTimeString();
+    el.textContent = `${t} — ` + args.map(a=> (typeof a==='object'? JSON.stringify(a): String(a))).join(' ');
+    console.debug(...args);
+  }catch(e){}
+}
+function log(...a){ console.log(...a); dbg(...a); }
+function warn(...a){ console.warn(...a); dbg('WARN:', ...a); }
+function errlog(...a){ console.error(...a); dbg('ERR:', ...a); }
+
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 function readCfg(){ try{ return JSON.parse(localStorage.getItem('static_ads_cfg_v1')||'{}') }catch(e){ return {} } }
+function saveCfg(cfg){ localStorage.setItem('static_ads_cfg_v1', JSON.stringify(cfg)); }
 
-/* placeholder for existing ghRaw/ghPut/ghDelete/ghApiGet functions from original file.
-   The original functions are kept intact in your version — we don't replace them here.
-   This admin.html assumes those functions exist elsewhere in the same file (as in original).
-*/
+/* =================== GitHub helpers (ghRaw, ghPut, ghDelete) =================== */
+async function getSessionPat(){
+  return sessionStorage.getItem('static_session_pat') || document.getElementById('cfg_session_pat')?.value || '';
+}
+function normalizeRepo(repo){
+  if(!repo) return null;
+  const parts = repo.split('/');
+  if(parts.length !== 2) return null;
+  return { owner: parts[0].trim(), repo: parts[1].trim() };
+}
 
-/* ----------------- List rendering helpers (reuse original structure) ----------------- */
+async function ghRaw(repo, path, branch='main'){
+  // Try raw.githubusercontent first (fast for public repos)
+  try{
+    const r = normalizeRepo(repo);
+    if(!r) throw new Error('Invalid repo');
+    const rawUrl = `https://raw.githubusercontent.com/${r.owner}/${r.repo}/${encodeURIComponent(branch)}/${path}`;
+    const t0 = Date.now();
+    const resp = await fetch(rawUrl, { cache: 'no-cache' });
+    const dt = Date.now() - t0;
+    log('ghRaw attempt raw.githubusercontent', rawUrl, 'status', resp.status, 'elapsed', dt+'ms');
+    if(resp.ok){
+      const text = await resp.text();
+      return text;
+    }
+  }catch(e){
+    warn('raw.githubusercontent fetch failed (will try API)', e);
+  }
+
+  // fallback: use GitHub API (works with private repos with PAT)
+  try{
+    const pat = await getSessionPat();
+    const r = normalizeRepo(repo);
+    if(!r) throw new Error('Invalid repo');
+    const url = `https://api.github.com/repos/${r.owner}/${r.repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+    const headers = { Accept: 'application/vnd.github.v3.raw' };
+    if(pat) headers.Authorization = 'token ' + pat;
+    const t0 = Date.now();
+    const resp = await fetch(url, { headers });
+    const dt = Date.now() - t0;
+    log('ghRaw API', url, 'status', resp.status, 'elapsed', dt+'ms');
+    if(resp.status === 200){
+      // content returned as raw because of Accept header, or as JSON with base64
+      const contentType = resp.headers.get('content-type') || '';
+      if(contentType.includes('application/json')){
+        const j = await resp.json();
+        if(j && j.content){
+          const decoded = atob(j.content.replace(/\n/g,''));
+          return decoded;
+        }
+      } else {
+        return await resp.text();
+      }
+    } else if(resp.status === 404){
+      return null;
+    } else {
+      const txt = await resp.text().catch(()=>null);
+      throw new Error('ghRaw API error: ' + resp.status + ' ' + (txt||''));
+    }
+  }catch(err){
+    errlog('ghRaw failed', err);
+    throw err;
+  }
+}
+
+function _readRate(resp){
+  try{
+    const rem = Number(resp.headers.get('x-ratelimit-remaining') || -1);
+    const reset = Number(resp.headers.get('x-ratelimit-reset') || 0);
+    return { remaining: rem, reset };
+  }catch(e){ return { remaining:-1, reset:0 }; }
+}
+
+async function ghPut(pat, repo, path, base64content, message='update', branch='main', maxRetries=5){
+  if(!pat) throw new Error('PAT required for ghPut');
+  const r = normalizeRepo(repo);
+  if(!r) throw new Error('Invalid repo');
+  const apiUrl = `https://api.github.com/repos/${r.owner}/${r.repo}/contents/${encodeURIComponent(path)}`;
+
+  // fetch existing sha if present
+  let sha;
+  try{
+    const metaResp = await fetch(apiUrl + `?ref=${encodeURIComponent(branch)}`, { headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' } });
+    if(metaResp.status === 200){
+      const meta = await metaResp.json();
+      sha = meta.sha;
+      log('ghPut meta read', path, 'sha', sha);
+    } else if(metaResp.status === 404){
+      sha = undefined;
+    } else if(metaResp.status === 401 || metaResp.status === 403){
+      const t = await metaResp.text().catch(()=>null);
+      throw new Error('ghPut meta auth error: ' + (t||metaResp.status));
+    }
+  }catch(e){
+    warn('ghPut meta read failed (continuing):', e);
+  }
+
+  const bodyObj = { message, content: base64content, branch };
+  if(sha) bodyObj.sha = sha;
+
+  for(let attempt=1; attempt<=maxRetries; attempt++){
+    console.groupCollapsed(`ghPut attempt ${attempt} -> ${path}`);
+    console.time(`ghPut-${path}-attempt${attempt}`);
+    try{
+      const t0 = Date.now();
+      const resp = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyObj)
+      });
+      const elapsed = Date.now() - t0;
+      const rate = _readRate(resp);
+      const text = await resp.text().catch(()=>null);
+      log('ghPut resp', path, 'status', resp.status, 'elapsed', elapsed+'ms', 'rate', rate);
+      if(resp.ok){
+        console.timeEnd(`ghPut-${path}-attempt${attempt}`);
+        console.groupEnd();
+        try{ return JSON.parse(text); }catch(e){ return text; }
+      }
+      if(resp.status === 403 && rate.remaining === 0 && rate.reset){
+        const waitMs = Math.max(1000, (rate.reset * 1000) - Date.now());
+        warn('Rate limited. waiting', waitMs);
+        await new Promise(r=>setTimeout(r, waitMs + 300));
+        continue;
+      }
+      const parsed = (()=>{ try{ return JSON.parse(text||'{}'); }catch(e){ return null; } })();
+      const errMsg = parsed && parsed.message ? parsed.message : text || ('HTTP ' + resp.status);
+      // conflict/sha mismatch -> refresh sha try again
+      if((resp.status === 409 || resp.status === 422 || (errMsg && errMsg.toLowerCase().includes('sha'))) && attempt < maxRetries){
+        warn('Conflict/sha issue, re-reading sha and retrying', errMsg);
+        try{
+          const metaResp2 = await fetch(apiUrl + `?ref=${encodeURIComponent(branch)}`, { headers: { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' } });
+          if(metaResp2.ok){
+            const meta2 = await metaResp2.json();
+            bodyObj.sha = meta2.sha;
+          } else {
+            delete bodyObj.sha;
+          }
+        }catch(e){}
+        await new Promise(r=>setTimeout(r, 250 * attempt));
+        continue;
+      }
+      throw new Error('ghPut failed: ' + errMsg);
+    }catch(e){
+      warn('ghPut exception', e);
+      if(attempt === maxRetries){
+        console.timeEnd(`ghPut-${path}-attempt${attempt}`);
+        console.groupEnd();
+        throw e;
+      }
+      await new Promise(r=>setTimeout(r, 200 * attempt + Math.random()*200));
+    } finally {
+      try{ console.timeEnd(`ghPut-${path}-attempt${attempt}`); }catch(e){}
+      console.groupEnd();
+    }
+  }
+  throw new Error('ghPut: failed after retries');
+}
+
+async function ghDelete(pat, repo, path, message='delete', branch='main'){
+  if(!pat) throw new Error('PAT required for ghDelete');
+  const r = normalizeRepo(repo);
+  if(!r) throw new Error('Invalid repo');
+  const apiUrl = `https://api.github.com/repos/${r.owner}/${r.repo}/contents/${encodeURIComponent(path)}`;
+
+  // get sha
+  const metaResp = await fetch(apiUrl + `?ref=${encodeURIComponent(branch)}`, { headers: { Authorization: 'token '+pat, Accept: 'application/vnd.github.v3+json' } });
+  if(!metaResp.ok) {
+    if(metaResp.status === 404) return null;
+    const txt = await metaResp.text().catch(()=>null);
+    throw new Error('ghDelete meta error: ' + (txt||metaResp.status));
+  }
+  const meta = await metaResp.json();
+  if(!meta.sha) throw new Error('ghDelete: no sha found');
+  // delete
+  const resp = await fetch(apiUrl, {
+    method: 'DELETE',
+    headers: { Authorization: 'token '+pat, Accept: 'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+    body: JSON.stringify({ message, sha: meta.sha, branch })
+  });
+  const txt = await resp.text().catch(()=>null);
+  if(!resp.ok) {
+    let errMsg = txt || ('HTTP ' + resp.status);
+    try{ const p = JSON.parse(txt||'{}'); if(p && p.message) errMsg = p.message; }catch(e){}
+    throw new Error('ghDelete failed: ' + errMsg);
+  }
+  try{ return JSON.parse(txt); }catch(e){ return txt; }
+}
+
+/* helper: attempt to delete image path if value present (best-effort) */
+async function maybeDeleteImage(cfg, imagePath){
+  try{
+    const pat = await getSessionPat();
+    if(!pat) throw new Error('No PAT in session');
+    if(!imagePath) return;
+    // imagePath may be an URL or relative; try to normalize
+    let repoPath = imagePath;
+    // strip raw.githubusercontent url prefix if present
+    repoPath = repoPath.replace(/^https?:\/\/raw\.githubusercontent\.com\/[^\/]+\/[^\/]+\/[^\/]+\/?/i, '');
+    // if still absolute URL, try extract pathname
+    if(repoPath.startsWith('http')) {
+      const u = new URL(repoPath);
+      repoPath = u.pathname.replace(/^\/+/,'');
+    }
+    // if begins with / remove leading slash
+    repoPath = repoPath.replace(/^\/+/,'');
+    if(!repoPath) return;
+    return await ghDelete(pat, cfg.repo, repoPath, 'remove image');
+  }catch(e){
+    warn('maybeDeleteImage failed', e);
+    return null;
+  }
+}
+
+/* =================== Image optimize utilities (client-side resize) =================== */
+const OPT_FULL = { maxWidth:1200, maxHeight:900, quality:0.78, outputType:'image/webp' };
+const OPT_THUMB = { maxWidth:480, maxHeight:320, quality:0.6, outputType:'image/webp' };
+
+function dataURLtoBase64(durl){
+  // remove data:*/*;base64, prefix
+  const idx = durl.indexOf('base64,');
+  return durl.slice(idx + 7);
+}
+
+function loadImageFile(file){
+  return new Promise((res, rej)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> {
+      const img = new Image();
+      img.onload = ()=> res(img);
+      img.onerror = rej;
+      img.src = reader.result;
+    };
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function resizeImageFile(file, opts){
+  const img = await loadImageFile(file);
+  const ratio = Math.min(1, opts.maxWidth / img.width, opts.maxHeight / img.height);
+  const w = Math.max(1, Math.round(img.width * ratio));
+  const h = Math.max(1, Math.round(img.height * ratio));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, w, h);
+  // toDataURL
+  const mime = opts.outputType || 'image/jpeg';
+  const q = typeof opts.quality === 'number' ? opts.quality : 0.8;
+  const durl = canvas.toDataURL(mime, q);
+  const base64 = dataURLtoBase64(durl);
+  return { dataUrl: durl, base64, width: w, height: h, sizeApprox: Math.ceil((base64.length*3)/4) };
+}
+
+/* =================== App state & rendering =================== */
 const adsListEl = document.getElementById('ads_list');
 const proposalsListEl = document.getElementById('proposals_list');
 const adsCountEl = document.getElementById('ads_count');
 const searchInput = document.getElementById('admin_search');
 
-let allAds = [];       // latest loaded ads array (keeps original objects)
-let allProposals = []; // proposals array
+let allAds = [];
+let allProposals = [];
 
-/* render a single ad item (keeps markup compatible with original code expectations) */
 function renderAdItem(item, idx){
   const thumb = (item.thumb || item.image || '').replace(/^\//,'');
   const thumbHtml = thumb ? `<img src="${escapeAttr(thumb)}" class="thumb" alt="${escapeAttr(item.name||'')}" />` : `<div class="thumb"></div>`;
@@ -137,14 +399,12 @@ function renderAdItem(item, idx){
       </div>
     </div>
   `;
-  // wire buttons
   html.querySelector('.viewBtn').addEventListener('click', ()=> showDetailFor(idx));
   html.querySelector('.editBtn').addEventListener('click', ()=> buildDetailFor(idx, 'edit'));
-  html.querySelector('.delBtn').addEventListener('click', ()=> deleteAd(idx));
+  html.querySelector('.delBtn').addEventListener('click', ()=> confirmDeleteAd(idx));
   return html;
 }
 
-/* build list from allAds; applies simple client-side filter if search is active */
 function buildAdsList(filterText){
   adsListEl.innerHTML = '';
   const q = (filterText||'').trim().toLowerCase();
@@ -156,10 +416,9 @@ function buildAdsList(filterText){
       shown.push(a);
     }
   });
-  adsCountEl.textContent = `${shown.length} إعلان (${allAds.length} الكلي)`;
+  adsCountEl.textContent = `${shown.length} إعلان (${allAds.length} الإجمالي)`;
 }
 
-/* show detail (simple) — reuse existing detail rendering if exists */
 const detailEl = document.getElementById('detail');
 function showDetailFor(idx){
   const ad = allAds[idx];
@@ -171,20 +430,20 @@ function showDetailFor(idx){
         <div style="flex:1">
           <div style="font-weight:800">${escapeHtml(ad.name||'')}</div>
           <div class="muted">رمز: <strong>${escapeHtml(ad.ref_code||ad.code||'')}</strong></div>
-          <div class="muted">تاريخ الإنشاء: ${escapeHtml(ad.created_at||'')}</div>
+          <div class="muted">تاريخ الإنشاء: ${escapeHtml(ad.created_at||ad.created||'')}</div>
         </div>
       </div>
       <div class="muted">${escapeHtml(ad.description||'')}</div>
       <div style="display:flex;gap:8px;justify-content:flex-end">
         <button onclick="buildDetailFor(${idx}, 'edit')">فتح للتحرير</button>
-        <button onclick="deleteAd(${idx})" class="alt">حذف</button>
+        <button onclick="confirmDeleteAd(${idx})" class="alt">حذف</button>
       </div>
     </div>
   `;
   detailEl.innerHTML = html;
 }
 
-/* build detail form for edit/new — reuse existing logic where possible */
+/* build detail/edit/new form */
 function buildDetailFor(idx, mode='edit'){
   const ad = (mode==='new') ? {} : (allAds[idx] || {});
   const codeVal = escapeAttr(ad.ref_code || ad.code || '');
@@ -196,32 +455,36 @@ function buildDetailFor(idx, mode='edit'){
       <div class="detailRow"><label class="small">الموقع</label><input id="a_loc" value="${escapeAttr(ad.location||'')}" style="flex:1"></div>
       <div class="detailRow"><label class="small">التواصل</label><input id="a_contact" value="${escapeAttr(ad.contact||'')}" style="flex:1"></div>
       <div class="detailRow"><label class="small">التصنيف</label><input id="a_cat" value="${escapeAttr(ad.category||'')}" style="flex:1"></div>
+      <div class="detailRow"><label class="small">الوزن (لترتيب)</label><input id="a_weight" value="${escapeAttr(ad.weight||0)}" style="width:120px"></div>
       <div class="detailRow"><label class="small">صورة</label><input id="a_file" type="file" accept="image/*"></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button id="saveAdBtn">${mode==='new'?'إضافة':'حفظ'}</button><button id="cancelAdBtn" class="alt">إلغاء</button></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="saveAdBtn">${mode==='new'?'إضافة':'حفظ'}</button>
+        <button id="cancelAdBtn" class="alt">إلغاء</button>
+      </div>
+      <div id="saveStatus" class="smallmuted" style="margin-top:8px"></div>
     </div>
   `;
-  // wire small utilities
   document.getElementById('assignRefBtn').addEventListener('click', ()=>{
     const el = document.getElementById('a_code');
     el.value = el.value.trim() || genRef();
   });
-  document.getElementById('cancelAdBtn').onclick = ()=> { detailEl.innerHTML = 'حدد إعلاناً أو مقترحاً لعرض التفاصيل'; };
+  document.getElementById('cancelAdBtn').onclick = ()=> { detailEl.innerHTML = 'حدد إعلاناً أو اضغط \"إضافة إعلان جديد\"'; };
   document.getElementById('saveAdBtn').onclick = async ()=>{
+    const statusEl = document.getElementById('saveStatus');
+    statusEl.textContent = 'جاري الحفظ...';
     try{
-      // delegate to original save logic if available
-      if(typeof saveAdFromDetail === 'function'){
-        await saveAdFromDetail(mode, idx); // your original function name may differ; original file had similar logic
-        await loadAll(); // refresh
-        alert('تم الحفظ');
-        detailEl.innerHTML='حدد إعلاناً أو مقترحاً لعرض التفاصيل';
-      } else {
-        alert('لم أعثر على دالة الحفظ الأصلية (saveAdFromDetail). تأكد أن الملف الأصلي يحتوي على منطق الحفظ كما كان.');
-      }
-    }catch(e){ alert('خطأ: ' + (e.message||e)); console.error(e); }
+      await saveAdFromDetail(mode, idx);
+      statusEl.textContent = 'تم الحفظ بنجاح';
+      await loadAll();
+      setTimeout(()=> { detailEl.innerHTML = 'حدد إعلاناً أو اضغط "إضافة إعلان جديد"'; }, 700);
+    }catch(e){
+      statusEl.textContent = 'خطأ: ' + (e.message || e);
+      errlog(e);
+    }
   };
 }
 
-/* ----------------- Proposals rendering (simple) ----------------- */
+/* =================== Proposals rendering & accept flow =================== */
 function renderProposalItem(item, filename, idx){
   const html = document.createElement('div');
   html.className = 'item';
@@ -233,100 +496,295 @@ function renderProposalItem(item, filename, idx){
   html.querySelector('.acceptBtn').addEventListener('click', ()=> startAcceptFlow(item, filename));
   html.querySelector('.rejectBtn').addEventListener('click', ()=> {
     if(!confirm('رفض المقترح وحذفه؟')) return;
-    if(typeof deleteProposalWithImage === 'function'){
-      deleteProposalWithImage(readCfg(), filename).then(()=> loadAll()).catch(e=>alert('خطأ: '+e.message));
-    } else alert('وظيفة حذف المقترحات غير متاحة (ghDelete).');
+    // delete proposal file if ghDelete available
+    (async ()=>{
+      try{
+        const cfg = readCfg();
+        const pat = await getSessionPat();
+        if(!pat) throw new Error('PAT required to delete proposal');
+        await ghDelete(pat, cfg.repo, `proposals/${filename}`, 'reject proposal');
+        alert('تم حذف المقترح');
+        await loadAll();
+      }catch(e){ alert('خطأ: '+(e.message||e)); errlog(e); }
+    })();
   });
   return html;
 }
 
-/* ----------------- Loading data from repo (uses original helper functions if present) ----------------- */
-async function loadAll(){
-  // prefer original fetch functions if available
+async function startAcceptFlow(item, filename){
+  // Accepting a proposal: convert to ad, upload images if needed, update ads.json and delete proposal file
   try{
-    // try to use original ghRaw function to fetch ads.json (if present)
-    let arr = null;
-    if(typeof ghRaw === 'function'){
-      const cfg = readCfg();
-      const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
-      arr = raw ? JSON.parse(raw) : null;
-    } else {
-      // fallback: try raw.githubusercontent static URL
-      const cfg = readCfg();
-      if(cfg && cfg.repo){
-        const [owner, repoName] = (cfg.repo||'').split('/');
-        const url = `https://raw.githubusercontent.com/${owner}/${repoName}/${cfg.branch||'main'}/static/ads.json`;
-        const r = await fetch(url, { cache:'no-cache' });
-        if(r.ok) arr = await r.json();
-      }
+    if(!confirm('قبول المقترح ومباشرة نشره كإعلان؟')) return;
+    const cfg = readCfg();
+    const pat = await getSessionPat();
+    if(!pat) throw new Error('PAT required');
+    log('Accepting proposal', filename, item);
+    // item expected to contain fields similar to ads entries; adapt if needed
+    const ad = Object.assign({}, item);
+    if(!ad.ref_code) ad.ref_code = genRef();
+    // if proposal has image as DataURL or remote link, handle accordingly
+    // For simplicity, if item.image is a data URL, upload it; otherwise retain as-is
+    if(ad.image && ad.image.startsWith('data:')){
+      // upload full + thumb
+      const fileNameBase = `images/${Date.now().toString(36)}-${ad.ref_code}`;
+      const full = await uploadDataUrlAsFile(pat, cfg.repo, `${fileNameBase}.webp`, ad.image, cfg.branch || 'main');
+      const thumbData = await makeThumbnailFromDataUrl(ad.image);
+      const thumb = await uploadDataUrlAsFile(pat, cfg.repo, `${fileNameBase}-thumb.webp`, thumbData, cfg.branch || 'main');
+      ad.image = full;
+      ad.thumb = thumb;
     }
-    allAds = Array.isArray(arr) ? arr : [];
-  }catch(e){
-    console.warn('loadAll ads error', e);
-    allAds = [];
-  }
+    // append to ads.json
+    const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.unshift(ad);
+    await ghPut(pat, cfg.repo, 'static/ads.json', btoa(unescape(encodeURIComponent(JSON.stringify(arr)))), `accept proposal ${filename}`, cfg.branch || 'main');
+    // delete proposal file
+    await ghDelete(pat, cfg.repo, `proposals/${filename}`, 'remove proposal after accept', cfg.branch || 'main');
+    alert('تم قبول المقترح ونشر الإعلان');
+    await loadAll();
+  }catch(e){ alert('خطأ أثناء قبول المقترح: ' + (e.message || e)); errlog(e); }
+}
 
-  // load proposals
-  try{
-    if(typeof listProposals === 'function'){ // if original file exposes helper
-      allProposals = await listProposals();
-    } else {
-      // fallback: try to list proposals by fetching a known index (not guaranteed). Keep empty to avoid breaking.
-      allProposals = [];
-    }
-  }catch(e){ allProposals = []; }
-
-  // render lists (apply current search)
-  buildAdsList(searchInput.value || '');
-  proposalsListEl.innerHTML = '';
-  allProposals.forEach((p, i)=>{
-    const filename = p.filename || ('proposal-'+i);
-    proposalsListEl.appendChild(renderProposalItem(p.item||p, filename, i));
+/* helper to create thumbnail from DataURL (loads and resizes) */
+async function makeThumbnailFromDataUrl(dataUrl){
+  return new Promise((res, rej)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const ratio = Math.min(1, OPT_THUMB.maxWidth / img.width, OPT_THUMB.maxHeight / img.height);
+      const w = Math.max(1, Math.round(img.width * ratio));
+      const h = Math.max(1, Math.round(img.height * ratio));
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      const durl = c.toDataURL(OPT_THUMB.outputType, OPT_THUMB.quality);
+      res(durl);
+    };
+    img.onerror = rej;
+    img.src = dataUrl;
   });
 }
 
-/* ----------------- Delete ad wrapper (uses original deleteAd if present) ----------------- */
-async function deleteAd(idx){
-  if(!confirm('حذف الإعلان؟')) return;
-  try{
-    if(typeof deleteAd === 'function' && deleteAd !== arguments.callee){
-      // original deleteAd function exists in file; call it (careful to not recurse)
-      // to avoid name collision, original file's deleteAd should be available in scope; if it is, use different name in original
-      // if original function name conflicts, this will skip and try to fallback below
-    }
-    // fallback behavior: try to use original ghPut to update ads.json without the item
-    const cfg = readCfg();
-    if(typeof ghRaw === 'function' && typeof ghPut === 'function'){
-      const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
-      const arr = raw ? JSON.parse(raw) : [];
-      const toRemove = arr[idx];
-      // attempt to remove images too if maybeDeleteImage exists
-      if(typeof maybeDeleteImage === 'function' && toRemove){
-        if(toRemove.image) await maybeDeleteImage(cfg, toRemove.image);
-        if(toRemove.thumb) await maybeDeleteImage(cfg, toRemove.thumb);
-      }
-      arr.splice(idx,1);
-      await ghPut(sessionStorage.getItem('static_session_pat'), cfg.repo, 'static/ads.json', btoa(unescape(encodeURIComponent(JSON.stringify(arr)))), 'delete ad', cfg.branch || 'main');
-      alert('تم الحذف');
-      await loadAll();
-    } else {
-      alert('لا يمكن حذف الإعلان لأن الوظائف الضرورية غير متوفرة (ghRaw/ghPut). تأكد أن الملف الأصلي متكامل.');
-    }
-  }catch(e){ alert('خطأ: ' + (e.message||e)); console.error(e); }
+/* upload helper for DataURL image -> path in repo (returns public raw URL path) */
+async function uploadDataUrlAsFile(pat, repo, pathInRepo, dataUrl, branch='main'){
+  const cfg = normalizeRepo(repo);
+  if(!cfg) throw new Error('Invalid repo');
+  const base64 = dataURLtoBase64(dataUrl);
+  // pathInRepo is relative like images/name.webp or static/images/...
+  // We'll place images under static/images/ by default if caller didn't provide prefix
+  let finalPath = pathInRepo;
+  if(!/^(static\/|images\/)/i.test(finalPath)) finalPath = `static/${finalPath}`;
+  await ghPut(pat, `${cfg.owner}/${cfg.repo}`, finalPath, base64, 'upload image', branch);
+  // return raw.githubusercontent url
+  return `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${branch}/${finalPath}`;
 }
 
-/* ----------------- Search wiring ----------------- */
-const debouncedFilter = (function(){
-  let t;
-  return (val)=>{ clearTimeout(t); t = setTimeout(()=> buildAdsList(val), 200); };
-})();
+/* =================== Save/Update/Delete ads logic =================== */
+async function saveAdFromDetail(mode, idx){
+  // read fields
+  const cfg = readCfg();
+  const pat = await getSessionPat();
+  if(!cfg.repo) throw new Error('اعدادات الريبو مفقودة. ضع owner/repo ثم حفظ الإعدادات.');
+  if(!pat) throw new Error('PAT مطلوب لإجراء الحفظ. ألصقه في الحقل واضغط حفظ الإعدادات.');
 
-searchInput.addEventListener('input', (e) => {
-  const v = e.target.value || '';
-  debouncedFilter(v);
+  const code = document.getElementById('a_code').value.trim() || genRef();
+  const name = document.getElementById('a_name').value.trim();
+  const desc = document.getElementById('a_desc').value.trim();
+  const loc = document.getElementById('a_loc').value.trim();
+  const contact = document.getElementById('a_contact').value.trim();
+  const cat = document.getElementById('a_cat').value.trim();
+  const weight = Number(document.getElementById('a_weight').value||0);
+  const fileInput = document.getElementById('a_file');
+
+  // read ads.json current
+  const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
+  const arr = raw ? JSON.parse(raw) : [];
+
+  let existing = null;
+  if(mode==='edit') existing = allAds[idx] || null;
+
+  const newAd = Object.assign({}, existing || {}, {
+    ref_code: code,
+    name, description: desc, location: loc, contact, category: cat, weight,
+    modified_at: new Date().toISOString()
+  });
+  if(!newAd.created_at) newAd.created_at = new Date().toISOString();
+
+  // handle file upload if provided
+  if(fileInput && fileInput.files && fileInput.files.length){
+    const f = fileInput.files[0];
+    dbg('optimizing image...');
+    const fullRes = await resizeImageFile(f, OPT_FULL);
+    const thumbRes = await resizeImageFile(f, OPT_THUMB);
+    dbg('uploading images (full & thumb)...');
+    // create unique filenames
+    const base = `images/${Date.now().toString(36)}-${code}`;
+    const fullPath = `static/${base}.webp`;
+    const thumbPath = `static/${base}-thumb.webp`;
+
+    // upload in parallel
+    const upStart = Date.now();
+    await Promise.all([
+      ghPut(pat, cfg.repo, fullPath, fullRes.base64, `upload ${base}.webp`, cfg.branch || 'main'),
+      ghPut(pat, cfg.repo, thumbPath, thumbRes.base64, `upload ${base}-thumb.webp`, cfg.branch || 'main')
+    ]);
+    dbg('uploads finished in', (Date.now()-upStart)+'ms');
+    // set public raw URLs
+    newAd.image = `https://raw.githubusercontent.com/${normalizeRepo(cfg.repo).owner}/${normalizeRepo(cfg.repo).repo}/${cfg.branch || 'main'}/${fullPath}`;
+    newAd.thumb = `https://raw.githubusercontent.com/${normalizeRepo(cfg.repo).owner}/${normalizeRepo(cfg.repo).repo}/${cfg.branch || 'main'}/${thumbPath}`;
+  }
+
+  // update array
+  if(mode==='new'){
+    arr.unshift(newAd);
+  } else {
+    // replace existing by matching ref_code if possible, else idx
+    let replaced = false;
+    for(let i=0;i<arr.length;i++){
+      if(arr[i].ref_code === (existing && existing.ref_code) || i===idx){
+        arr[i] = newAd;
+        replaced = true;
+        break;
+      }
+    }
+    if(!replaced) arr.unshift(newAd);
+  }
+
+  // commit ads.json (base64)
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, cfg.repo, 'static/ads.json', jsonB64, `${mode==='new'?'add':'update'} ad ${code}`, cfg.branch || 'main');
+  log('saved ad', code);
+  return true;
+}
+
+async function confirmDeleteAd(idx){
+  if(!confirm('هل أنت متأكد من حذف الإعلان نهائياً؟')) return;
+  await deleteAd(idx);
+}
+
+async function deleteAd(idx){
+  const cfg = readCfg();
+  const pat = await getSessionPat();
+  if(!cfg.repo) throw new Error('اعدادات الريبو مفقودة');
+  if(!pat) throw new Error('PAT مطلوب للحذف');
+  const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
+  const arr = raw ? JSON.parse(raw) : [];
+  const toRemove = arr[idx];
+  if(!toRemove) throw new Error('الإعلان غير موجود');
+  // attempt removing images (best-effort)
+  try{
+    if(toRemove.image) await maybeDeleteImage(cfg, toRemove.image);
+    if(toRemove.thumb) await maybeDeleteImage(cfg, toRemove.thumb);
+  }catch(e){ warn('failed to delete images', e); }
+  arr.splice(idx,1);
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, cfg.repo, 'static/ads.json', jsonB64, `delete ad ${toRemove.ref_code||toRemove.code||'unknown'}`, cfg.branch || 'main');
+  alert('تم حذف الإعلان');
+  await loadAll();
+}
+
+/* =================== Load data (ads + proposals) =================== */
+async function listProposals(){
+  // Try to list files in proposals folder using GitHub API tree (requires PAT if repo private)
+  try{
+    const cfg = readCfg();
+    const pat = await getSessionPat();
+    const repoObj = normalizeRepo(cfg.repo);
+    if(!repoObj) return [];
+    const url = `https://api.github.com/repos/${repoObj.owner}/${repoObj.repo}/git/trees/${cfg.branch || 'main'}?recursive=1`;
+    const headers = { Accept: 'application/vnd.github.v3+json' };
+    if(pat) headers.Authorization = 'token ' + pat;
+    const resp = await fetch(url, { headers });
+    if(!resp.ok) {
+      warn('listProposals: tree fetch failed', resp.status);
+      return [];
+    }
+    const j = await resp.json();
+    const files = (j.tree||[]).filter(it=> it.path && it.path.startsWith('proposals/') && (it.path.endsWith('.json') || it.path.endsWith('.txt') || it.path.endsWith('.jsonx')));
+    const results = [];
+    for(const f of files){
+      try{
+        const raw = await ghRaw(cfg.repo, f.path, cfg.branch || 'main');
+        const parsed = raw ? JSON.parse(raw) : null;
+        if(parsed) results.push({ filename: f.path.replace(/^proposals\//,''), item: parsed });
+      }catch(e){ warn('failed to load proposal', f.path, e); }
+    }
+    return results;
+  }catch(e){
+    warn('listProposals failed', e);
+    return [];
+  }
+}
+
+async function loadAll(){
+  dbg('loadAll start');
+  const cfg = readCfg();
+  if(!cfg.repo){
+    adsCountEl.textContent = 'لم يتم إعداد repo';
+    allAds = [];
+    allProposals = [];
+    buildAdsList('');
+    proposalsListEl.innerHTML = '';
+    return;
+  }
+  try{
+    const raw = await ghRaw(cfg.repo, 'static/ads.json', cfg.branch || 'main');
+    allAds = raw ? JSON.parse(raw) : [];
+    log('loaded ads.json', allAds.length);
+  }catch(e){ warn('failed to load ads.json', e); allAds = []; }
+
+  try{
+    const ps = await listProposals();
+    allProposals = ps.map(p=> p.item ? p.item : p);
+    proposalsListEl.innerHTML = '';
+    ps.forEach((p,i)=> proposalsListEl.appendChild(renderProposalItem(p.item || p, p.filename || `p${i}`, i)));
+    log('loaded proposals', ps.length);
+  }catch(e){ warn('load proposals failed', e); proposalsListEl.innerHTML = ''; allProposals = []; }
+
+  buildAdsList(searchInput.value || '');
+  dbg('loadAll done');
+}
+
+/* =================== Wiring: search, buttons, init =================== */
+const debouncedFilter = (function(){ let t; return (val)=>{ clearTimeout(t); t = setTimeout(()=> buildAdsList(val), 180); }; })();
+searchInput.addEventListener('input', (e) => { debouncedFilter(e.target.value || ''); });
+
+document.getElementById('refreshBtn').addEventListener('click', ()=> loadAll());
+document.getElementById('newAdBtn').addEventListener('click', ()=> buildDetailFor(-1, 'new'));
+
+// Save settings button: store cfg + session PAT
+document.getElementById('saveBtn').addEventListener('click', ()=>{
+  const patVal = document.getElementById('cfg_session_pat')?.value || '';
+  if(patVal) sessionStorage.setItem('static_session_pat', patVal);
+  const cfg = readCfg() || {};
+  cfg.repo = document.getElementById('cfg_repo')?.value.trim() || cfg.repo;
+  cfg.branch = document.getElementById('cfg_branch')?.value.trim() || cfg.branch;
+  cfg.allow_public_submissions = document.getElementById('allowPublic')?.checked || false;
+  saveCfg(cfg);
+  alert('تم حفظ الإعدادات (PAT مخزن مؤقتاً في الجلسة)');
+  loadAll();
+});
+document.getElementById('clearPatBtn').addEventListener('click', ()=>{
+  sessionStorage.removeItem('static_session_pat');
+  document.getElementById('cfg_session_pat').value = '';
+  alert('تم مسح PAT من الجلسة');
 });
 
-/* ----------------- Auto-fill ref on focus for create/edit forms ----------------- */
+/* autofill config fields from saved config */
+(function init(){
+  try{
+    const cfg = readCfg();
+    if(cfg){
+      document.getElementById('cfg_repo').value = cfg.repo || '';
+      document.getElementById('cfg_branch').value = cfg.branch || 'main';
+      document.getElementById('allowPublic').checked = !!cfg.allow_public_submissions;
+    }
+  }catch(e){}
+  // load advertisements (if repo set)
+  loadAll();
+})();
+
+/* auto-fill ref on focus for new/edit forms */
 document.addEventListener('focusin', (e)=>{
   try{
     const el = e.target;
@@ -336,21 +794,11 @@ document.addEventListener('focusin', (e)=>{
   }catch(err){}
 });
 
-/* ----------------- init ----------------- */
-(function init(){
-  // set UI from saved cfg if any (keeps parity with your original save/load)
-  try{
-    const cfg = readCfg();
-    if(cfg){
-      document.getElementById('cfg_repo').value = cfg.repo || '';
-      document.getElementById('cfg_branch').value = cfg.branch || 'main';
-      document.getElementById('cfg_session_pat').value = ''; // session PAT kept in sessionStorage
-      document.getElementById('allowPublic').checked = !!cfg.allow_public_submissions;
-    }
-  }catch(e){}
-  // initial load
-  loadAll();
-})();
+/* ===== small convenience: expose some functions to global for direct console use ===== */
+window.adminDebug = {
+  ghRaw, ghPut, ghDelete, loadAll, saveAdFromDetail, listProposals, maybeDeleteImage
+};
+
 </script>
 </body>
 </html>
