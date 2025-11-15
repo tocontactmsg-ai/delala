@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>الدلالة — إعلانات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f7fbff;--card:#fff;--accent:#0078d7;--muted:#6b7280;--radius:10px}
+  *{box-sizing:border-box;font-family:"Tajawal",system-ui,Segoe UI,Roboto,Arial}
+  body{margin:0;background:var(--bg);color:#042031;line-height:1.45}
+  .wrap{max-width:1100px;margin:18px auto;padding:14px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(90deg,#0078d7,#005bb5);color:#fff;padding:12px;border-radius:10px}
+  .topbar .title{font-size:20px;font-weight:700}
+  .controls{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  input[type="text"],select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #e8f2fb;font-size:16px}
+  button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+  main{margin-top:18px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}.topbar .title{font-size:18px}}
+  .card{background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 8px 18px rgba(10,25,40,.06);display:flex;flex-direction:column;height:100%}
+  .media{height:180px;background:#f2f8ff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .media img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
+  .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);padding:12px}
+  .body{padding:14px;display:flex;flex-direction:column;gap:10px}
+  .title{font-size:18px;font-weight:800;margin:0}
+  .desc{font-size:15px;color:#123046}
+  .meta{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .tag{background:#e9f6ff;color:var(--accent);padding:6px 8px;border-radius:8px;font-weight:700}
+  .contact{margin-left:auto;color:var(--muted);font-size:14px}
+  .panel{margin-top:18px;background:var(--card);padding:14px;border-radius:10px;box-shadow:0 8px 20px rgba(10,25,40,.04)}
+  .big{font-size:17px}
+  .mutedSmall{font-size:13px;color:var(--muted)}
+  pre{background:#fbfdff;padding:10px;border-radius:8px;overflow:auto}
+  .refBox{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .refCode{background:#f0f9ff;padding:8px 12px;border-radius:10px;color:var(--accent);font-weight:800}
+  .logList{margin-top:12px;background:#fff;padding:8px;border-radius:8px}
+  .lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.85);z-index:999}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:96%;max-height:96%}
+  .cameraBtn{background:#111;padding:8px 10px;border-radius:8px;color:#fff;border:none;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <div class="title">الدلالة — الإعلانات</div>
+      <div class="mutedSmall">أرسل إعلانك بسرعة — رمز التتبع يرسل تلقائياً إلى المشرف</div>
+    </div>
+    <div class="mutedSmall">WhatsApp: <strong>+249964147954</strong></div>
+  </div>
+
+  <div class="controls">
+    <input id="q" type="text" placeholder="ابحث بالعنوان أو الرمز أو الموقع">
+    <select id="catFilter" style="width:220px"><option value="">كل الفئات</option></select>
+    <button id="refresh">⟳ تحديث</button>
+  </div>
+
+  <main>
+    <section aria-labelledby="ads-list">
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div id="noitems" style="display:none;padding:22px;text-align:center;color:#6b7280;font-size:15px">لا توجد إعلانات</div>
+    </section>
+
+    <section class="panel" aria-labelledby="send-form">
+      <h2 class="big">أرسل إعلانك</h2>
+      <div class="mutedSmall">بعد الإرسال سيُرسَل رمز التتبع تلقائياً إلى المشرف عبر WhatsApp.</div>
+
+      <label><input id="f_name" placeholder="عنوان الإعلان" class="big"></label>
+      <label><textarea id="f_desc" placeholder="وصف الإعلان" class="big"></textarea></label>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <input id="f_loc" placeholder="الموقع (مثال: Khartoum)" style="flex:1;min-width:160px" class="big">
+        <input id="f_contact" placeholder="وسيلة التواصل" style="width:220px" class="big">
+        <input id="f_cat" placeholder="التصنيف" style="width:220px" class="big">
+      </div>
+
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <input id="f_file" type="file" accept="image/*">
+        <button id="useCameraBtn" class="cameraBtn" type="button">استخدام الكاميرا</button>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px">
+        <button id="submitBtn" class="big">إرسال</button>
+        <div id="submitStatus" class="mutedSmall"></div>
+      </div>
+
+      <div id="afterSubmit" style="display:none;margin-top:12px">
+        <div class="refBox">
+          <div class="mutedSmall">رمز الإرسال:</div>
+          <div id="refCode" class="refCode"></div>
+          <button id="copyRef" style="background:#eee;color:#222;border-radius:8px;padding:6px 8px;border:none">نسخ</button>
+          <a id="openWa" class="mutedSmall" target="_blank" style="margin-left:8px"></a>
+        </div>
+        <div id="fallbackJson" style="display:none;margin-top:8px">
+          <div class="mutedSmall">إذا لم يُسمح بالإرسال التلقائي، انسخ هذه البيانات وأرسلها للمدير:</div>
+          <pre id="fallbackArea"></pre>
+        </div>
+
+        <div class="logList" id="logList" style="margin-top:12px">
+          <strong>آخر الإرساليات</strong>
+          <div id="logRows"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="lightbox" class="lightbox" onclick="this.classList.remove('open')"><img id="lbImg" alt=""></div>
+
+<script>
+/* ---------- Config & helpers ---------- */
+const WA_NUMBER = '249964147954'; // admin WhatsApp number (no +)
+const CACHE_KEY = 'static_ads_cache_v3';
+const LOG_KEY = 'static_ads_sent_refs';
+const OPT_DEFAULTS = { maxWidth: 1600, maxHeight: 1200, quality: 0.78, outputType: 'image/webp' };
+
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
+function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
+
+/* ---------- Image optimizer (client-side) ---------- */
+async function optimizeImageFile(file, options = {}) {
+  const { maxWidth = OPT_DEFAULTS.maxWidth, maxHeight = OPT_DEFAULTS.maxHeight, quality = OPT_DEFAULTS.quality, outputType = OPT_DEFAULTS.outputType } = options;
+  const dataUrl = await new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
+  });
+  const img = await new Promise((res, rej) => {
+    const i = new Image();
+    i.onload = () => res(i);
+    i.onerror = rej;
+    i.src = dataUrl;
+  });
+  let { width, height } = img;
+  const scale = Math.min(1, maxWidth / width, maxHeight / height);
+  const targetW = Math.round(width * scale);
+  const targetH = Math.round(height * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, targetW, targetH);
+  const blob = await new Promise((res) => canvas.toBlob(res, outputType, quality));
+  const base64 = await new Promise((res) => {
+    const fr = new FileReader();
+    fr.onload = () => res(fr.result.split(',')[1]);
+    fr.readAsDataURL(blob);
+  });
+  return { blob, base64, size: blob.size, width: targetW, height: targetH };
+}
+
+/* ---------- Local log (visitor submissions) ---------- */
+function pushLocalLog(entry){ try{ const cur = JSON.parse(localStorage.getItem(LOG_KEY)||'[]'); cur.unshift(entry); localStorage.setItem(LOG_KEY, JSON.stringify(cur.slice(0,50))); }catch(e){} }
+function getLocalLog(){ try{ return JSON.parse(localStorage.getItem(LOG_KEY)||'[]'); }catch(e){ return []; } }
+function renderLocalLog(){ const rows = getLocalLog().slice(0,10); const container = document.getElementById('logRows'); container.innerHTML=''; if(rows.length===0){ container.innerHTML = '<div class="mutedSmall">لا توجد إرساليات محلية بعد</div>'; return } rows.forEach(r=>{ const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.padding='6px 0'; el.innerHTML = `<div><strong>${escapeHtml(r.ref)}</strong> — ${escapeHtml(r.name||'')}</div><div class="mutedSmall">${new Date(r.ts).toLocaleString()}</div>`; container.appendChild(el); }); }
+
+/* ---------- Load / render ads (fast, cached) ---------- */
+let ads = [];
+const grid = document.getElementById('grid');
+const qEl = document.getElementById('q');
+const catFilter = document.getElementById('catFilter');
+
+async function loadAds(){
+  try{
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if(cached && (Date.now() - cached.t < 30_000) && cached.data){ ads = cached.data; renderGrid(ads); buildCategories(ads); return; }
+    const paths = ['./static/ads.json','./ads.json','/static/ads.json'];
+    let items = null;
+    for(const p of paths){
+      try{ const res = await fetch(p, { cache:'no-cache' }); if(!res.ok) continue; items = await res.json(); break; }catch(e){ continue; }
+    }
+    if(!items) throw new Error('ads.json not found');
+    ads = Array.isArray(items) ? items : [];
+    ads.sort((a,b)=> (new Date(b.created_at||0)) - (new Date(a.created_at||0)));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: ads }));
+    renderGrid(ads); buildCategories(ads);
+  }catch(e){
+    grid.innerHTML = `<div style="padding:18px;color:#6b7280">تعذّر تحميل الإعلانات.</div>`;
+  }
+}
+
+function renderGrid(items){
+  grid.innerHTML = '';
+  if(!items || items.length===0){ document.getElementById('noitems').style.display='block'; return; } else document.getElementById('noitems').style.display='none';
+  const frag = document.createDocumentFragment();
+  items.forEach(a=>{
+    const card = document.createElement('article'); card.className='card';
+    const imgPath = (a.thumb || a.image || '').replace(/^\//,'');
+    const media = document.createElement('div'); media.className='media';
+    if(imgPath){
+      const img = document.createElement('img'); img.loading='lazy'; img.src = imgPath; img.alt = a.name||'';
+      img.onerror = ()=> { img.style.display='none'; media.innerHTML = `<div class="placeholder"><div style="font-weight:700">${escapeHtml(a.name||'لا صورة')}</div></div>`; }
+      img.addEventListener('click', ()=> { document.getElementById('lbImg').src = img.src; document.getElementById('lightbox').classList.add('open'); });
+      media.appendChild(img);
+    } else {
+      media.innerHTML = `<div class="placeholder"><div style="font-weight:700">${escapeHtml(a.name||'لا صورة')}</div></div>`;
+    }
+    const body = document.createElement('div'); body.className='body';
+    body.innerHTML = `<h3 class="title">${escapeHtml(a.name||'بدون عنوان')}</h3><div class="desc">${escapeHtml(a.description||'')}</div>`;
+    const meta = document.createElement('div'); meta.className='meta';
+    const tag = document.createElement('div'); tag.className='tag'; tag.innerText = a.category || 'عام';
+    const contact = document.createElement('div'); contact.className='contact'; contact.innerText = a.contact || '';
+    meta.appendChild(tag); meta.appendChild(contact); body.appendChild(meta);
+    card.appendChild(media); card.appendChild(body); frag.appendChild(card);
+  });
+  grid.appendChild(frag);
+}
+
+function buildCategories(items){
+  const s = new Set(); (items||ads).forEach(a=> a.category && s.add(a.category));
+  catFilter.innerHTML = '<option value="">كل الفئات</option>';
+  Array.from(s).sort().forEach(c=> { const o=document.createElement('option'); o.value=c; o.innerText=c; catFilter.appendChild(o); });
+}
+
+/* filter */
+function filterList(){
+  const q = qEl.value.trim().toLowerCase(); const cat = catFilter.value;
+  const filtered = ads.filter(a=>{
+    if(cat && a.category !== cat) return false;
+    if(!q) return true;
+    return (a.name||'').toLowerCase().includes(q) || (a.code||'').toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q);
+  });
+  renderGrid(filtered);
+}
+qEl.addEventListener('input', debounce(filterList, 250)); catFilter.addEventListener('change', filterList);
+document.getElementById('refresh').addEventListener('click', ()=> { localStorage.removeItem(CACHE_KEY); loadAds(); });
+
+/* ---------- Upload flow (visitor) ---------- */
+const submitBtn = document.getElementById('submitBtn');
+const submitStatus = document.getElementById('submitStatus');
+const afterSubmit = document.getElementById('afterSubmit');
+const refCodeEl = document.getElementById('refCode');
+const fallbackArea = document.getElementById('fallbackArea');
+const fallbackBox = document.getElementById('fallbackJson');
+const openWaLink = document.getElementById('openWa');
+const copyRefBtn = document.getElementById('copyRef');
+
+function toBase64(file){
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+}
+
+// GitHub PUT helper (used only if admin config present and allow_public_submissions true)
+async function putFileToRepo(pat, repo, path, base64content, message, branch='main', alreadyBase64=false){
+  const [owner, repoName] = repo.split('/');
+  if(!owner || !repoName) throw new Error('invalid repo format owner/name');
+  const url = `https://api.github.com/repos/${owner}/${repoName}/contents/${encodeURIComponent(path)}`;
+  const headers = { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' };
+  // get existing file to obtain sha if present
+  const meta = await fetch(url + `?ref=${encodeURIComponent(branch)}`, { headers });
+  let sha = null;
+  if(meta.status === 200){
+    const mjson = await meta.json(); sha = mjson.sha;
+  }
+  const body = { message, content: alreadyBase64 ? base64content : btoa(unescape(encodeURIComponent(base64content))), branch };
+  if(sha) body.sha = sha;
+  const res = await fetch(url, { method:'PUT', headers, body: JSON.stringify(body) });
+  if(!res.ok){ const txt = await res.text(); throw new Error('GitHub API error: ' + res.status + ' ' + txt); }
+  return await res.json();
+}
+
+copyRefBtn.addEventListener('click', ()=>{ const txt = refCodeEl.textContent || ''; navigator.clipboard?.writeText(txt).then(()=>alert('تم النسخ')).catch(()=>alert('نسخ فشل')); });
+
+submitBtn.addEventListener('click', async ()=>{
+  submitBtn.disabled = true; submitStatus.textContent = 'جارٍ الإعداد...';
+  const ref = genRef();
+  const payload = {
+    ref_code: ref,
+    name: document.getElementById('f_name').value.trim(),
+    description: document.getElementById('f_desc').value.trim(),
+    location: document.getElementById('f_loc').value.trim(),
+    contact: document.getElementById('f_contact').value.trim(),
+    category: document.getElementById('f_cat').value.trim(),
+    created_at: new Date().toISOString()
+  };
+  refCodeEl.textContent = ref;
+  afterSubmit.style.display = 'block';
+
+  const file = document.getElementById('f_file').files[0];
+  // read admin config if present (admin can allow public submissions)
+  let cfg = {};
+  try { cfg = JSON.parse(localStorage.getItem('static_ads_cfg_v1')||'{}'); } catch(e){ cfg = {}; }
+  const pat = cfg.pat || '';
+  const repo = cfg.repo || '';
+  const branch = cfg.branch || 'main';
+  let uploadedOk = false;
+
+  if(pat && repo && cfg.allow_public_submissions){
+    submitStatus.textContent = 'إرسال إلى الريبو...';
+    try {
+      if(file){
+        const safeName = file.name.replace(/[^a-z0-9.\-_]/ig,'_');
+        const imgName = `${ref}-${safeName}`;
+        // optimize image before upload
+        const opt = await optimizeImageFile(file, OPT_DEFAULTS);
+        await putFileToRepo(pat, repo, `static/images/${imgName}`, opt.base64, `upload ${imgName}`, branch, true);
+        payload.image = `static/images/${imgName}`;
+        payload.thumb = payload.image;
+      }
+      const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+      await putFileToRepo(pat, repo, `static/proposals/${ref}.json`, contentBase64, `proposal ${ref}`, branch, true);
+      uploadedOk = true;
+      submitStatus.textContent = 'تم الإرسال';
+      fallbackBox.style.display = 'none';
+    } catch(err){
+      console.error('upload failed', err);
+      submitStatus.textContent = 'فشل الإرسال التلقائي';
+      fallbackBox.style.display = 'block';
+      fallbackArea.textContent = JSON.stringify(payload, null, 2);
+    }
+  } else {
+    submitStatus.textContent = 'الإرسال التلقائي غير مفعّل';
+    fallbackBox.style.display = 'block';
+    fallbackArea.textContent = JSON.stringify(payload, null, 2);
+  }
+
+  // open WhatsApp to admin
+  try {
+    const message = `مرحباً، وصلني إعلان جديد برمز: ${ref}\nالعنوان: ${payload.name || '-'}\nالموقع: ${payload.location || '-'}`;
+    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`;
+    openWaLink.href = waUrl; openWaLink.textContent = 'فتح WhatsApp لإرسال رمز المتابعة';
+    window.open(waUrl, '_blank');
+  } catch(e){
+    console.warn('WhatsApp open failed', e);
+  }
+
+  pushLocalLog({ ref, ts: new Date().toISOString(), uploadedOk, name: payload.name||'', codeUsed: ref });
+  renderLocalLog();
+  submitBtn.disabled = false;
+});
+
+/* ---------- Camera on-demand (no forced camera) ---------- */
+document.getElementById('useCameraBtn').addEventListener('click', async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    const v = document.createElement('video'); v.autoplay = true; v.playsInline = true; v.srcObject = stream;
+    const modal = document.createElement('div'); modal.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.8);z-index:999';
+    const box = document.createElement('div'); box.style.cssText='background:#fff;padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:8px;align-items:center';
+    const btn = document.createElement('button'); btn.textContent='التقاط الصورة'; btn.style.cssText='padding:8px 10px;border-radius:8px;background:#0078d7;color:#fff;border:none;cursor:pointer';
+    box.appendChild(v); box.appendChild(btn); modal.appendChild(box); document.body.appendChild(modal);
+    v.style.maxWidth='360px'; v.style.maxHeight='520px';
+    await v.play();
+    btn.onclick = async ()=>{
+      const canvas = document.createElement('canvas'); canvas.width = v.videoWidth; canvas.height = v.videoHeight;
+      const ctx = canvas.getContext('2d'); ctx.drawImage(v,0,0,canvas.width,canvas.height);
+      canvas.toBlob(async (blob)=>{
+        const file = new File([blob], 'capture_' + Date.now() + '.jpg', { type: 'image/jpeg' });
+        const dataTransfer = new DataTransfer(); dataTransfer.items.add(file);
+        document.getElementById('f_file').files = dataTransfer.files;
+        stream.getTracks().forEach(t=>t.stop());
+        document.body.removeChild(modal);
+      }, 'image/jpeg', 0.9);
+    };
+  }catch(e){
+    alert('لا يمكن الوصول إلى الكاميرا: ' + (e.message || e));
+  }
+});
+
+/* ---------- init ---------- */
+renderLocalLog();
+loadAds();
+</script>
+</body>
+</html>
