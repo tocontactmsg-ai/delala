@@ -1,252 +1,695 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Admin — الدلالة</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>لوحة الإدارة — الدلالة (محدثة)</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-  body{font-family:"Tajawal",sans-serif;margin:12px;background:#f6f8fb;color:#07203a}
-  .wrap{max-width:1000px;margin:0 auto}
-  .panel{background:#fff;padding:12px;border-radius:8px;box-shadow:0 6px 18px rgba(9,30,66,0.06)}
-  .list{max-height:420px;overflow:auto;margin-top:8px}
-  .thumb{width:96px;height:72px;object-fit:cover;border-radius:6px;background:#f4f6f9}
-  input,textarea,button{font-size:14px;padding:8px;border-radius:6px;border:1px solid #e6eef8}
-  button{background:#0b69d6;color:#fff;border:none;cursor:pointer}
+  :root{--bg:#f5f7fb;--card:#fff;--muted:#59656f;--accent:#0b69d6}
+  *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
+  body{margin:12px;background:var(--bg);color:#07203a}
+  .wrap{max-width:1200px;margin:0 auto}
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+  h1{margin:0;font-size:20px}
+  .cfg{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input,select,textarea,button{font-size:14px}
+  input,select,textarea{padding:8px;border-radius:8px;border:1px solid #e6eef8}
+  button{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer}
   button.alt{background:#6b7280}
-  .muted{color:#59656f;font-size:13px}
+  .cols{display:grid;grid-template-columns:1fr 420px;gap:12px}
+  .panel{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 10px 24px rgba(9,30,66,0.06)}
+  .list{max-height:520px;overflow:auto}
+  .item{display:flex;gap:10px;border-bottom:1px solid #f2f4f7;padding:10px 0;align-items:center}
+  .thumb{width:96px;height:72px;object-fit:cover;border-radius:6px;background:#f4f6f9}
+  .meta{flex:1}
+  .muted{color:var(--muted);font-size:13px}
+  .actions{display:flex;gap:8px}
+  .detailRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+  label.small{font-size:13px;color:#333;min-width:90px}
+  pre{background:#fbfdff;padding:8px;border-radius:6px;overflow:auto;max-height:220px}
+  .searchRow{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+  .searchRow input{flex:1;padding:8px;border-radius:8px;border:1px solid #e6eef8}
+  .debug{font-family:monospace;font-size:12px;color:#0b3b5e;background:#eef6ff;padding:8px;border-radius:6px;margin-top:8px}
+  .mutedSmall{font-size:12px;color:#73808a}
+  .pill{background:#f1f5f9;padding:6px 8px;border-radius:999px;font-size:13px}
+  @media(max-width:980px){ .cols{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>لوحة الإدارة — الدلالة</h1>
-  <div class="panel" id="cfgPanel">
-    <div style="display:flex;gap:8px;align-items:center">
-      <input id="cfg_repo" placeholder="owner/repo" style="width:260px">
-      <input id="cfg_branch" placeholder="branch" style="width:100px" value="main">
-      <input id="cfg_session_pat" placeholder="PAT (dev only, optional)" style="width:300px">
-      <button id="saveBtn">حفظ الإعدادات</button>
-      <button id="clearBtn" class="alt">مسح PAT</button>
+  <header>
+    <h1>لوحة الإدارة — الدلالة (متقدِّمة)</h1>
+    <div class="cfg">
+      <input id="cfg_repo" placeholder="owner/repo (مثال: user/repo)" style="width:220px">
+      <input id="cfg_branch" placeholder="branch" style="width:80px" value="main">
+      <input id="cfg_session_pat" placeholder="ألصق PAT مؤقتاً (session only)" style="width:300px">
+      <button id="saveCfgBtn">حفظ الإعدادات</button>
+      <button id="clearPatBtn" class="alt">مسح PAT</button>
     </div>
-    <div class="muted" style="margin-top:6px">ملاحظة: في الإنتاج يستخدم هذا الموقع Cloudflare Pages Functions (server-side) — لا تضِع PAT في الواجهة.</div>
+  </header>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+    <div class="pill">نظام سريع وآمن: يفضل وضع PAT في متغيرات Pages (GITHUB_PAT)</div>
+    <div class="mutedSmall">يمكنك لصق PAT مؤقتاً هنا للعمل السريع؛ سيحفظ في الجلسة فقط.</div>
   </div>
 
-  <div style="height:12px"></div>
+  <div class="cols">
+    <!-- Left: Ads list + controls -->
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong>قائمة الإعلانات</strong>
+        <div class="mutedSmall" id="ads_count">تحميل...</div>
+      </div>
 
-  <div class="panel">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <strong>قائمة الإعلانات</strong>
-      <div><input id="admin_search" placeholder="ابحث برمز أو عنوان أو موقع" style="width:260px"></div>
+      <div class="searchRow">
+        <input id="admin_search" placeholder="ابحث برمز/عنوان/موقع/تصنيف">
+        <select id="sort_by" title="ترتيب">
+          <option value="created_desc">الأحدث أولاً</option>
+          <option value="created_asc">الأقدم أولاً</option>
+          <option value="weight_desc">الوزن تنازلي</option>
+          <option value="weight_asc">الوزن تصاعدي</option>
+        </select>
+        <button id="refreshBtn">تحديث</button>
+        <button id="newAdBtn" class="alt">إضافة إعلان</button>
+      </div>
+
+      <div class="list" id="ads_list" aria-live="polite"></div>
+
+      <div class="debug" id="debugBox">سجل التصحيح: جاهز</div>
     </div>
 
-    <div class="list" id="ads_list">تحميل...</div>
-    <div style="margin-top:10px;display:flex;gap:8px">
-      <button id="refreshBtn">تحديث</button>
-      <button id="newBtn" class="alt">إضافة إعلان جديد</button>
+    <!-- Right: Detail / proposals / tools -->
+    <div class="panel">
+      <strong>تفاصيل / تحرير</strong>
+      <div id="detail" style="margin-top:10px">حدد إعلانًا من اليسار أو اضغط "إضافة إعلان"</div>
+
+      <hr style="margin:12px 0">
+
+      <strong>المقترحات (Proposals)</strong>
+      <div id="proposals_list" class="list" style="margin-top:8px">تحميل...</div>
+
+      <hr style="margin:12px 0">
+
+      <strong>أدوات</strong>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <button id="exportBtn">تصدير ads.json</button>
+        <button id="importBtn" class="alt">استيراد ملف ads.json</button>
+        <label class="mutedSmall">إجراءات سريعة</label>
+        <button id="purgeImagesBtn" class="alt">حذف الصور غير المستخدمة (محاولة)</button>
+      </div>
     </div>
   </div>
-
-  <div style="height:12px"></div>
-
-  <div class="panel" id="detail">حدد إعلاناً أو اضغط إضافة</div>
-  <div style="height:20px"></div>
-  <div class="panel muted">Debug console: افتح DevTools لرؤية رسائل أكثر</div>
 </div>
 
 <script>
-/* ---------- helpers that use the Pages API endpoints ---------- */
-async function ghRaw(path, branch='main'){
-  const url = `/api/raw?path=${encodeURIComponent(path)}&branch=${encodeURIComponent(branch)}`;
-  const r = await fetch(url);
-  const j = await r.json();
-  if(!r.ok) throw new Error(j.error || ('status ' + r.status));
-  return j.content;
+/* ====================== Utilities & Config ====================== */
+function dbg(...args){ try{ const el=document.getElementById('debugBox'); const t=new Date().toLocaleTimeString(); el.textContent = t + ' — ' + args.map(a => (typeof a==='object'? JSON.stringify(a): String(a))).join(' '); console.debug(...args);}catch(e){} }
+function esc(s){ return String(s||''); }
+function uuidRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
+function readCfg(){ try{ return JSON.parse(localStorage.getItem('eld_cfg')||'{}'); }catch(e){return{}} }
+function saveCfg(cfg){ localStorage.setItem('eld_cfg', JSON.stringify(cfg)); }
+
+/* ====================== GitHub / API helpers ====================== */
+/*
+  Preferred flow:
+   - Use server-side Pages Function endpoints at /api/raw, /api/put, /api/delete (no PAT required client side)
+   - If those fail, fallback to direct GitHub API using session PAT (sessionStorage 'eld_pat' or field)
+*/
+
+async function getSessionPat(){ return sessionStorage.getItem('eld_pat') || document.getElementById('cfg_session_pat')?.value || ''; }
+function cfgRepo(){ const c=readCfg(); return c.repo || document.getElementById('cfg_repo')?.value.trim(); }
+function cfgBranch(){ const c=readCfg(); return c.branch || document.getElementById('cfg_branch')?.value.trim() || 'main'; }
+
+async function apiFetch(path, options){
+  // call Cloudflare Pages Functions first (same-origin /api)
+  try{
+    const url = path.startsWith('/') ? path : ('/api/' + path);
+    const t0 = Date.now();
+    const resp = await fetch(url, options);
+    const elapsed = Date.now() - t0;
+    const j = await resp.json().catch(()=>null);
+    dbg('apiFetch', url, 'status', resp.status, 'elapsed', elapsed, j && (j.rate || j.result || j.status));
+    return { ok: resp.ok, status: resp.status, json: j, elapsed, rawResp: resp };
+  }catch(e){
+    dbg('apiFetch fail', path, e);
+    return { ok:false, status:0, error:e };
+  }
 }
 
-async function ghPut(sessionPat, repo, path, base64Content, message='update', branch='main'){
-  // call Pages function
-  const payload = { path, contentBase64: base64Content, message, branch };
-  const r = await fetch('/api/put', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
-  const j = await r.json();
-  if(!r.ok) throw new Error(j.error || j.result?.message || ('status ' + r.status));
-  return j.result;
+/* ghRaw: tries /api/raw, then fallback to direct GitHub API using session PAT */
+async function ghRaw(path, branch=cfgBranch()){
+  // try pages function
+  const usePath = `/api/raw?path=${encodeURIComponent(path)}&branch=${encodeURIComponent(branch)}`;
+  const r = await apiFetch(usePath, { method:'GET' });
+  if(r.ok && r.json && typeof r.json.content !== 'undefined') return r.json.content;
+  // fallback direct (requires session PAT)
+  const pat = await getSessionPat();
+  if(!pat) throw new Error('ghRaw failed and no session PAT for fallback');
+  const repo = cfgRepo();
+  const url = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+  const t0 = Date.now();
+  const resp = await fetch(url, { headers:{ Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3.raw' }});
+  const elapsed = Date.now() - t0;
+  if(!resp.ok) { const txt = await resp.text().catch(()=>null); throw new Error('direct ghRaw failed: ' + resp.status + ' ' + (txt||'')); }
+  const text = await resp.text();
+  dbg('ghRaw direct', path, 'elapsed', elapsed);
+  return text;
 }
 
-async function ghDelete(path, message='delete', branch='main'){
-  const payload = { path, message, branch };
-  const r = await fetch('/api/delete', { method:'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
-  const j = await r.json();
-  if(!r.ok) throw new Error(j.error || j.result?.message || ('status ' + r.status));
-  return j.result;
+/* ghPut: tries /api/put, else direct via session PAT */
+async function ghPut(sessionPatCandidate, repoParam, path, base64content, message='update', branch=cfgBranch()){
+  // try pages function
+  try{
+    const payload = { path, contentBase64: base64content, message, branch };
+    const r = await apiFetch('/api/put', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+    if(r.ok) return r.json;
+    dbg('ghPut: pages function returned not-ok', r);
+  }catch(e){ dbg('ghPut pages failed', e); }
+  // fallback to direct (requires PAT)
+  const pat = sessionPatCandidate || await getSessionPat();
+  if(!pat) throw new Error('ghPut failed and no PAT for fallback');
+  const repo = repoParam || cfgRepo();
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path)}`;
+  // get existing sha
+  const metaResp = await fetch(apiUrl + `?ref=${encodeURIComponent(branch)}`, { headers:{ Authorization:'token ' + pat, Accept:'application/vnd.github.v3+json' }});
+  let sha;
+  if(metaResp.ok){ const mj = await metaResp.json(); sha = mj.sha; }
+  const body = { message, content: base64content, branch };
+  if(sha) body.sha = sha;
+  const t0 = Date.now();
+  const resp = await fetch(apiUrl, { method:'PUT', headers:{ Authorization:'token ' + pat, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+  const text = await resp.text().catch(()=>null);
+  if(!resp.ok) throw new Error('direct ghPut failed: ' + (text || resp.status));
+  dbg('ghPut direct success', path, 'elapsed', Date.now()-t0);
+  return JSON.parse(text);
 }
 
-/* ---------- small UI logic (reads/writes static/ads.json) ---------- */
+/* ghDelete: tries /api/delete, else direct via session PAT */
+async function ghDelete(path, message='delete', branch=cfgBranch()){
+  try{
+    const payload = { path, message, branch };
+    const r = await apiFetch('/api/delete', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+    if(r.ok) return r.json;
+    dbg('ghDelete pages func not-ok', r);
+  }catch(e){ dbg('ghDelete pages failed', e); }
+  const pat = await getSessionPat();
+  if(!pat) throw new Error('ghDelete failed and no session PAT for fallback');
+  const repo = cfgRepo();
+  const apiUrl = `https://api.github.com/repos/${repo}/contents/${encodeURIComponent(path)}`;
+  const metaResp = await fetch(apiUrl + `?ref=${encodeURIComponent(branch)}`, { headers:{ Authorization:'token ' + pat, Accept:'application/vnd.github.v3+json' }});
+  if(!metaResp.ok){ const txt = await metaResp.text().catch(()=>null); throw new Error('meta fetch failed: ' + (txt||metaResp.status)); }
+  const meta = await metaResp.json();
+  if(!meta.sha) throw new Error('no sha for delete');
+  const resp = await fetch(apiUrl, { method:'DELETE', headers:{ Authorization:'token ' + pat, Accept:'application/vnd.github.v3+json', 'Content-Type':'application/json' }, body: JSON.stringify({ message, sha: meta.sha, branch }) });
+  const text = await resp.text().catch(()=>null);
+  if(!resp.ok) throw new Error('direct ghDelete failed: ' + (text||resp.status));
+  return JSON.parse(text);
+}
+
+/* Helper: list proposals (tries proposals/index.json, else falls back to listing via GitHub tree using PAT) */
+async function listProposals(){
+  // try index.json first
+  try{
+    const raw = await ghRaw('proposals/index.json');
+    if(raw){
+      const j = JSON.parse(raw);
+      if(Array.isArray(j)) return j; // expect [{ filename, item }]
+    }
+  }catch(e){ dbg('no proposals/index.json or parse error', e); }
+  // fallback: use GitHub tree listing (requires session PAT)
+  const pat = await getSessionPat();
+  if(!pat) return [];
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  const api = `https://api.github.com/repos/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`;
+  const resp = await fetch(api, { headers:{ Authorization:'token ' + pat, Accept:'application/vnd.github.v3+json' }});
+  if(!resp.ok) return [];
+  const tree = await resp.json();
+  const files = (tree.tree||[]).filter(t=> t.path && t.path.startsWith('proposals/') && (t.path.endsWith('.json') || t.path.endsWith('.txt')));
+  const results = [];
+  for(const f of files){
+    try{
+      const raw = await ghRaw(f.path);
+      const parsed = raw ? JSON.parse(raw) : null;
+      results.push({ filename: f.path.replace(/^proposals\//,''), item: parsed || raw });
+    }catch(e){ dbg('failed load proposal file', f.path, e); }
+  }
+  return results;
+}
+
+/* ====================== UI Rendering & Actions ====================== */
 const adsListEl = document.getElementById('ads_list');
-const detailEl = document.getElementById('detail');
+const proposalsListEl = document.getElementById('proposals_list');
+const adsCountEl = document.getElementById('ads_count');
 const searchEl = document.getElementById('admin_search');
+const sortEl = document.getElementById('sort_by');
 
 let allAds = [];
+let lastDeleted = null;
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-function renderList(q=''){
-  adsListEl.innerHTML = '';
-  const ql = (q||'').toLowerCase();
-  const shown = [];
-  allAds.forEach((ad, idx)=>{
-    const combined = `${ad.ref_code||ad.code||''} ${ad.name||''} ${ad.location||''} ${ad.category||''}`.toLowerCase();
-    if(ql && !combined.includes(ql)) return;
-    const div = document.createElement('div');
-    div.style.display='flex';
-    div.style.gap='10px';
-    div.style.padding='8px 0';
-    div.style.borderBottom='1px solid #f2f4f7';
-    div.innerHTML = `<div style="width:96px"><img src="${escapeHtml(ad.thumb||ad.image||'')}" class="thumb" /></div>
-      <div style="flex:1">
-        <div style="font-weight:700">${escapeHtml(ad.name||'')}</div>
-        <div class="muted">رمز: ${escapeHtml(ad.ref_code||ad.code||'')}</div>
-        <div style="margin-top:6px" class="muted">📍 ${escapeHtml(ad.location||'')}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-        <button data-idx="${idx}" class="viewBtn">عرض</button>
-        <button data-idx="${idx}" class="editBtn alt">تحرير</button>
-        <button data-idx="${idx}" class="delBtn alt">حذف</button>
-      </div>`;
-    adsListEl.appendChild(div);
-  });
+function safeParseJson(s){
+  try{ if(!s || !s.trim()) return []; return JSON.parse(s); }catch(e){ dbg('parse error', e, s); return []; }
 }
 
+function renderAdItem(ad, idx){
+  const thumb = ad.thumb || ad.image || '';
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.dataset.idx = idx;
+  div.innerHTML = `<div><img class="thumb" src="${esc(thumb)}" alt=""></div>
+    <div class="meta">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="font-weight:700">${esc(ad.name||'')}</div>
+        <div style="margin-left:auto" class="muted">${esc(ad.ref_code||ad.code||'')}</div>
+      </div>
+      <div class="muted" style="margin-top:6px">📍 ${esc(ad.location||'')} — ${esc(ad.category||'')}</div>
+      <div style="display:flex;gap:8px;margin-top:8px" class="actions">
+        <button class="viewBtn">عرض</button>
+        <button class="editBtn alt">تحرير</button>
+        <button class="delBtn alt">حذف</button>
+      </div>
+    </div>`;
+  div.querySelector('.viewBtn').addEventListener('click', ()=> showDetail(idx));
+  div.querySelector('.editBtn').addEventListener('click', ()=> buildDetail(idx,'edit'));
+  div.querySelector('.delBtn').addEventListener('click', ()=> confirmDelete(idx));
+  return div;
+}
+
+function buildAdsList(filter=''){
+  adsListEl.innerHTML = '';
+  const q = (filter||'').toLowerCase().trim();
+  let arr = Array.isArray(allAds) ? allAds.slice() : [];
+  // sort
+  const s = sortEl.value;
+  if(s === 'created_desc') arr.sort((a,b)=> (b.created_at||0) > (a.created_at||0) ? 1 : -1);
+  if(s === 'created_asc') arr.sort((a,b)=> (a.created_at||0) > (b.created_at||0) ? 1 : -1);
+  if(s === 'weight_desc') arr.sort((a,b)=> (b.weight||0)-(a.weight||0));
+  if(s === 'weight_asc') arr.sort((a,b)=> (a.weight||0)-(b.weight||0));
+  let shown=0;
+  arr.forEach((a,i)=>{
+    const combined = `${a.ref_code||a.code||''} ${a.name||''} ${a.location||''} ${a.category||''}`.toLowerCase();
+    if(!q || combined.includes(q)){
+      adsListEl.appendChild(renderAdItem(a,i));
+      shown++;
+    }
+  });
+  adsCountEl.textContent = `${shown} إعلان (${allAds.length} الكلي)`;
+}
+
+/* detail & editor */
+const detailEl = document.getElementById('detail');
 function showDetail(idx){
   const a = allAds[idx];
   if(!a) return;
-  detailEl.innerHTML = `<div style="display:flex;gap:12px">
-    <img src="${escapeHtml(a.thumb||a.image||'')}" style="width:160px;height:120px;object-fit:cover;border-radius:6px"/>
+  detailEl.innerHTML = `<div style="display:flex;gap:10px">
+    <img src="${esc(a.thumb||a.image||'')}" style="width:160px;height:120px;object-fit:cover;border-radius:6px">
     <div style="flex:1">
-      <div style="font-weight:800">${escapeHtml(a.name||'')}</div>
-      <div class="muted">رمز: <strong>${escapeHtml(a.ref_code||a.code||'')}</strong></div>
-      <div class="muted" style="margin-top:6px">${escapeHtml(a.description||'')}</div>
-      <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
-        <button onclick="buildEdit(${idx})">تحرير</button>
-        <button onclick="doDelete(${idx})" class="alt">حذف</button>
+      <div style="font-weight:800">${esc(a.name||'')}</div>
+      <div class="muted">رمز: <strong>${esc(a.ref_code||a.code||'')}</strong></div>
+      <div class="muted" style="margin-top:8px">${esc(a.description||'')}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="buildDetail(${idx},'edit')">تحرير</button>
+        <button onclick="confirmDelete(${idx})" class="alt">حذف</button>
       </div>
     </div></div>`;
 }
 
-function buildEdit(idx){
-  const a = allAds[idx] || {};
+function buildDetail(idx, mode='new'){
+  const ad = (typeof idx === 'number' && allAds[idx]) ? allAds[idx] : {};
+  const code = ad.ref_code || ad.code || '';
   detailEl.innerHTML = `
     <div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><label style="min-width:80px">رمز</label><input id="a_code" value="${escapeHtml(a.ref_code||a.code||'')}" style="flex:1"></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><label style="min-width:80px">العنوان</label><input id="a_name" value="${escapeHtml(a.name||'')}" style="flex:1"></div>
-      <div style="margin-bottom:8px"><label>الوصف</label><textarea id="a_desc" style="width:100%">${escapeHtml(a.description||'')}</textarea></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><label style="min-width:80px">الموقع</label><input id="a_loc" value="${escapeHtml(a.location||'')}" style="flex:1"></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px"><label style="min-width:80px">صورة</label><input id="a_file" type="file" accept="image/*"></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end"><button id="saveBtnLocal">حفظ</button><button id="cancelBtn" class="alt">إلغاء</button></div>
-      <div id="saveStatus" class="muted" style="margin-top:8px"></div>
+      <div class="detailRow"><label class="small">رمز الإعلان</label><input id="a_code" value="${esc(code)}" style="flex:1"><button id="assignRefBtn" class="alt">تعيين رمز</button></div>
+      <div class="detailRow"><label class="small">العنوان</label><input id="a_name" value="${esc(ad.name||'')}" style="flex:1"></div>
+      <div class="detailRow"><label class="small">الوصف</label><textarea id="a_desc" style="flex:1">${esc(ad.description||'')}</textarea></div>
+      <div class="detailRow"><label class="small">الموقع</label><input id="a_loc" value="${esc(ad.location||'')}" style="flex:1"></div>
+      <div class="detailRow"><label class="small">التصنيف</label><input id="a_cat" value="${esc(ad.category||'')}" style="flex:1"></div>
+      <div class="detailRow"><label class="small">الوزن</label><input id="a_weight" value="${esc(ad.weight||0)}" style="width:120px"></div>
+      <div class="detailRow"><label class="small">صورة</label><input id="a_file" type="file" accept="image/*"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="saveAdBtn">${mode==='new'?'إضافة':'حفظ'}</button>
+        <button id="cancelAdBtn" class="alt">إلغاء</button>
+      </div>
+      <div id="saveStatus" class="mutedSmall" style="margin-top:8px"></div>
     </div>
   `;
-  document.getElementById('cancelBtn').onclick = ()=> { detailEl.innerHTML='حدد إعلاناً أو اضغط إضافة'; };
-  document.getElementById('saveBtnLocal').onclick = ()=> saveAd(idx);
+  document.getElementById('assignRefBtn').addEventListener('click', ()=> { const el=document.getElementById('a_code'); el.value = el.value.trim() || uuidRef(); });
+  document.getElementById('cancelAdBtn').onclick = ()=> { detailEl.innerHTML = 'حدد إعلانًا أو اضغط "إضافة إعلان"'; };
+  document.getElementById('saveAdBtn').onclick = async ()=> {
+    const st = document.getElementById('saveStatus'); st.textContent = 'جاري الحفظ…';
+    try{ await saveAd(idx); st.textContent = 'تم الحفظ'; setTimeout(()=> detailEl.innerHTML='حدد إعلاناً أو اضغط "إضافة إعلان"',700); }catch(e){ st.textContent = 'خطأ: ' + (e.message||e); dbg(e); }
+  };
+}
+
+/* ====================== Save / Upload logic ====================== */
+async function resizeImageFile(file, maxW=1200, maxH=900, quality=0.78){
+  const img = await new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=> { const i=new Image(); i.onload = ()=> res(i); i.onerror=rej; i.src=r.result; };
+    r.onerror = rej; r.readAsDataURL(file);
+  });
+  const ratio = Math.min(1, maxW/img.width, maxH/img.height);
+  const w = Math.max(1, Math.round(img.width*ratio)), h = Math.max(1, Math.round(img.height*ratio));
+  const c = document.createElement('canvas'); c.width=w; c.height=h;
+  const ctx = c.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+  const durl = c.toDataURL('image/webp', quality);
+  return { dataUrl: durl, base64: durl.split(',')[1] };
+}
+
+/* Batch upload support detection: if /upload/batch or /api/batch exists on server, we'll use it */
+async function hasBatchEndpoint(){
+  try{
+    const r = await fetch('/upload/batch', { method:'OPTIONS' });
+    if(r.ok) return true;
+  }catch(e){}
+  try{
+    const r = await fetch('/api/batch', { method:'OPTIONS' });
+    if(r.ok) return true;
+  }catch(e){}
+  return false;
 }
 
 async function saveAd(idx){
-  const cfgRepo = document.getElementById('cfg_repo').value.trim();
-  const branch = document.getElementById('cfg_branch').value.trim() || 'main';
-  if(!cfgRepo){ alert('ضع owner/repo أولا'); return; }
-  const pat = sessionStorage.getItem('static_session_pat') || document.getElementById('cfg_session_pat').value || '';
-  try{
-    const code = document.getElementById('a_code').value.trim() || ('R'+Date.now().toString(36).slice(-6).toUpperCase());
-    const name = document.getElementById('a_name').value.trim();
-    const desc = document.getElementById('a_desc').value.trim();
-    const loc = document.getElementById('a_loc').value.trim();
-    // prepare ad object
-    const item = { ref_code: code, name, description: desc, location: loc, modified_at: new Date().toISOString() };
-    // handle file
-    const fileInput = document.getElementById('a_file');
-    if(fileInput && fileInput.files && fileInput.files[0]){
-      const f = fileInput.files[0];
-      // simple resize to smaller using canvas
-      const img = await new Promise((res, rej)=>{
-        const r = new FileReader();
-        r.onload = ()=>{ const i = new Image(); i.onload = ()=> res(i); i.src = r.result; }
-        r.onerror = rej; r.readAsDataURL(f);
-      });
-      const maxW = 1200, maxH = 900;
-      const ratio = Math.min(1, maxW/img.width, maxH/img.height);
-      const w = Math.round(img.width*ratio), h = Math.round(img.height*ratio);
-      const c = document.createElement('canvas'); c.width=w; c.height=h;
-      const ctx = c.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-      const durl = c.toDataURL('image/webp', 0.78);
-      const b64 = durl.split(',')[1];
-      const filename = `static/images/${Date.now().toString(36)}-${code}.webp`;
-      // upload file using API
-      await ghPut(pat, cfgRepo, filename, b64, `upload ${filename}`, branch);
-      item.image = `https://raw.githubusercontent.com/${cfgRepo}/${branch}/${filename}`;
-      item.thumb = item.image;
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  if(!repo) throw new Error('اعداد repo مطلوب');
+  const pat = await getSessionPat();
+  // build ad object
+  const code = (document.getElementById('a_code').value||'').trim() || uuidRef();
+  const item = { ref_code: code, name: document.getElementById('a_name').value.trim(), description: document.getElementById('a_desc').value.trim(), location: document.getElementById('a_loc').value.trim(), category: document.getElementById('a_cat').value.trim(), weight: Number(document.getElementById('a_weight').value||0), modified_at: new Date().toISOString() };
+  if(!item.created_at) item.created_at = item.modified_at;
+  // handle file if present
+  const fileInput = document.getElementById('a_file');
+  let uploadedFiles = []; // { path, base64 }
+  if(fileInput && fileInput.files && fileInput.files[0]){
+    dbg('optimizing image...');
+    const full = await resizeImageFile(fileInput.files[0], 1200, 900, 0.78);
+    const thumb = await resizeImageFile(fileInput.files[0], 480, 320, 0.6);
+    const baseName = `static/images/${Date.now().toString(36)}-${code}`;
+    const fullPath = `${baseName}.webp`;
+    const thumbPath = `${baseName}-thumb.webp`;
+    uploadedFiles.push({ path: fullPath, base64: full.base64 });
+    uploadedFiles.push({ path: thumbPath, base64: thumb.base64 });
+    item.image = `https://raw.githubusercontent.com/${repo}/${branch}/${fullPath}`;
+    item.thumb = `https://raw.githubusercontent.com/${repo}/${branch}/${thumbPath}`;
+  }
+
+  // load existing ads.json
+  const raw = await ghRaw('static/ads.json', branch);
+  const arr = safeParseJson(raw);
+  // if edit, replace; else add
+  if(typeof idx === 'number' && arr[idx]) { arr[idx] = Object.assign(arr[idx], item); } else { arr.unshift(item); }
+
+  // try batch commit if supported
+  const batchAvailable = await hasBatchEndpoint();
+  if(batchAvailable && uploadedFiles.length){
+    dbg('using batch endpoint');
+    const files = uploadedFiles.map(f=> ({ path: f.path, contentBase64: f.base64 }));
+    files.push({ path: 'static/ads.json', contentBase64: btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2)))) });
+    // try both common routes
+    let good=false;
+    try{
+      const r = await fetch('/upload/batch', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ files, message: `batch upload ad ${code}`, branch }) });
+      const j = await r.json();
+      if(r.ok) { good=true; dbg('batch upload ok', j); }
+    }catch(e){ dbg('batch /upload/batch failed', e); }
+    if(!good){
+      try{
+        const r2 = await fetch('/api/batch', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ files, message: `batch upload ad ${code}`, branch }) });
+        const j2 = await r2.json();
+        if(r2.ok) { good=true; dbg('batch /api/batch ok', j2); }
+      }catch(e){ dbg('batch /api/batch failed', e); }
     }
-    // update ads.json
-    // fetch existing ads
-    const raw = await ghRaw('static/ads.json', branch);
-    const arr = raw ? JSON.parse(raw) : [];
-    if(typeof idx === 'number' && arr[idx]) { arr[idx] = item; } else { arr.unshift(item); }
-    const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
-    await ghPut(pat, cfgRepo, 'static/ads.json', jsonB64, `save ad ${item.ref_code}`, branch);
-    alert('تم الحفظ');
-    loadAll();
-  }catch(e){ console.error(e); alert('خطأ: ' + (e.message||e)); }
+    if(good) { await loadAll(); return; } // success
+    dbg('batch endpoints present but failed, falling back to single uploads');
+  }
+
+  // upload files individually (PUT)
+  for(const f of uploadedFiles){
+    await ghPut(pat, repo, f.path, f.base64, `upload ${f.path}`, branch);
+  }
+  // update ads.json
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, repo, 'static/ads.json', jsonB64, `save ad ${code}`, branch);
+  await loadAll();
 }
 
-async function doDelete(idx){
-  if(!confirm('حذف الإعلان؟')) return;
-  const cfgRepo = document.getElementById('cfg_repo').value.trim();
-  const branch = document.getElementById('cfg_branch').value.trim() || 'main';
-  const pat = sessionStorage.getItem('static_session_pat') || document.getElementById('cfg_session_pat').value || '';
-  if(!cfgRepo) { alert('ضع repo'); return; }
+/* ====================== Delete ====================== */
+async function confirmDelete(idx){
+  if(!confirm('هل تريد حذف الإعلان نهائياً؟')) return;
+  await deleteAd(idx);
+}
+async function deleteAd(idx){
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  const pat = await getSessionPat();
+  const raw = await ghRaw('static/ads.json', branch);
+  const arr = safeParseJson(raw);
+  const removed = arr.splice(idx,1)[0];
+  // try deleting images (best-effort)
   try{
-    const raw = await ghRaw('static/ads.json', branch);
-    const arr = raw ? JSON.parse(raw) : [];
-    const rem = arr.splice(idx,1)[0];
-    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
-    await ghPut(pat, cfgRepo, 'static/ads.json', b64, `delete ad ${rem.ref_code||'unknown'}`, branch);
-    alert('تم الحذف');
-    loadAll();
-  }catch(e){ alert('خطأ: '+(e.message||e)); console.error(e); }
+    if(removed.image) await maybeDeleteFileFromRepo(removed.image, repo, branch);
+    if(removed.thumb) await maybeDeleteFileFromRepo(removed.thumb, repo, branch);
+  }catch(e){ dbg('image delete failed', e); }
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, repo, 'static/ads.json', jsonB64, `delete ad ${removed.ref_code||'unknown'}`, branch);
+  lastDeleted = { item: removed, index: idx };
+  if(confirm('تم الحذف. التراجع؟')) await undoDelete();
+  await loadAll();
 }
 
-document.getElementById('refreshBtn').addEventListener('click', ()=> loadAll());
-document.getElementById('newBtn').addEventListener('click', ()=> { buildEdit(-1); });
+async function maybeDeleteFileFromRepo(urlOrPath, repo, branch){
+  // normalize path if full raw URL provided
+  let p = urlOrPath || '';
+  p = p.replace(/^https?:\/\/raw\.githubusercontent\.com\/[^\/]+\/[^\/]+\/[^\/]+\/?/i, '');
+  if(p.startsWith('https://') || p.startsWith('http://')){
+    try{ p = new URL(p).pathname.replace(/^\/+/,''); }catch(e){}
+  }
+  p = p.replace(/^\/+/,'');
+  if(!p) return;
+  try{ await ghDelete(p, `remove file ${p}`, branch); }catch(e){ dbg('maybeDeleteFileFromRepo failed', e); }
+}
 
-searchEl.addEventListener('input', (e)=> renderList(e.target.value));
+/* undo last delete */
+async function undoDelete(){
+  if(!lastDeleted) return alert('لا شيء للتراجع عنه');
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  const pat = await getSessionPat();
+  if(!pat) return alert('التراجع يتطلب PAT في الجلسة أو إعداد Pages secret');
+  // re-add removed item to ads.json at its index
+  const raw = await ghRaw('static/ads.json', branch);
+  const arr = safeParseJson(raw);
+  arr.splice(lastDeleted.index, 0, lastDeleted.item);
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, repo, 'static/ads.json', jsonB64, `undo delete ${lastDeleted.item.ref_code||''}`, branch);
+  lastDeleted = null;
+  await loadAll();
+}
 
-document.getElementById('saveBtn').addEventListener('click', ()=>{
-  const cfg = { repo: document.getElementById('cfg_repo').value.trim(), branch: document.getElementById('cfg_branch').value.trim() || 'main' };
-  localStorage.setItem('static_ads_cfg_v1', JSON.stringify(cfg));
-  const pat = document.getElementById('cfg_session_pat').value || '';
-  if(pat) sessionStorage.setItem('static_session_pat', pat);
-  alert('تم حفظ الإعدادات (PAT في الجلسة إذا وضعت)');
-  loadAll();
-});
-document.getElementById('clearBtn').addEventListener('click', ()=> { sessionStorage.removeItem('static_session_pat'); document.getElementById('cfg_session_pat').value=''; alert('PAT محذوف من الجلسة'); });
+/* ====================== Proposals (list, view, accept, reject) ====================== */
+function renderProposal(p, idx){
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.innerHTML = `<div style="flex:1"><div style="font-weight:700">${esc(p.item.name||p.filename||'مقترح')}</div><div class="muted">الملف: ${esc(p.filename||'')}</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="acceptBtn">قبول</button>
+      <button class="editBtn alt">تحرير ثم قبول</button>
+      <button class="rejectBtn alt">رفض</button>
+    </div>`;
+  el.querySelector('.acceptBtn').addEventListener('click', ()=> acceptProposal(p));
+  el.querySelector('.editBtn').addEventListener('click', ()=> editProposalThenAccept(p));
+  el.querySelector('.rejectBtn').addEventListener('click', ()=> rejectProposal(p));
+  return el;
+}
 
-async function loadAll(){
-  adsListEl.innerHTML = 'تحميل...';
+async function loadProposals(){
+  proposalsListEl.innerHTML = 'تحميل...';
   try{
-    // try config from localStorage
-    const cfg = JSON.parse(localStorage.getItem('static_ads_cfg_v1')||'{}');
-    if(cfg && cfg.repo) document.getElementById('cfg_repo').value = cfg.repo;
-    const branch = document.getElementById('cfg_branch').value.trim() || 'main';
-    const raw = await ghRaw('static/ads.json', branch);
-    allAds = raw ? JSON.parse(raw) : [];
-    renderList(searchEl.value || '');
-    detailEl.innerHTML = 'حدد إعلاناً أو اضغط إضافة';
+    const rawList = await listProposals(); // returns [{filename,item}]
+    proposalsListEl.innerHTML = '';
+    if(!rawList || rawList.length===0){ proposalsListEl.innerHTML = '<div class="mutedSmall">لا توجد مقترحات</div>'; return; }
+    rawList.forEach((p,i)=> proposalsListEl.appendChild(renderProposal(p,i)));
   }catch(e){
-    adsListEl.innerHTML = 'فشل التحميل: ' + (e.message||e);
-    console.error(e);
+    proposalsListEl.innerHTML = 'فشل التحميل: ' + (e.message||e);
+    dbg(e);
   }
 }
 
-// init
-(function(){ const cfg = JSON.parse(localStorage.getItem('static_ads_cfg_v1')||'{}'); if(cfg && cfg.repo) document.getElementById('cfg_repo').value = cfg.repo; loadAll(); })();
+async function acceptProposal(p){
+  if(!confirm('قبول المقترح ونشره كإعلان؟')) return;
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  const pat = await getSessionPat();
+  const ad = Object.assign({}, p.item);
+  if(!ad.ref_code) ad.ref_code = uuidRef();
+  // if image is data URL, upload; if remote keep as-is
+  if(ad.image && ad.image.startsWith('data:')){
+    const filenameBase = `static/images/${Date.now().toString(36)}-${ad.ref_code}`;
+    // create full + thumb
+    const full = ad.image; // assume dataurl
+    // create thumbnail on client
+    const turl = await (async function(dataUrl){ return new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>{ const ratio = Math.min(1,480/i.width,320/i.height); const w=Math.max(1,Math.round(i.width*ratio)); const h=Math.max(1,Math.round(i.height*ratio)); const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(i,0,0,w,h); res(c.toDataURL('image/webp',0.6)); }; i.onerror=rej; i.src=dataUrl; }); })(full);
+    const fullB64 = full.split(',')[1];
+    const thumbB64 = turl.split(',')[1];
+    // upload (use batch if available)
+    const batchAvailable = await hasBatchEndpoint();
+    if(batchAvailable){
+      const files = [{ path: `${filenameBase}.webp`, contentBase64: fullB64 }, { path: `${filenameBase}-thumb.webp`, contentBase64: thumbB64 }];
+      files.push({ path: 'static/ads.json', contentBase64: '' }); // placeholder; we'll provide content below
+      // build ads.json after fetching, but for simplicity do sequential: upload images then update ads.json
+      await ghPut(pat, repo, `${filenameBase}.webp`, fullB64, `upload ${filenameBase}.webp`, branch);
+      await ghPut(pat, repo, `${filenameBase}-thumb.webp`, thumbB64, `upload ${filenameBase}-thumb.webp`, branch);
+      ad.image = `https://raw.githubusercontent.com/${repo}/${branch}/${filenameBase}.webp`;
+      ad.thumb = `https://raw.githubusercontent.com/${repo}/${branch}/${filenameBase}-thumb.webp`;
+    } else {
+      await ghPut(pat, repo, `${filenameBase}.webp`, fullB64, `upload ${filenameBase}.webp`, branch);
+      await ghPut(pat, repo, `${filenameBase}-thumb.webp`, thumbB64, `upload ${filenameBase}-thumb.webp`, branch);
+      ad.image = `https://raw.githubusercontent.com/${repo}/${branch}/${filenameBase}.webp`;
+      ad.thumb = `https://raw.githubusercontent.com/${repo}/${branch}/${filenameBase}-thumb.webp`;
+    }
+  }
+  // now add to ads.json
+  const raw = await ghRaw('static/ads.json', branch);
+  const arr = safeParseJson(raw);
+  arr.unshift(ad);
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+  await ghPut(pat, repo, 'static/ads.json', jsonB64, `accept proposal ${p.filename||''}`, branch);
+  // delete proposal file
+  await ghDelete('proposals/' + p.filename, `remove proposal ${p.filename}`, branch);
+  alert('تم قبول المقترح ونشر الإعلان');
+  await loadAll();
+  await loadProposals();
+}
+
+async function editProposalThenAccept(p){
+  // open proposal in editor: we copy fields into detail and allow save
+  const item = p.item || {};
+  // present a simple editor in detailEl; on save we will call accept flow with modified content
+  detailEl.innerHTML = `<div>
+    <div class="detailRow"><label class="small">رمز</label><input id="p_code" value="${esc(item.ref_code||uuidRef())}" style="flex:1"></div>
+    <div class="detailRow"><label class="small">العنوان</label><input id="p_name" value="${esc(item.name||'')}" style="flex:1"></div>
+    <div class="detailRow"><label class="small">الوصف</label><textarea id="p_desc" style="flex:1">${esc(item.description||'')}</textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button id="p_accept_save">حفظ & قبول</button><button id="p_cancel" class="alt">إلغاء</button></div>
+  </div>`;
+  document.getElementById('p_cancel').onclick = ()=> { detailEl.innerHTML = 'حدد إعلان أو مقترح'; };
+  document.getElementById('p_accept_save').onclick = async ()=>{
+    // update item and accept
+    item.ref_code = document.getElementById('p_code').value.trim() || uuidRef();
+    item.name = document.getElementById('p_name').value.trim();
+    item.description = document.getElementById('p_desc').value.trim();
+    p.item = item;
+    await acceptProposal(p);
+  };
+}
+
+async function rejectProposal(p){
+  if(!confirm('حذف المقترح نهائياً؟')) return;
+  const pat = await getSessionPat();
+  const repo = cfgRepo();
+  const branch = cfgBranch();
+  if(!pat) return alert('لم يتم العثور على PAT في الجلسة. الرجاء لصق PAT مؤقتاً أو إعداد GITHUB_PAT في Pages.');
+  await ghDelete(`proposals/${p.filename}`, `reject ${p.filename}`, branch);
+  alert('تم حذف المقترح');
+  await loadProposals();
+}
+
+/* ====================== Export / Import ====================== */
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  try{
+    const raw = await ghRaw('static/ads.json', cfgBranch());
+    const blob = new Blob([raw], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'ads.json'; a.click();
+    URL.revokeObjectURL(url);
+  }catch(e){ alert('خطأ: ' + (e.message||e)); }
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='application/json';
+  inp.onchange = async (ev)=>{
+    const f = ev.target.files[0]; if(!f) return;
+    const txt = await f.text();
+    let arr; try{ arr = JSON.parse(txt); }catch(e){ alert('ملف غير صالح'); return; }
+    if(!Array.isArray(arr)) return alert('الملف يجب أن يحتوي على مصفوفة JSON');
+    if(!confirm('ستقوم باستبدال static/ads.json بالمحتوى. متابعة؟')) return;
+    const pat = getSessionPat();
+    const repo = cfgRepo();
+    const branch = cfgBranch();
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(arr, null, 2))));
+    try{ await ghPut(await getSessionPat(), repo, 'static/ads.json', b64, 'import ads.json', branch); alert('تم الاستيراد'); await loadAll(); }catch(e){ alert('خطأ: '+(e.message||e)); }
+  };
+  inp.click();
+});
+
+/* ====================== Misc: purge images not used (best-effort) ====================== */
+document.getElementById('purgeImagesBtn').addEventListener('click', async ()=>{
+  if(!confirm('سيحاول حذف الصور غير المستخدمة (قد يفشل لبعض الملفات). متابعة؟')) return;
+  try{
+    const raw = await ghRaw('static/ads.json', cfgBranch());
+    const arr = safeParseJson(raw);
+    const used = new Set();
+    arr.forEach(a=>{ if(a.image) used.add(a.image); if(a.thumb) used.add(a.thumb); });
+    // list images in static/images via repo tree (requires PAT)
+    const pat = await getSessionPat(); if(!pat) return alert('التنظيف يتطلب PAT في الجلسة');
+    const repo = cfgRepo();
+    const branch = cfgBranch();
+    const treeResp = await fetch(`https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`, { headers:{ Authorization:'token '+pat } });
+    const tree = await treeResp.json();
+    const imgs = (tree.tree||[]).filter(t=> t.path && t.path.startsWith('static/images/')).map(t=> t.path);
+    let removed=0;
+    for(const p of imgs){
+      const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${p}`;
+      if(![...used].some(u=> u.includes(p))) {
+        try{ await ghDelete(p, 'cleanup unused image', branch); removed++; }catch(e){ dbg('purge failed', p, e); }
+      }
+    }
+    alert('انتهى التنظيف. الملفات المحذوفة: ' + removed);
+    await loadAll();
+  }catch(e){ alert('خطأ: ' + (e.message||e)); dbg(e); }
+});
+
+/* ====================== Load & init ====================== */
+async function loadAll(){
+  dbg('تحميل...'); adsListEl.innerHTML = 'تحميل...';
+  try{
+    const raw = await ghRaw('static/ads.json', cfgBranch());
+    allAds = safeParseJson(raw);
+    buildAdsList(searchEl.value || '');
+  }catch(e){ adsListEl.innerHTML = 'فشل التحميل: ' + (e.message||e); dbg(e); allAds = []; }
+  try{ await loadProposals(); }catch(e){ dbg('load proposals error', e); proposalsListEl.innerHTML = '<div class="mutedSmall">تعذر تحميل المقترحات</div>'; }
+}
+
+/* ====================== Wiring ====================== */
+document.getElementById('refreshBtn').addEventListener('click', ()=> loadAll());
+document.getElementById('newAdBtn').addEventListener('click', ()=> buildDetail(-1,'new'));
+searchEl.addEventListener('input', (e)=> buildAdsList(e.target.value || ''));
+sortEl.addEventListener('change', ()=> buildAdsList(searchEl.value || ''));
+
+/* config save */
+document.getElementById('saveCfgBtn').addEventListener('click', ()=>{
+  const repo = document.getElementById('cfg_repo').value.trim();
+  const branch = document.getElementById('cfg_branch').value.trim() || 'main';
+  if(repo) { saveCfg({ repo, branch }); alert('تم حفظ الإعدادات'); }
+  const pat = document.getElementById('cfg_session_pat').value || '';
+  if(pat) sessionStorage.setItem('eld_pat', pat);
+  loadAll();
+});
+document.getElementById('clearPatBtn').addEventListener('click', ()=> { sessionStorage.removeItem('eld_pat'); document.getElementById('cfg_session_pat').value=''; alert('PAT محذوف من الجلسة'); });
+
+/* auto-load saved config */
+(function init(){
+  const cfg = readCfg();
+  if(cfg){ if(cfg.repo) document.getElementById('cfg_repo').value = cfg.repo; if(cfg.branch) document.getElementById('cfg_branch').value = cfg.branch; }
+  // if session PAT already present, show masked
+  const sp = sessionStorage.getItem('eld_pat');
+  if(sp) document.getElementById('cfg_session_pat').value = '••••••••';
+  loadAll();
+})();
+
+/* Expose debug functions for console experiments */
+window.adminTools = { ghRaw, ghPut, ghDelete, loadAll, listProposals, maybeDeleteFileFromRepo };
 </script>
 </body>
 </html>
