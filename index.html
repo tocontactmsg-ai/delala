@@ -147,7 +147,7 @@
           </div>
 
           <div id="fallbackJson" style="display:none;margin-top:8px">
-            <div class="small">إذا لم يُسمح بالإرسال التلقائي،تواصل مع الادارة:</div>
+            <div class="small">إذا لم يُسمح بالإرسال التلقائي، تواصل مع الادارة:</div>
            
           </div>
 
@@ -456,7 +456,7 @@ function openDetails(item){
     img.addEventListener('click', ()=> window.open(img.src,'_blank'));
     modalMedia.appendChild(img);
   } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
-  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، إعلان جديد برمز ${modalRef.textContent}`)}`;
+  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، ربما يهمك هذا الإعلان بالرمز ${modalRef.textContent}`)}`;
   modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
   modalCopyContact.style.display = 'inline-block';
   modalCopyContact.onclick = ()=> {
@@ -476,7 +476,7 @@ function openDetails(item){
     modalEdit.style.display='none';
     modalFallback.style.display='none';
     adminEditHint.style.display='block';
-    adminEditHint.textContent = 'لتعديل: افتح لوحة الإدارة وأدخل repo وPAT الجلسة';
+    adminEditHint.textContent = 'انت ايضا يمكنك الاعلان علي موقع الدلالة ';
   }
 
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
@@ -595,7 +595,7 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
 
   // Arabic phrase — styled and friendly
   ctx.fillStyle = '#0b84ff';
-  ctx.font = (compact ? '650 20px Tajawal, system-ui' : '900 26px Tajawal, system-ui');
+  ctx.font = (compact ? '650 25px Tajawal, system-ui' : '900 26px Tajawal, system-ui');
   ctx.fillText('شكراً لك على استخدامك موقع الدلالة', innerRightX, cursorY);
   cursorY += (compact ? 36 : 46);
 
@@ -628,7 +628,7 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
 
   // footer small note (RTL)
   ctx.fillStyle = '#94a3b8';
-  ctx.font = (compact ? '400 13px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
+  ctx.font = (compact ? '500 20px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
   ctx.fillText(' كن جزء من مجتمع واعي وحريص تواصل معنا لاي اقتراحات او شكاوي ', innerRightX, pad + photoH - 18);
 
   // finalize blob and dataURL
@@ -764,7 +764,7 @@ submitBtn.addEventListener('click', async ()=>{
     downloadEmbeddedBtn.style.display = 'inline-block';
     downloadEmbeddedBtn.onclick = ()=> downloadBlob(embedded, payload.ref_code + '_eldelala.jpg');
 
-    const msg = `مرحباً، وصلني إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالرجاء إرفاق الملف المضمّن (${payload.ref_code}_eldelala.jpg) كـ 'مستند' عند الرد لتأكيد نشر الإعلان.`;
+    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nوساقوم ب إرفاق الملف المضمّن (${payload.ref_code}_eldelala.jpg) كـ 'مستند' لتأكيد نشر الإعلان.`;
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     openWa.href = waUrl; openWa.textContent = 'فتح WhatsApp لإرسال رمز المتابعة';
     window.open(waUrl, '_blank');
