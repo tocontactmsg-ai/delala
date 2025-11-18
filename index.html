@@ -121,12 +121,12 @@
 
     <section id="send" style="display:none">
       <div class="panel">
-        <h3>أرسل إعلانك</h3>
+        <h2>لارسال اعلانك املا البيانات  للحصول علي بطاقة بعدها ارسل البطاقة عبر الواتساب لتاكيد النشر </h2>
         <div style="display:grid;gap:8px">
-          <input id="f_name" placeholder="عنوان الإعلان">
+          <input id="f_name" placeholder="ماهو اعلانك">
           <input id="f_price" placeholder="السعر (مثال: 12000 + العملة)" type="text">
-          <textarea id="f_desc" placeholder="وصف" rows="4"></textarea>
-          <input id="f_loc" placeholder="الموقع">
+          <textarea id="f_desc" placeholder="قدم وصف " rows="4"></textarea>
+          <input id="f_loc" placeholder="الموقع اذكر الولاية + المدينة ">
           <input id="f_contact" placeholder="وسيلة التواصل (رقم/واتساب/إيميل)">
           <input id="f_cat" placeholder="التصنيف (مثال: سيارات, عقار...)">
           <div style="display:flex;gap:8px;align-items:center">
@@ -147,20 +147,20 @@
             <div>رمز الإعلان الخاص بك:</div>
             <div class="refBox" style="margin-top:6px">
               <div id="refCode" class="refCode"></div>
-              <button id="copyRef" class="copyBtn">نسخ</button>
+          
               <a id="openWa" class="small" target="_blank" style="margin-left:8px;color:#0078d7;display:none"></a>
-              <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل الملف (PNG)</button>
+              <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل البطاقة  </button>
             </div>
           </div>
 
           <div id="fallbackJson" style="display:none;margin-top:8px">
-            <div class="small">لنشر اعلانك ارسل الملف عبر الواتساب</div>
-            <textarea id="fallbackArea" rows="6" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eef6ff;background:#fff;margin-top:8px"></textarea>
+            <div class="small">لن يتم نشر اعلانك مالم ترسل لنا البطاقة , بعد التحميل يمكنك ان تجد البطاقة في المستندات</div>
+            
           </div>
 
           <div id="previewCard" class="subCard" style="display:none">
             <div id="previewCanvasWrap"></div>
-            <div class="small muted" style="margin-top:8px">قم بارسال هذا الملف اذا اردت نشر الاعلان</div>
+           
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@ tocontactmsg@gmail.com</div>
 /* ---------------------- Utilities ---------------------- */
 const CFG_KEY = 'static_ads_cfg_v1';
 const CACHE_KEY = 'static_ads_cache_v1';
-const WA_NUMBER = '249964147954';
+const WA_NUMBER = '00000000000';
 const PAGE_SIZE = 12;
 const MARKER = 'ELDELALA_PAYLOAD:';
 
@@ -777,7 +777,7 @@ submitBtn.addEventListener('click', async ()=>{
     const adLink = base + '#' + anchor;
     const msg = `مرحباً، اود نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nسأرفق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.\n${adLink}`;
     // do not preselect recipient — let user choose the contact
-    const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    const waUrl = `https://wa.me/+249 99 861 5193?text=${encodeURIComponent(msg)}`;
     openWa.href = waUrl;
     openWa.target = '_blank';
     openWa.textContent = 'فتح WhatsApp لإرسال البطاقة (اضغط لفتح)';
@@ -813,7 +813,7 @@ submitBtn.addEventListener('click', async ()=>{
         fallbackArea.value = JSON.stringify(payload,null,2);
       }
     } else {
-      submitStatus.textContent = 'تم انشاء البطاقة  — قم بتحميل الملف وأرسله عبر WhatsApp كمستند';
+      submitStatus.textContent = 'تم انشاء البطاقة  — قم بتحميل الملف وأرسله عبر WhatsApp من المستندات';
       fallbackBox.style.display='block';
       
     }
