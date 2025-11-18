@@ -817,7 +817,12 @@ downloadEmbeddedBtn.onclick = function () {
 });
 
 /* ---------------- Admin panel logic (simple open admin.html) ---------------- */
-document.getElementById('openAdmin').addEventListener('click', ()=> { window.open('admin.html','_blank'); });
+// safe admin opener — won't throw if element is missing
+const openAdminEl = document.getElementById('openAdmin') || document.getElementById('adminBtn');
+if (openAdminEl) {
+  openAdminEl.addEventListener('click', () => { window.open('admin.html','_blank'); });
+}
+
 
 function adminAvailable(){ const cfg = readCfg(); return !!((cfg.repo && cfg.branch) && (cfg.pat || getSessionPat())); }
 
