@@ -253,6 +253,210 @@ const CACHE_KEY = 'static_ads_cache_v1';
 const WA_NUMBER = '249964147954';
 const PAGE_SIZE = 12;
 const MARKER = 'ELDELALA_PAYLOAD:';
+<!-- ضع هذا الجزء داخل نفس <script> في الملف (يفضل قبل نهاية </script>) -->
+<script>
+/* --- Camera capture helper --- */
+const useCameraBtn = document.getElementById('useCameraBtn');
+const fileInput = document.getElementById('f_file');
+
+async function stopStream(stream){
+  if(!stream) return;
+  stream.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} });
+}
+
+function createOverlay(){
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.inset = '0';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.background = 'rgba(0,0,0,0.75)';
+  overlay.style.zIndex = '2000';
+  overlay.id = 'cameraOverlay';
+
+  const card = document.createElement('div');
+  card.style.width = '95%';
+  card.style.maxWidth = '420px';
+  card.style.background = '#fff';
+  card.style.borderRadius = '12px';
+  card.style.overflow = 'hidden';
+  card.style.display = 'flex';
+  card.style.flexDirection = 'column';
+  card.style.gap = '8px';
+  card.style.padding = '8px';
+
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.playsInline = true;
+  video.style.width = '100%';
+  video.style.borderRadius = '8px';
+  video.style.background = '#000';
+
+  const row = document.createElement('div');
+  row.style.display = 'flex';
+  row.style.gap = '8px';
+  row.style.justifyContent = 'space-between';
+
+  const captureBtn = document.createElement('button');
+  captureBtn.className = 'btn';
+  captureBtn.textContent = 'التقاط';
+
+  const flipBtn = document.createElement('button');
+  flipBtn.className = 'btn alt';
+  flipBtn.textContent = 'تبديل الكاميرا';
+  flipBtn.style.display = 'none'; // نظيف: يظهر فقط إن وُجد أكثر من كاميرا
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn alt';
+  cancelBtn.textContent = 'إلغاء';
+
+  const info = document.createElement('div');
+  info.className = 'small muted';
+  info.style.textAlign = 'center';
+  info.textContent = 'انتظر فتح الكاميرا...';
+
+  row.appendChild(flipBtn);
+  row.appendChild(captureBtn);
+  row.appendChild(cancelBtn);
+
+  card.appendChild(video);
+  card.appendChild(info);
+  card.appendChild(row);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  return { overlay, video, captureBtn, cancelBtn, flipBtn, info };
+}
+
+useCameraBtn.addEventListener('click', async () => {
+  // منع النقر المكرر
+  useCameraBtn.disabled = true;
+  let stream = null;
+  let currentDeviceId = null;
+  let devices = [];
+  try{
+    // استعلام الأجهزة المتاحة أولاً (بعض المتصفحات تطلب صلاحية أولاً)
+    const devicesList = await navigator.mediaDevices.enumerateDevices();
+    devices = devicesList.filter(d => d.kind === 'videoinput');
+  }catch(e){
+    // ignore
+  }
+
+  const ui = createOverlay();
+  const { overlay, video, captureBtn, cancelBtn, flipBtn, info } = ui;
+
+  if(devices.length > 1) flipBtn.style.display = 'inline-block';
+
+  async function start(deviceId){
+    try{
+      // إيقاف أي بث سابق
+      await stopStream(stream);
+      const constraints = { video: { facingMode: deviceId ? undefined : 'environment', deviceId: deviceId ? { exact: deviceId } : undefined, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false };
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.srcObject = stream;
+      info.textContent = 'اضغط \"التقاط\" لالتقاط الصورة';
+      // تذكر الجهاز الحالي
+      try{
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        currentDeviceId = settings.deviceId || deviceId || null;
+      }catch(e){}
+    }catch(err){
+      console.error('camera error', err);
+      alert('تعذر فتح الكاميرا — تأكد من صلاحيات الكاميرا أو أن جهازك يدعمها.');
+      cleanup();
+    }
+  }
+
+  function cleanup(){
+    try{ stopStream(stream); }catch(e){}
+    const el = document.getElementById('cameraOverlay');
+    if(el) el.remove();
+    useCameraBtn.disabled = false;
+  }
+
+  // تبديل الكاميرا (إن وُجد أكثر من جهاز)
+  flipBtn.addEventListener('click', async () => {
+    if(!devices || devices.length < 2) return;
+    // إيجاد التالي بعد الحالي أو أول واحد
+    const ids = devices.map(d=>d.deviceId);
+    let idx = ids.indexOf(currentDeviceId);
+    idx = (idx + 1) % ids.length;
+    await start(ids[idx]);
+  });
+
+  cancelBtn.addEventListener('click', () => { cleanup(); });
+
+  captureBtn.addEventListener('click', async () => {
+    try{
+      // عمل snapshot إلى canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 1280;
+      canvas.height = video.videoHeight || 720;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      // تحويل إلى blob (JPEG لتقليل الحجم، يمكنك تغيير PNG إن أردت)
+      canvas.toBlob(async (blob) => {
+        if(!blob){ alert('تعذر التقاط الصورة'); return; }
+        // إنشاء File من blob
+        const filename = `camera-${Date.now()}.jpg`;
+        const file = new File([blob], filename, { type: blob.type || 'image/jpeg' });
+
+        // تعيين الملف لحقل الملف (DataTransfer)
+        try{
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInput.files = dt.files;
+        }catch(e){
+          // بعض البيئات القديمة لا تدعم DataTransfer() للملفات؛ في هذه الحالة نستخدم عنقود بديل: نضع المعاينة فقط
+          console.warn('DataTransfer not supported for file input:', e);
+        }
+
+        // إظهار المعاينة في واجهتك إن وُجد previewCanvasWrap
+        try{
+          const previewCanvasWrap = document.getElementById('previewCanvasWrap');
+          if(previewCanvasWrap){
+            previewCanvasWrap.innerHTML = '';
+            const imgEl = document.createElement('img');
+            imgEl.style.width = '100%';
+            imgEl.style.display = 'block';
+            imgEl.src = canvas.toDataURL('image/jpeg', 0.9);
+            previewCanvasWrap.appendChild(imgEl);
+            document.getElementById('previewCard').style.display = 'block';
+          }
+        }catch(e){}
+
+        // إغلاق البث والنافذة
+        cleanup();
+
+        // إمكانية تشغيل أي callback إضافي: مثلا تفعيل زر الإرسال
+        // submitBtn.disabled = false;
+      }, 'image/jpeg', 0.88);
+    }catch(err){
+      console.error(err);
+      alert('حدث خطأ أثناء الالتقاط: ' + (err.message || err));
+    }
+  });
+
+  // محاولة بدء الكاميرا - تفضيل الكاميرا الخلفية أولاً
+  try{
+    if(devices.length){
+      // حاول اختيار الجهاز الخلفي (لو قدم المتصفح مفتاح description يحتوي على 'back' أو 'rear')
+      const rear = devices.find(d => /back|rear|خلف/i.test(d.label || '')) || devices[0];
+      await start(rear.deviceId);
+    } else {
+      await start();
+    }
+  }catch(e){
+    console.error(e);
+    alert('تعذر الوصول إلى الكاميرا: ' + (e && e.message ? e.message : e));
+    cleanup();
+  }
+});
+
+
+ 
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
