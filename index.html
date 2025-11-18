@@ -30,7 +30,7 @@
 
   .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 26px rgba(11,19,32,0.06);display:flex;flex-direction:column;height:100%;transition:transform .12s,box-shadow .12s}
   .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(11,19,32,0.09)}
-  .media{height:180px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;cursor:zoom-in;position:relative}
+  .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;cursor:zoom-in;position:relative}
   .media img{width:100%;height:100%;object-fit:cover;display:block}
   .media .noimg{padding:12px;color:#7b8794}
   .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -38,6 +38,7 @@
   .desc{color:#334155;font-size:14px;max-height:3.2em;overflow:hidden;text-overflow:ellipsis}
   .meta{display:flex;gap:8px;align-items:center;margin-top:auto;flex-wrap:wrap}
   .badge{background:#eef8ff;color:#0078d7;padding:6px 8px;border-radius:999px;font-weight:700;direction:ltr}
+  .price{background:#fffbeb;color:#b45309;padding:6px 8px;border-radius:8px;font-weight:800;direction:ltr}
   .muted{color:#6b7280;font-size:13px}
   .actions{display:flex;gap:8px}
   .link-like{background:transparent;border:0;color:#0078d7;cursor:pointer;padding:6px}
@@ -75,6 +76,13 @@
   .adminNote{font-size:12px;color:#666;margin-top:6px}
 
   .subCard{background:#fff;padding:12px;border-radius:10px;border:1px solid #eef6ff;box-shadow:0 6px 20px rgba(6,20,40,0.02);margin-top:12px}
+
+  /* small responsive tweaks */
+  @media (max-width:420px){
+    header{padding:10px}
+    .brand .title{font-size:20px}
+    .media{height:180px}
+  }
 </style>
 </head>
 <body>
@@ -117,6 +125,7 @@
         <h3>أرسل إعلانك</h3>
         <div style="display:grid;gap:8px">
           <input id="f_name" placeholder="عنوان الإعلان">
+          <input id="f_price" placeholder="السعر (مثال: 12000 ريال)" type="text">
           <textarea id="f_desc" placeholder="وصف" rows="4"></textarea>
           <input id="f_loc" placeholder="الموقع">
           <input id="f_contact" placeholder="وسيلة التواصل (رقم/واتساب/إيميل)">
@@ -142,13 +151,13 @@
               <div id="refCode" class="refCode"></div>
               <button id="copyRef" class="copyBtn">نسخ</button>
               <a id="openWa" class="small" target="_blank" style="margin-left:8px;color:#0078d7"></a>
-              <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل الملف</button>
+              <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل الملف (PNG)</button>
             </div>
           </div>
 
           <div id="fallbackJson" style="display:none;margin-top:8px">
-            <div class="small">إذا لم يُسمح بالإرسال التلقائي، تواصل مع الادارة:</div>
-           
+            <div class="small">لنشر اعلانك ارسل الملف عبر الواتساب</div>
+            <textarea id="fallbackArea" rows="6" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eef6ff;background:#fff;margin-top:8px"></textarea>
           </div>
 
           <div id="previewCard" class="subCard" style="display:none">
@@ -163,6 +172,8 @@
       <div class="panel">
         <h3>سياسة الاستخدام</h3>
         <p class="small">
+
+
 
 باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط. إذا لم توافق يرجى التوقف عن استخدام الموقع.
 يقدّم الموقع خدمة عرض الإعلانات والمحتوى التسويقي وروابط الأطراف الثالثة دون تقديم أي ضمانات حول دقتها أو مصداقيتها أو جودة المنتجات أو الخدمات المعروضة. 
@@ -181,7 +192,7 @@ tocontactmsg@gmail.com
   </main>
 </div>
 
-<!-- details modal (unchanged) -->
+<!-- details modal (unchanged but price shown) -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modalCard" role="document" aria-labelledby="modalTitle">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
@@ -206,6 +217,7 @@ tocontactmsg@gmail.com
         <div class="row">
           <div class="field"><div class="small">الموقع</div><div id="modalLoc" class="muted"></div></div>
           <div class="field"><div class="small">التصنيف</div><div id="modalCat" class="badge"></div></div>
+          <div class="field"><div class="small">السعر</div><div id="modalPrice" class="price"></div></div>
         </div>
         <div class="row">
           <div class="field"><div class="small">التواصل</div><div id="modalContact" class="muted"></div></div>
@@ -223,7 +235,7 @@ tocontactmsg@gmail.com
         <button id="modalEdit" class="btn" style="display:none">تحرير (مسؤول)</button>
         <button id="modalFallback" class="btn alt" style="display:none">عرض JSON للاحتياط</button>
       </div>
-      <div class="small muted">ملاحظة: تاكد بنفسك من من كل مايتم الاعلان عنهظ.</div>
+      <div class="small muted">ملاحظة: تاكد بنفسك من كل مايتم الاعلان عنه .</div>
     </div>
   </div>
 </div>
@@ -231,20 +243,7 @@ tocontactmsg@gmail.com
 <!-- admin (unchanged) -->
 <button id="adminBtn" class="adminBtn">🔧 Admin</button>
 <div id="adminPanel" class="adminPanel" aria-hidden="true">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <strong>لوحة الإدارة (مبنية)</strong>
-    <button id="closeAdmin" class="btn alt" style="padding:6px 8px">إغلاق</button>
-  </div>
-  <input id="admin_repo" placeholder="owner/repo (مثال: user/repo)">
-  <input id="admin_branch" placeholder="branch (main)" value="main">
-  <input id="admin_session_pat" placeholder="Session PAT (يُحفظ مؤقتًا فقط)">
-  <div class="adminRow"><button id="setSessionPat" class="btn">تعيين PAT مؤقت</button><button id="clearSessionPat" class="btn alt">مسح PAT</button></div>
-  <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input id="allowPublic" type="checkbox"> السماح بالإرسال العام</label>
-  <div style="display:flex;gap:8px;margin-top:8px">
-    <button id="saveAdminCfg" class="btn">حفظ الإعدادات (بدون PAT)</button>
-    <button id="revokeNote" class="btn alt">تعليمات الإبطال</button>
-  </div>
-  <div class="adminNote">ملاحظة: PAT المؤقت يُخزّن في Session Storage فقط—سيُفقد عند إغلاق التبويب. لا تحفظ توكن في localStorage.</div>
+  <!-- admin content -->
 </div>
 
 <script>
@@ -255,7 +254,7 @@ const WA_NUMBER = '249964147954';
 const PAGE_SIZE = 12;
 const MARKER = 'ELDELALA_PAYLOAD:';
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c)); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 function readCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}') }catch(e){ return {} } }
@@ -265,14 +264,12 @@ function getSessionPat(){ return sessionStorage.getItem('static_session_pat') ||
 function clearSessionPat(){ setSessionPat(null); }
 
 /* ------------------ ghPut (unchanged) ------------------ */
-async function ghPut(pat, repo, path, base64content, message, branch='main', maxRetries=4){
+async function ghPut(pat, repo, path, base64content, message, branch='main', maxRetries=4){ /* ... same as before ... */
   if(!pat) throw new Error('PAT required for write');
   const [owner, repoName] = (repo||'').split('/');
   if(!owner || !repoName) throw new Error('invalid repo');
-
   const apiBase = `https://api.github.com/repos/${owner}/${repoName}/contents/${encodeURIComponent(path)}`;
   const headers = { Authorization: 'token ' + pat, Accept: 'application/vnd.github.v3+json' };
-
   for(let attempt=1; attempt<=maxRetries; attempt++){
     let sha = undefined;
     try{
@@ -281,17 +278,12 @@ async function ghPut(pat, repo, path, base64content, message, branch='main', max
       else if(metaResp.status === 404) sha = undefined;
       else if(metaResp.status === 401 || metaResp.status === 403) throw new Error('PAT invalid or missing permission');
     }catch(e){ if(attempt === maxRetries) throw e; }
-
     const body = { message, content: base64content, branch };
     if(sha) body.sha = sha;
-
     const putResp = await fetch(apiBase, { method: 'PUT', headers, body: JSON.stringify(body) });
     const text = await putResp.text();
-    let parsed = null;
-    try{ parsed = JSON.parse(text); }catch(e){ parsed = null; }
-
+    let parsed = null; try{ parsed = JSON.parse(text); }catch(e){ parsed = null; }
     if(putResp.ok) return parsed;
-
     const errMsg = (parsed && parsed.message) ? parsed.message.toLowerCase() : (text||'').toLowerCase();
     if((putResp.status===409 || putResp.status===422 || errMsg.includes('does not match') || errMsg.includes('sha')) && attempt < maxRetries){
       await new Promise(r=>setTimeout(r, 250 * attempt));
@@ -319,7 +311,7 @@ async function optimizeImageFile(file, conf){
   return { blob, base64, size: blob.size };
 }
 
-/* ------------------ Public UI: load/render ads (unchanged) ------------------ */
+/* ------------------ Public UI: load/render ads (unchanged except price shown) ------------------ */
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
@@ -364,6 +356,7 @@ function appendCards(chunk){
     const cat = a.category || 'عام';
     const ref = escapeHtml(a.ref_code||a.code||'');
     const contactDisplay = escapeHtml(a.contact || '-');
+    const priceDisplay = a.price ? `<div class="price">${escapeHtml(a.price)}</div>` : '';
     el.innerHTML = `<div class="media">${mediaHtml}</div>
       <div class="body"><div class="title">${escapeHtml(a.name||'')}</div>
       <div class="desc">${escapeHtml(a.description||'')}</div>
@@ -371,6 +364,7 @@ function appendCards(chunk){
       <div class="meta" style="margin-top:8px;justify-content:space-between;align-items:center;">
         <div class="small">التواصل: <span class="muted contact-text">${contactDisplay}</span></div>
         <div style="display:flex;gap:6px;align-items:center;">
+          ${priceDisplay}
           <button class="link-like copy-contact" type="button" title="نسخ جهة الاتصال">نسخ</button>
         </div>
       </div></div>`;
@@ -412,7 +406,7 @@ function filterList(){
   let filtered = ads.filter(a=> {
     if(cat && a.category !== cat) return false;
     if(!q) return true;
-    return (a.name||'').toLowerCase().includes(q) || (a.ref_code||a.code||'').toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q) || (a.description||'').toLowerCase().includes(q);
+    return (a.name||'').toLowerCase().includes(q) || (a.ref_code||a.code||'').toLowerCase().includes(q) || (a.location||'').toLowerCase().includes(q) || (a.description||'').toLowerCase().includes(q) || (a.price||'').toLowerCase().includes(q);
   });
   renderGrid(filtered);
   countEl.textContent = `${filtered.length} إعلان`;
@@ -435,6 +429,7 @@ const modalEdit=document.getElementById('modalEdit');
 const modalFallback=document.getElementById('modalFallback');
 const modalCopyContact=document.getElementById('modalCopyContact');
 const adminEditHint=document.getElementById('adminEditHint');
+const modalPrice=document.getElementById('modalPrice');
 
 let currentItem=null;
 
@@ -448,6 +443,7 @@ function openDetails(item){
   modalCat.textContent=item.category||'عام';
   modalContact.textContent=item.contact||'-';
   modalCreated.textContent=item.created_at? new Date(item.created_at).toLocaleString(): '-';
+  modalPrice.textContent = item.price || '-';
   modalMedia.innerHTML='';
   const imgPath=item.image||item.thumb||'';
   if(imgPath){
@@ -489,7 +485,7 @@ function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-
 /* Inline edit omitted for brevity (kept in actual file) */
 function adminAvailable(){ const cfg = readCfg(); return !!((cfg.repo && cfg.branch) && (cfg.pat || getSessionPat())); }
 
-/* ---------------- Submission flow (MODIFIED; includes styled visual + embedding) ---------------- */
+/* ---------------- Submission flow (MODIFIED; includes styled visual + embedding; outputs PNG) ---------------- */
 
 const submitBtn = document.getElementById('submitBtn');
 const submitStatus = document.getElementById('submitStatus');
@@ -506,11 +502,6 @@ let lastEmbeddedBlobUrl = null;
 let lastEmbeddedBlob = null;
 let lastRef = null;
 
-/*
-  REPLACED: buildVisualAndDataURL
-  Improved styled output using whitespace, big ref, and Arabic phrase:
-  "شكراً لك على استخدامك موقع الدلالة"
-*/
 async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   // returns { blob, dataURL, canvas }
   const compact = opts.compact;
@@ -599,32 +590,29 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   ctx.fillText('شكراً لك على استخدامك موقع الدلالة', innerRightX, cursorY);
   cursorY += (compact ? 36 : 46);
 
-  
+  // price (if provided) – prominent
+  if(data.price){
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#b45309';
+    ctx.font = (compact ? '800 20px Tajawal, system-ui' : '800 26px Tajawal, system-ui');
+    ctx.fillText(`السعر: ${data.price}`, innerRightX, cursorY);
+    cursorY += (compact ? 36 : 44);
+  }
 
   // small info boxes (location / category / contact)
   const infoGapY = 18;
   const infoLabelFont = (compact ? '600 14px Tajawal, system-ui' : '600 16px Tajawal, system-ui');
   const infoValueFont = (compact ? '400 14px Tajawal, system-ui' : '400 15px Tajawal, system-ui');
 
-  const infoX = innerRightX;
-  // location
-  ctx.fillStyle = '#6b7280';
-  ctx.font = infoLabelFont;
-  ctx.fillText('الموقع', infoX, cursorY);
-  ctx.fillStyle = '#111827';
-  ctx.font = infoValueFont;
-  ctx.fillText(data.location || '-', infoX, cursorY + 20);
-  cursorY += infoGapY + 26;
-
-   
+ 
 
   // footer small note (RTL)
   ctx.fillStyle = '#94a3b8';
-  ctx.font = (compact ? '500 13px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
-  ctx.fillText(' كن جزء من مجتمع واعي تواصل معنا لاي اقتراحات او شكاوي ', innerRightX, pad + photoH - 18);
+  ctx.font = (compact ? '500 10px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
+  ctx.fillText(' كن جزء من مجتمع واعي تواصل معنا لاي اقتراح او شكوي ', innerRightX, pad + photoH - 18);
 
-  // finalize blob and dataURL
-  const blob = await new Promise(res => cv.toBlob(res, 'image/jpeg', 0.88));
+  // finalize blob and dataURL (PNG)
+  const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   const dataURL = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob); });
   return { blob, dataURL, canvas: cv };
 
@@ -694,14 +682,14 @@ async function embedJsonInImageBlob(imageBlob, payloadObj){
   out.set(origBytes, 0);
   out.set(markerBytes, origBytes.length);
   out.set(b64Bytes, origBytes.length + markerBytes.length);
-  return new Blob([out], { type: imageBlob.type || 'image/jpeg' });
+  return new Blob([out], { type: imageBlob.type || 'image/png' });
 }
 
 // download helper
 function downloadBlob(blob, filename){
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = filename || 'embedded.jpg';
+  a.download = filename || 'embedded.png';
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 2500);
@@ -711,6 +699,7 @@ function downloadBlob(blob, filename){
 submitBtn.addEventListener('click', async ()=>{
   if(submitBtn.disabled) return;
   const name = document.getElementById('f_name').value.trim();
+  const price = document.getElementById('f_price').value.trim();
   const desc = document.getElementById('f_desc').value.trim();
   const contact = document.getElementById('f_contact').value.trim();
   const agree = document.getElementById('agree').checked;
@@ -724,6 +713,7 @@ submitBtn.addEventListener('click', async ()=>{
   const payload = {
     ref_code: ref,
     name: name,
+    price: price,
     description: desc,
     location: document.getElementById('f_loc').value.trim(),
     contact: contact,
@@ -754,15 +744,15 @@ submitBtn.addEventListener('click', async ()=>{
     if(lastEmbeddedBlobUrl) { URL.revokeObjectURL(lastEmbeddedBlobUrl); lastEmbeddedBlobUrl = null; }
     lastEmbeddedBlobUrl = URL.createObjectURL(embedded);
     downloadEmbeddedBtn.style.display = 'inline-block';
-    downloadEmbeddedBtn.onclick = ()=> downloadBlob(embedded, payload.ref_code + '_eldelala.jpg');
+    downloadEmbeddedBtn.onclick = ()=> downloadBlob(embedded, payload.ref_code + '_eldelala.png');
 
-    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nوساقوم ب إرفاق الملف المضمّن (${payload.ref_code}_eldelala.jpg) كـ 'مستند' لتأكيد نشر الإعلان.`;
+    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nوساقوم ب إرفاق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.`;
     const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
     openWa.href = waUrl; openWa.textContent = 'فتح WhatsApp لإرسال رمز المتابعة';
     window.open(waUrl, '_blank');
 
     fallbackBox.style.display = 'none';
-    fallbackArea.value = JSON.stringify(payload, null, 2);
+   
 
     // Try automatic GitHub proposal upload if configured
     const cfg = readCfg() || {};
@@ -808,38 +798,13 @@ submitBtn.addEventListener('click', async ()=>{
 const adminBtn = document.getElementById('adminBtn');
 const adminPanel = document.getElementById('adminPanel');
 const closeAdmin = document.getElementById('closeAdmin');
-const admin_repo = document.getElementById('admin_repo');
-const admin_branch = document.getElementById('admin_branch');
-const admin_session_pat = document.getElementById('admin_session_pat');
-const setSessionPatBtn = document.getElementById('setSessionPat');
-const clearSessionPatBtn = document.getElementById('clearSessionPat');
-const allowPublicEl = document.getElementById('allowPublic');
-const saveAdminCfgBtn = document.getElementById('saveAdminCfg');
-const revokeNoteBtn = document.getElementById('revokeNote');
-
-adminBtn.addEventListener('click', ()=>{ adminPanel.classList.toggle('open'); adminPanel.setAttribute('aria-hidden', adminPanel.classList.contains('open') ? 'false' : 'true'); loadAdminUi(); });
-closeAdmin.addEventListener('click', ()=>{ adminPanel.classList.remove('open'); adminPanel.setAttribute('aria-hidden','true'); });
-
-function loadAdminUi(){
-  const cfg = readCfg();
-  admin_repo.value = cfg.repo || '';
-  admin_branch.value = cfg.branch || 'main';
-  allowPublicEl.checked = !!cfg.allow_public_submissions;
-  admin_session_pat.value = sessionStorage.getItem('static_session_pat') || '';
-  updateAdminUi();
-}
-function updateAdminUi(){ const hasPat = !!sessionStorage.getItem('static_session_pat') || !!readCfg().pat; setSessionPatBtn.disabled=false; clearSessionPatBtn.disabled = !hasPat; }
-setSessionPatBtn.addEventListener('click', ()=>{ const v=admin_session_pat.value.trim(); if(!v) return alert('ألصق PAT'); setSessionPat(v); alert('تم تعيين PAT مؤقتاً (جلسة)'); updateAdminUi(); });
-clearSessionPatBtn.addEventListener('click', ()=>{ if(!confirm('مسح PAT الجلسة الآن؟')) return; clearSessionPat(); admin_session_pat.value=''; updateAdminUi(); alert('تم المسح'); });
-saveAdminCfgBtn.addEventListener('click', ()=>{ const repo = admin_repo.value.trim(); const branch = admin_branch.value.trim()||'main'; const allow = allowPublicEl.checked; if(!repo) return alert('أدخل owner/repo'); saveCfg({ repo, branch, allow_public_submissions: allow }); alert('تم حفظ الإعدادات (بدون PAT)'); loadAdminUi(); loadAds(); });
-revokeNoteBtn.addEventListener('click', ()=>{ alert('لإبطال PAT: اذهب إلى GitHub > Settings > Developer settings > Personal access tokens، وابحث عن التوكن وأبطله.'); });
+function loadAdminUi(){ const cfg = readCfg(); }
 
 /* ---------------- init ---------------- */
 (function init(){ // navigation basic
   const navBtns = document.querySelectorAll('.nav-btn');
   const sections = { home: document.getElementById('home'), send: document.getElementById('send'), policy: document.getElementById('policy') };
   navBtns.forEach(b=>b.addEventListener('click', ()=>{ for(const k in sections) sections[k].style.display='none'; sections[b.dataset.target].style.display='block'; navBtns.forEach(n=>n.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); window.scrollTo({top:0,behavior:'smooth'}); }));
-  loadAdminUi();
   loadAds();
 })();
 </script>
