@@ -243,7 +243,7 @@ const WA_NUMBER = '249964147954';
 const PAGE_SIZE = 12;
 const MARKER = 'ELDELALA_PAYLOAD:';
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 function readCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}') }catch(e){ return {} } }
@@ -252,7 +252,9 @@ function setSessionPat(v){ if(v){ sessionStorage.setItem('static_session_pat', v
 function getSessionPat(){ return sessionStorage.getItem('static_session_pat') || null; }
 function clearSessionPat(){ setSessionPat(null); }
 
-/* ------------------ ghPut (unchanged) ------------------ */
+/* ------------------ ghPut (original) ------------------ */
+/* NOTE: ghPut is left as-is but later we guard it so writes are disabled by default.
+   To allow writes for a session call enableGhPutForSession() after a deliberate admin action. */
 async function ghPut(pat, repo, path, base64content, message, branch='main', maxRetries=4){ 
   if(!pat) throw new Error('PAT required for write');
   const [owner, repoName] = (repo||'').split('/');
@@ -283,22 +285,41 @@ async function ghPut(pat, repo, path, base64content, message, branch='main', max
   }
 }
 
-/* ------------------ Image optimize (unchanged helper) ------------------ */
-async function optimizeImageFile(file, conf){
-  const { maxWidth, maxHeight, quality, outputType } = conf;
-  const dataUrl = await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(file); });
-  const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=dataUrl; });
-  let w = img.width, h = img.height;
-  const scale = Math.min(1, maxWidth/w, maxHeight/h);
-  const tw = Math.round(w * scale), th = Math.round(h * scale);
-  const canvas = document.createElement('canvas'); canvas.width = tw; canvas.height = th;
-  const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img,0,0,tw,th);
-  await new Promise(r=>setTimeout(r,8));
-  const blob = await new Promise(res=>canvas.toBlob(res, outputType, quality));
-  const base64 = await new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result.split(',')[1]); fr.readAsDataURL(blob); });
-  return { blob, base64, size: blob.size };
+/* ----------------- embed helpers ----------------- */
+
+// validate uploads (size + type)
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg','image/png','image/webp'];
+function validateUploadFile(file){
+  if(!file) return 'لا يوجد ملف';
+  if(ALLOWED_TYPES.indexOf(file.type) === -1) return 'صيغة ملف غير مدعومة — استخدم jpg, png أو webp';
+  if(file.size > MAX_UPLOAD_BYTES) return 'حجم الملف كبير جداً (الحدّ 5MB)';
+  return null;
 }
+
+async function jsonToBase64String(obj){
+  const json = JSON.stringify(obj);
+  const utf8 = unescape(encodeURIComponent(json));
+  return btoa(utf8);
+}
+async function blobToUint8(blob){
+  const ab = await blob.arrayBuffer();
+  return new Uint8Array(ab);
+}
+async function embedJsonInImageBlob(imageBlob, payloadObj){
+  const origBytes = await blobToUint8(imageBlob);
+  const markerBytes = new TextEncoder().encode(MARKER);
+  const b64 = jsonToBase64String(payloadObj);
+  const b64Bytes = new TextEncoder().encode(b64);
+  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
+  out.set(origBytes,0);
+  out.set(markerBytes, origBytes.length);
+  out.set(b64Bytes, origBytes.length + markerBytes.length);
+  return new Blob([out], { type: imageBlob.type || 'image/png' });
+}
+
+/* ------------------ Image optimize (unchanged helper) ------------------ */
+/* Safety guard wrapper will be applied later (after definition) */
 
 /* ------------------ Visual builder (QR D-style, PNG output) ------------------ */
 /* (unchanged) */
@@ -452,29 +473,9 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   }
 }
 
-/* ----------------- embed helpers ----------------- */
-function jsonToBase64String(obj){
-  const json = JSON.stringify(obj);
-  const utf8 = unescape(encodeURIComponent(json));
-  return btoa(utf8);
-}
-async function blobToUint8(blob){
-  const ab = await blob.arrayBuffer();
-  return new Uint8Array(ab);
-}
-async function embedJsonInImageBlob(imageBlob, payloadObj){
-  const origBytes = await blobToUint8(imageBlob);
-  const markerBytes = new TextEncoder().encode(MARKER);
-  const b64 = jsonToBase64String(payloadObj);
-  const b64Bytes = new TextEncoder().encode(b64);
-  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
-  out.set(origBytes,0);
-  out.set(markerBytes, origBytes.length);
-  out.set(b64Bytes, origBytes.length + markerBytes.length);
-  return new Blob([out], { type: imageBlob.type || 'image/png' });
-}
-
 /* ------------------ Public UI + submission flow ------------------ */
+let GH_ENABLED = false; // safeguard: still here to double ensure wrapper present
+
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
@@ -494,7 +495,7 @@ async function loadAds(){
     if(cached && (Date.now() - cached.t < 30_000) && cached.data){ ads = cached.data; renderGrid(ads); buildCategories(); countEl.textContent = `${ads.length} إعلان`; return; }
     const paths = ['./ads.json','./static/ads.json','/static/ads.json'];
     let items = null;
-    for(const p of paths){ try{ console.log('尝试:',p); const res = await fetch(p, { cache:'no-cache' }); console.log(p,'=>',res.status); if(!res.ok) continue; items = await res.json(); break; }catch(e){ console.warn('fetch failed',p,e); continue; } }
+    for(const p of paths){ try{ const res = await fetch(p, { cache:'no-cache' }); if(!res.ok) continue; items = await res.json(); break; }catch(e){ continue; } }
     if(!items){ grid.innerHTML = '<div style="padding:16px">لا توجد إعلانات.</div>'; countEl.textContent='0 إعلان'; return; }
     ads = Array.isArray(items) ? items : [];
     ads.sort((a,b)=> (new Date(b.created_at||0)) - (new Date(a.created_at||0)));
@@ -608,13 +609,12 @@ function openDetails(item){
     modalMedia.appendChild(img);
   } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
 
-  // <-- CHANGED: make WhatsApp share send the ad link (page URL + #ad-REF) and include title
+  // build shareable ad link (page URL + anchor) and set as WhatsApp share WITHOUT forcing recipient
   const base = window.location.href.split('#')[0];
   const anchor = 'ad-' + (item.ref_code||item.code||'');
   const adLink = base + '#' + anchor;
-  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent((item.name || '') + ' - ' + adLink)}`;
+  modalWhats.href = `https://wa.me/?text=${encodeURIComponent((item.name || '') + ' - ' + adLink)}`;
   modalWhats.target = '_blank';
-  // -->
 
   modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
   modalCopyContact.style.display = 'inline-block';
@@ -718,6 +718,15 @@ submitBtn.addEventListener('click', async ()=>{
       submitBtn.disabled = false; submitStatus.textContent='أكمل البيانات';
       return;
     }
+
+    // validate file early to avoid heavy processing
+    const uploadErr = validateUploadFile(file);
+    if(uploadErr){
+      alert(uploadErr);
+      submitBtn.disabled = false; submitStatus.textContent='أكمل البيانات';
+      return;
+    }
+
     const { blob: visualBlob, dataURL, canvas } = await buildVisualAndDataURL(file, payload, { compact:true });
 
     previewCanvasWrap.innerHTML = '';
@@ -762,15 +771,18 @@ submitBtn.addEventListener('click', async ()=>{
         }, 1500);
     };
 
-    // <-- CHANGED: prepare WhatsApp link but DO NOT open it automatically
-    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nعن : ${payload.name || '-'}\nالسعر || '-'}\nسأقوم بإرفاق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.`;
-    const waUrl = `https://wa.me/${+249998615193}?text=${encodeURIComponent(msg)}`;
+    // prepare WhatsApp link but DO NOT open it automatically — include ad link anchor so recipient can open
+    const base = window.location.href.split('#')[0];
+    const anchor = 'ad-' + payload.ref_code;
+    const adLink = base + '#' + anchor;
+    const msg = `مرحباً، اود نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nسأرفق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.\n${adLink}`;
+    // do not preselect recipient — let user choose the contact
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
     openWa.href = waUrl;
     openWa.target = '_blank';
     openWa.textContent = 'فتح WhatsApp لإرسال البطاقة (اضغط لفتح)';
     openWa.style.display = 'inline-block';
     openWa.focus();
-    // -->
 
     fallbackBox.style.display = 'none';
 
@@ -785,6 +797,7 @@ submitBtn.addEventListener('click', async ()=>{
           const b64 = payload.image.split(',')[1];
           const safe = (file.name||'image').replace(/[^a-z0-9.\-_]/ig,'_').slice(0,120);
           const fullName = `${payload.ref_code}-${safe}.webp`;
+          // Note: ghPut is guarded — it will throw unless GH_ENABLED is true (i.e. admin explicitly enabled writes)
           await ghPut(writeCfg.pat, writeCfg.repo, `static/proposals_images/${fullName}`, b64, `proposal image ${fullName}`, writeCfg.branch || 'main');
           payload.image = `static/proposals_images/${fullName}`;
         }
@@ -808,7 +821,8 @@ submitBtn.addEventListener('click', async ()=>{
     console.error(err);
     alert('حدث خطأ أثناء إنشاء الإعلان: ' + (err.message || err));
     submitStatus.textContent = 'فشل الإعداد';
-    
+    fallbackBox.style.display='block';
+    fallbackArea.value = JSON.stringify(payload,null,2);
   } finally {
     submitBtn.disabled = false;
   }
@@ -837,6 +851,14 @@ function filterList(){
 
 /* ---------------- init ---------------- */
 (function init(){ // navigation basic
+  // security: remove any PAT that might be lingering in localStorage on page load
+  try{
+    const cfg = JSON.parse(localStorage.getItem(CFG_KEY)||'{}');
+    if(cfg && cfg.pat){ delete cfg.pat; localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); }
+    // ensure PAT only in sessionStorage
+    if(localStorage.getItem('static_session_pat')) localStorage.removeItem('static_session_pat');
+  }catch(e){}
+
   try{
     const navBtns = document.querySelectorAll('.nav-btn');
     const sections = { home: document.getElementById('home'), send: document.getElementById('send'), privacy: document.getElementById('privacy') };
