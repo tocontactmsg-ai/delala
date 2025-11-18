@@ -452,7 +452,7 @@ function openDetails(item){
     img.addEventListener('click', ()=> window.open(img.src,'_blank'));
     modalMedia.appendChild(img);
   } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
-  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، ربما يهمك هذا الإعلان بالرمز ${modalRef.textContent}`)}`;
+  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، ربما يهمك هذا الإعلان في موقع الدلالة بالرمز ${modalRef.textContent}`)}`;
   modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
   modalCopyContact.style.display = 'inline-block';
   modalCopyContact.onclick = ()=> {
