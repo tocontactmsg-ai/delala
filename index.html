@@ -124,7 +124,7 @@
         <h3>أرسل إعلانك</h3>
         <div style="display:grid;gap:8px">
           <input id="f_name" placeholder="عنوان الإعلان">
-          <input id="f_price" placeholder="السعر (مثال: 12000 ريال)" type="text">
+          <input id="f_price" placeholder="السعر (مثال: 12000 + العملة)" type="text">
           <textarea id="f_desc" placeholder="وصف" rows="4"></textarea>
           <input id="f_loc" placeholder="الموقع">
           <input id="f_contact" placeholder="وسيلة التواصل (رقم/واتساب/إيميل)">
@@ -139,7 +139,7 @@
           </label>
 
           <div style="display:flex;gap:8px;align-items:center">
-            <button id="submitBtn" class="btn">إرسال </button>
+            <button id="submitBtn" class="btn">بدء </button>
             <div id="submitStatus" class="small"></div>
           </div>
 
@@ -148,7 +148,7 @@
             <div class="refBox" style="margin-top:6px">
               <div id="refCode" class="refCode"></div>
               <button id="copyRef" class="copyBtn">نسخ</button>
-              <a id="openWa" class="small" target="_blank" style="margin-left:8px;color:#0078d7"></a>
+              <a id="openWa" class="small" target="_blank" style="margin-left:8px;color:#0078d7;display:none"></a>
               <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل الملف (PNG)</button>
             </div>
           </div>
@@ -243,12 +243,12 @@ const WA_NUMBER = '249964147954';
 const PAGE_SIZE = 12;
 const MARKER = 'ELDELALA_PAYLOAD:';
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 function readCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}') }catch(e){ return {} } }
 function saveCfg(cfg){ const c=Object.assign({},cfg); delete c.session_pat; delete c.pat; localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
-function setSessionPat(v){ if(v){ sessionStorage.setItem('static_session_pat', v); } else { sessionStorage.removeItem('static_session_pat'); } updateAdminUi(); }
+function setSessionPat(v){ if(v){ sessionStorage.setItem('static_session_pat', v); } else { sessionStorage.removeItem('static_session_pat'); } updateAdminUi && updateAdminUi(); }
 function getSessionPat(){ return sessionStorage.getItem('static_session_pat') || null; }
 function clearSessionPat(){ setSessionPat(null); }
 
@@ -414,7 +414,7 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   ctx.fillStyle = '#94a3b8';
   ctx.font = (compact ? '500 10px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
   ctx.textAlign = 'right';
-  ctx.fillText(' تواصل معنا لاي اقتراح او شكوي', innerRightX, pad + photoH - 18);
+  ctx.fillText(' كن جزء من مجتمعنا وتواصل معنا للاقتراحات او الشكاوي', innerRightX, pad + photoH - 18);
 
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   const dataURLFinal = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob); });
@@ -515,6 +515,8 @@ function renderGrid(list){
 function appendCards(chunk){
   const frag = document.createDocumentFragment();
   chunk.forEach(a=>{
+    // anchor id so link +hash works
+    const anchorId = 'ad-' + (a.ref_code||a.code||Date.now().toString(36));
     const el = document.createElement('div'); el.className='card'; el.setAttribute('role','listitem');
     const thumb = (a.thumb || a.image || '').replace(/^\//,'');
     const mediaHtml = thumb ? `<img src="${escapeHtml(thumb)}" loading="lazy" alt="${escapeHtml(a.name||'')}" />` : `<div class="noimg small">لا صورة</div>`;
@@ -522,7 +524,7 @@ function appendCards(chunk){
     const ref = escapeHtml(a.ref_code||a.code||'');
     const contactDisplay = escapeHtml(a.contact || '-');
     const priceDisplay = a.price ? `<div class="price">${escapeHtml(a.price)}</div>` : '';
-    el.innerHTML = `<div class="media">${mediaHtml}</div>
+    el.innerHTML = `<div id="${anchorId}"></div><div class="media">${mediaHtml}</div>
       <div class="body"><div class="title">${escapeHtml(a.name||'')}</div>
       <div class="desc">${escapeHtml(a.description||'')}</div>
       <div class="meta"><div class="badge">${escapeHtml(cat)}</div><div class="muted">📍 ${escapeHtml(a.location||'')}</div><div style="margin-left:auto" class="muted">${ref}</div></div>
@@ -605,7 +607,15 @@ function openDetails(item){
     img.addEventListener('click', ()=> window.open(img.src,'_blank'));
     modalMedia.appendChild(img);
   } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
-  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، ربما يهمك هذا الإعلان بالرمز ${modalRef.textContent}`)}`;
+
+  // <-- CHANGED: make WhatsApp share send the ad link (page URL + #ad-REF) and include title
+  const base = window.location.href.split('#')[0];
+  const anchor = 'ad-' + (item.ref_code||item.code||'');
+  const adLink = base + '#' + anchor;
+  modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent((item.name || '') + ' - ' + adLink)}`;
+  modalWhats.target = '_blank';
+  // -->
+
   modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
   modalCopyContact.style.display = 'inline-block';
   modalCopyContact.onclick = ()=> {
@@ -629,6 +639,14 @@ function openDetails(item){
   }
 
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+
+  // if URL hash matches this ad, ensure modal visible (useful when auto-scrolling)
+  try{
+    const h = location.hash.replace('#','');
+    if(h && h === ('ad-' + (item.ref_code||item.code||''))) {
+      // open modal already done
+    }
+  }catch(e){}
 }
 document.getElementById('modalClose').addEventListener('click', closeModal);
 modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
@@ -744,10 +762,15 @@ submitBtn.addEventListener('click', async ()=>{
         }, 1500);
     };
 
-   const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nوساقوم ب إرفاق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.`;
-    const waUrl = `https://wa.me/${+24998615193}?text=${encodeURIComponent(msg)}`;
-    openWa.href = waUrl; openWa.textContent = 'فتح WhatsApp لإرسال رمز المتابعة (أرسل الملف كمستند)';
-    window.open(waUrl, '_blank');
+    // <-- CHANGED: prepare WhatsApp link but DO NOT open it automatically
+    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nعن : ${payload.name || '-'}\nالسعر || '-'}\nسأقوم بإرفاق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.`;
+    const waUrl = `https://wa.me/${+249998615193}?text=${encodeURIComponent(msg)}`;
+    openWa.href = waUrl;
+    openWa.target = '_blank';
+    openWa.textContent = 'فتح WhatsApp لإرسال البطاقة (اضغط لفتح)';
+    openWa.style.display = 'inline-block';
+    openWa.focus();
+    // -->
 
     fallbackBox.style.display = 'none';
 
@@ -777,16 +800,15 @@ submitBtn.addEventListener('click', async ()=>{
         fallbackArea.value = JSON.stringify(payload,null,2);
       }
     } else {
-      submitStatus.textContent = 'الإرسال التلقائي غير مفعّل — أنزل الملف وأرسله عبر WhatsApp كمستند';
+      submitStatus.textContent = 'تم انشاء البطاقة  — قم بتحميل الملف وأرسله عبر WhatsApp كمستند';
       fallbackBox.style.display='block';
-      fallbackArea.value = JSON.stringify(payload,null,2);
+      
     }
   }catch(err){
     console.error(err);
     alert('حدث خطأ أثناء إنشاء الإعلان: ' + (err.message || err));
     submitStatus.textContent = 'فشل الإعداد';
-    fallbackBox.style.display='block';
-    fallbackArea.value = JSON.stringify(payload,null,2);
+    
   } finally {
     submitBtn.disabled = false;
   }
@@ -830,6 +852,23 @@ function filterList(){
         document.querySelectorAll('.nav-btn').forEach(n=>n.removeAttribute('aria-current'));
         this.setAttribute('aria-current','true');
         window.scrollTo({top:0,behavior:'smooth'});
+      });
+    }
+
+    // handle incoming hash (scroll + open modal) after load
+    if(location.hash){
+      window.addEventListener('load', ()=> {
+        const h = location.hash.replace('#','');
+        if(h){
+          const el = document.getElementById(h);
+          if(el){
+            setTimeout(()=> el.scrollIntoView({behavior:'smooth', block:'center'}), 200);
+            // try open modal for this ad if available in loaded dataset
+            const ref = h.replace(/^ad-/, '');
+            const found = ads.find(x => (x.ref_code||x.code||'') === ref);
+            if(found) setTimeout(()=> openDetails(found), 500);
+          }
+        }
       });
     }
 
