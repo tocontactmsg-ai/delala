@@ -90,13 +90,12 @@
   <header>
     <div class="brand">
       <div class="title">الدلالة</div>
-    
     </div>
 
     <nav aria-label="واجهة">
       <button data-target="home" class="nav-btn" aria-current="true">الرئيسية</button>
       <button data-target="send" class="nav-btn">أرسل إعلانك</button>
-     
+      <button data-target="privacy" class="nav-btn">سياسة الخصوصية</button>
     </nav>
   </header>
 
@@ -164,6 +163,23 @@
             <div class="small muted" style="margin-top:8px">قم بارسال هذا الملف اذا اردت نشر الاعلان</div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="privacy" style="display:none">
+      <div class="panel">
+        <h3>سياسة الخصوصية</h3>
+        <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px">باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط. إذا لم توافق يرجى التوقف عن استخدام الموقع.
+يقدّم الموقع خدمة عرض الإعلانات والمحتوى التسويقي وروابط الأطراف الثالثة دون تقديم أي ضمانات حول دقتها أو مصداقيتها أو جودة المنتجات أو الخدمات المعروضة. 
+جميع التعاملات مع المعلنين تتم على مسؤوليتك الشخصية، والموقع ليس طرفًا فيها ولا يتحمل أي مسؤولية عن نتائجها.
+يجب عليك استخدام الموقع بطريقة قانونية، وعدم نشر أو إرسال أي محتوى مخالف أو مضلل أو منتهك لحقوق الآخرين، وعدم محاولة اختراق أو تعطيل الموقع أو استخدامه لجمع بيانات بشكل غير مشروع , أي استخدام غير مناسب قد يؤدي إلى حظر الدخول دون إشعار.
+جميع حقوق الملكية الفكرية المتعلقة بالموقع، بما في ذلك التصميم، الشعار، المحتوى، والأكواد، هي ملك للدلالة  يمنع نسخ أي جزء من الموقع أو استخدام علامته التجارية دون إذن مسبق.
+قد يحتوي الموقع على روابط خارجية والموقع غير مسؤول عن محتواها أو سلامتها. 
+قد يقوم الموقع بتعديل أو إزالة أي إعلان أو محتوى متى شاء دون الحاجة لذكر الأسباب.
+قد يتم جمع بعض البيانات الأساسية لتحسين تجربة الاستخدام مثل ملفات الارتباط وسجلات الاستخدام، ويمكن مشاركة هذه البيانات فقط للامتثال للقانون أو لحماية الخدمة من الهجمات.
+قد يتم تحديث هذه الشروط من وقت لآخر، ويعتبر استمرارك في استخدام الموقع موافقة على النسخة المحدثة.
+ 
+tocontactmsg@gmail.com</div>
       </div>
     </section>
   </main>
@@ -285,15 +301,14 @@ async function optimizeImageFile(file, conf){
 }
 
 /* ------------------ Visual builder (QR D-style, PNG output) ------------------ */
+/* (unchanged) */
 async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
-  // D-style: large QR occupying ~50% of the right panel. Output as PNG (safe for WhatsApp as document)
   const compact = !!opts.compact;
   const W = compact ? 1400 : 2000;
   const H = compact ? 900 : 1333;
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
 
-  // layout measurements
   const pad = Math.round(W * 0.04);
   const gap = Math.round(W * 0.02);
   const photoW = Math.round(W * 0.60);
@@ -302,20 +317,16 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   const photoH = H - pad * 2;
   const radius = 18;
 
-  // white background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, W, H);
 
-  // photo area card
   ctx.fillStyle = '#f7fafc';
   roundRect(ctx, pad, pad, photoW, photoH, radius);
   ctx.fill();
 
-  // load original image file into an Image
   const dataUrl = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(file); });
   const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = dataUrl; });
 
-  // draw image cover inside the photo card (center-crop)
   const imgScale = Math.max(photoW / img.width, photoH / img.height);
   const dw = Math.round(img.width * imgScale);
   const dh = Math.round(img.height * imgScale);
@@ -325,55 +336,45 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   ctx.drawImage(img, dx, dy, dw, dh);
   ctx.restore();
 
-  // right panel background and thin divider
   ctx.fillStyle = '#ffffff';
   roundRect(ctx, rightX, pad, rightW, photoH, 12);
   ctx.fill();
   ctx.fillStyle = '#eef6ff';
   ctx.fillRect(rightX, pad + 10, 6, photoH - 20);
 
-  // right panel content start
   const innerRightX = rightX + rightW - 22;
   let cursorY = pad + 60;
 
-  // reference
   ctx.fillStyle = '#0b84ff';
   ctx.font = (compact ? 'bold 36px Tajawal, system-ui' : 'bold 52px Tajawal, system-ui');
   ctx.textAlign = 'right';
   ctx.fillText(data.ref_code || ('R' + Date.now().toString(36).slice(-6).toUpperCase()), innerRightX, cursorY);
 
-  // decorative underline
   cursorY += 14;
   ctx.strokeStyle = '#e6f4ff'; ctx.lineWidth = 6;
   ctx.beginPath(); ctx.moveTo(innerRightX - 260, cursorY); ctx.lineTo(innerRightX, cursorY); ctx.stroke();
 
-  // title
   cursorY += (compact ? 44 : 58);
   ctx.fillStyle = '#0b1220';
   ctx.font = (compact ? '700 26px Tajawal, system-ui' : '700 34px Tajawal, system-ui');
   wrapTextRTL(ctx, data.name || '(بدون عنوان)', innerRightX, cursorY, rightW - 44, (compact ? 30 : 38));
   cursorY += (compact ? 70 : 92);
 
-  // small friendly phrase
   ctx.fillStyle = '#0b84ff';
   ctx.font = (compact ? '650 22px Tajawal, system-ui' : '900 26px Tajawal, system-ui');
   ctx.fillText('شكراً لك على استخدامك موقع الدلالة', innerRightX, cursorY);
   cursorY += (compact ? 36 : 46);
 
-  // D-style QR: large card occupying about 50% of right panel height
-  // compute QR size to visually dominate but leave margins
   const qrSize = Math.min(rightW - 60, Math.round(photoH * 0.5));
   const qrX = rightX + Math.round((rightW - qrSize) / 2);
   const qrY = cursorY;
 
-  // background card for QR (rounded, with subtle shadow look)
   const qrPad = 12;
   const qrCardX = qrX - qrPad;
   const qrCardY = qrY - qrPad;
   const qrCardW = qrSize + qrPad * 2;
-  const qrCardH = qrSize + qrPad * 2 + 42; // leave space for caption
+  const qrCardH = qrSize + qrPad * 2 + 42;
 
-  // card gradient
   const g = ctx.createLinearGradient(qrCardX, qrCardY, qrCardX + qrCardW, qrCardY + qrCardH);
   g.addColorStop(0, '#ffffff');
   g.addColorStop(1, '#f6fbff');
@@ -381,59 +382,44 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
   roundRect(ctx, qrCardX, qrCardY, qrCardW, qrCardH, 16);
   ctx.fill();
 
-  // slight border
   ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(11,132,255,0.08)';
   roundRect(ctx, qrCardX, qrCardY, qrCardW, qrCardH, 16); ctx.stroke();
 
-  // prepare QR payload text (Arabic short message)
   const qrText = `شكراً لاستخدامك موقع الدلالة — رمز: ${data.ref_code || ''} \\n${data.name || ''} \\nتواصل: ${data.contact || ''}`;
 
-  // use api.qrserver to create QR PNG; colored dark accent to match brand
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(qrText)}&color=0B84FF&bgcolor=ffffff`; 
 
-  // draw QR image (load crossOrigin to avoid tainting when possible)
   await new Promise((res, rej) => {
     const qimg = new Image();
     qimg.crossOrigin = 'anonymous';
     qimg.onload = () => {
-      // center QR into card
       ctx.drawImage(qimg, qrX, qrY, qrSize, qrSize);
-
-      // add decorative accent: large translucent rounded frame
       ctx.lineWidth = Math.max(6, Math.round(qrSize * 0.03));
       ctx.strokeStyle = 'rgba(11,132,255,0.14)';
       roundRect(ctx, qrX - 8, qrY - 8, qrSize + 16, qrSize + 16, 18); ctx.stroke();
-
-      // overlay a light brand gradient square behind center area to create 'cover' feeling
       const centerGrad = ctx.createLinearGradient(qrX, qrY, qrX + qrSize, qrY + qrSize);
       centerGrad.addColorStop(0, 'rgba(11,132,255,0.06)');
       centerGrad.addColorStop(1, 'rgba(11,132,255,0.00)');
       ctx.fillStyle = centerGrad;
       roundRect(ctx, qrX, qrY, qrSize, qrSize, 10); ctx.fill();
-
-      // caption centered below QR
       ctx.textAlign = 'center';
       ctx.fillStyle = '#334155';
       ctx.font = (compact ? '600 14px Tajawal, system-ui' : '600 16px Tajawal, system-ui');
-    
       res();
     };
     qimg.onerror = (e) => { console.warn('QR load failed', e); res(); };
     qimg.src = qrUrl;
   });
 
-  // final footer note RTL
   ctx.fillStyle = '#94a3b8';
   ctx.font = (compact ? '500 10px Tajawal, system-ui' : '400 14px Tajawal, system-ui');
   ctx.textAlign = 'right';
   ctx.fillText(' تواصل معنا لاي اقتراح او شكوي', innerRightX, pad + photoH - 18);
 
-  // produce PNG blob (safe to send as WhatsApp document preserving trailing bytes)
   const blob = await new Promise(res => cv.toBlob(res, 'image/png'));
   const dataURLFinal = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob); });
   return { blob, dataURL: dataURLFinal, canvas: cv };
 
-  // helpers
   function wrapTextRTL(ctx, text, x, y, maxWidth, lineHeight) {
     const words = String(text || '').split(' ');
     let line = '';
@@ -457,13 +443,7 @@ async function buildVisualAndDataURL(file, data, opts = { compact: true }) {
     ctx.moveTo(x + r, y);
     ctx.lineTo(x + w - r, y);
     ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
     ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
   }
   function clipRoundRect(ctx, x, y, w, h, r) {
     ctx.save();
@@ -509,11 +489,12 @@ function showSkeleton(){ grid.innerHTML=''; for(let i=0;i<6;i++){ const sk=docum
 async function loadAds(){
   try{
     showSkeleton();
+    countEl.textContent = 'تحميل...';
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
     if(cached && (Date.now() - cached.t < 30_000) && cached.data){ ads = cached.data; renderGrid(ads); buildCategories(); countEl.textContent = `${ads.length} إعلان`; return; }
-    const paths = ['./static/ads.json','./ads.json','/static/ads.json'];
+    const paths = ['./ads.json','./static/ads.json','/static/ads.json'];
     let items = null;
-    for(const p of paths){ try{ const res = await fetch(p, { cache:'no-cache' }); if(!res.ok) continue; items = await res.json(); break; }catch(e){ continue; } }
+    for(const p of paths){ try{ console.log('尝试:',p); const res = await fetch(p, { cache:'no-cache' }); console.log(p,'=>',res.status); if(!res.ok) continue; items = await res.json(); break; }catch(e){ console.warn('fetch failed',p,e); continue; } }
     if(!items){ grid.innerHTML = '<div style="padding:16px">لا توجد إعلانات.</div>'; countEl.textContent='0 إعلان'; return; }
     ads = Array.isArray(items) ? items : [];
     ads.sort((a,b)=> (new Date(b.created_at||0)) - (new Date(a.created_at||0)));
@@ -620,10 +601,10 @@ function openDetails(item){
   const imgPath=item.image||item.thumb||'';
   if(imgPath){
     const img=document.createElement('img'); img.src=imgPath.replace(/^\//,''); img.alt=item.name||'';
-    img.addEventListener('error', ()=> modalMedia.innerHTML='<div class=\"noimg small\">لا صورة</div>');
+    img.addEventListener('error', ()=> modalMedia.innerHTML='<div class="noimg small">لا صورة</div>');
     img.addEventListener('click', ()=> window.open(img.src,'_blank'));
     modalMedia.appendChild(img);
-  } else modalMedia.innerHTML='<div class=\"noimg small\">لا صورة</div>';
+  } else modalMedia.innerHTML='<div class="noimg small">لا صورة</div>';
   modalWhats.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`مرحباً، ربما يهمك هذا الإعلان بالرمز ${modalRef.textContent}`)}`;
   modalCopy.onclick = ()=> navigator.clipboard?.writeText(modalRef.textContent).then(()=> alert('تم النسخ')).catch(()=> fallbackCopyPrompt(modalRef.textContent));
   modalCopyContact.style.display = 'inline-block';
@@ -684,6 +665,7 @@ async function downscalePngBlob(blob, maxW=1100, maxH=700){
 }
 
 submitBtn.addEventListener('click', async ()=>{
+  console.log('submit button clicked — starting handler');
   if(submitBtn.disabled) return;
   const name = document.getElementById('f_name').value.trim();
   const price = document.getElementById('f_price').value.trim();
@@ -710,7 +692,7 @@ submitBtn.addEventListener('click', async ()=>{
 
   refCodeEl.textContent = payload.ref_code; afterSubmit.style.display='block';
 
-  const file = document.getElementById('f_file').files[0];
+  let file = document.getElementById('f_file').files[0];
 
   try{
     if(!file){
@@ -742,31 +724,25 @@ submitBtn.addEventListener('click', async ()=>{
     if(lastEmbeddedBlobUrl) { URL.revokeObjectURL(lastEmbeddedBlobUrl); lastEmbeddedBlobUrl = null; }
     lastEmbeddedBlobUrl = URL.createObjectURL(embedded);
     downloadEmbeddedBtn.style.display = 'inline-block';
-  // store the final PNG blob
-lastEmbeddedBlob = embedded;
+    lastEmbeddedBlob = embedded;
+    downloadEmbeddedBtn.style.display = 'inline-block';
+    downloadEmbeddedBtn.onclick = function () {
+        if (!lastEmbeddedBlob) {
+            alert("لا يوجد ملف جاهز للتحميل");
+            return;
+        }
 
-// enable button
-downloadEmbeddedBtn.style.display = 'inline-block';
-
-// always regenerate the onclick AFTER blob exists
-downloadEmbeddedBtn.onclick = function () {
-    if (!lastEmbeddedBlob) {
-        alert("لا يوجد ملف جاهز للتحميل");
-        return;
-    }
-
-    const url = URL.createObjectURL(lastEmbeddedBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = payload.ref_code + "_eldelala.png";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-        URL.revokeObjectURL(url);
-        a.remove();
-    }, 1500);
-};
-
+        const url = URL.createObjectURL(lastEmbeddedBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = payload.ref_code + "_eldelala.png";
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+            a.remove();
+        }, 1500);
+    };
 
    const msg = `مرحباً، اريد نشر إعلان جديد برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nوساقوم ب إرفاق الملف المضمّن (${payload.ref_code}_eldelala.png) كـ 'مستند' لتأكيد نشر الإعلان.`;
     const waUrl = `https://wa.me/${+24998615193}?text=${encodeURIComponent(msg)}`;
@@ -816,22 +792,50 @@ downloadEmbeddedBtn.onclick = function () {
   }
 });
 
-/* ---------------- Admin panel logic (simple open admin.html) ---------------- */
-// safe admin opener — won't throw if element is missing
+/* ---------------- Admin panel logic (safe) ---------------- */
+// guard missing elements so script never throws
 const openAdminEl = document.getElementById('openAdmin') || document.getElementById('adminBtn');
 if (openAdminEl) {
   openAdminEl.addEventListener('click', () => { window.open('admin.html','_blank'); });
 }
 
-
 function adminAvailable(){ const cfg = readCfg(); return !!((cfg.repo && cfg.branch) && (cfg.pat || getSessionPat())); }
+
+/* ---------------- Filter + helpers ---------------- */
+function filterList(){
+  const q = (document.getElementById('q').value||'').toLowerCase().trim();
+  const cat = (catFilter.value||'').trim();
+  const filtered = ads.filter(a=>{
+    const inQ = !q || [a.name,a.description,a.ref_code,a.location].join(' ').toLowerCase().indexOf(q) !== -1;
+    const inCat = !cat || (a.category||'').toLowerCase() === cat.toLowerCase();
+    return inQ && inCat;
+  });
+  renderGrid(filtered);
+}
 
 /* ---------------- init ---------------- */
 (function init(){ // navigation basic
-  const navBtns = document.querySelectorAll('.nav-btn');
-  const sections = { home: document.getElementById('home'), send: document.getElementById('send') };
-  navBtns.forEach(b=>b.addEventListener('click', ()=>{ for(const k in sections) sections[k].style.display='none'; sections[b.dataset.target].style.display='block'; navBtns.forEach(n=>n.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); window.scrollTo({top:0,behavior:'smooth'}); }));
-  loadAds();
+  try{
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const sections = { home: document.getElementById('home'), send: document.getElementById('send'), privacy: document.getElementById('privacy') };
+    navBtns.forEach(b=>b.addEventListener('click', ()=>{ for(const k in sections) sections[k].style.display='none'; sections[b.dataset.target].style.display='block'; navBtns.forEach(n=>n.removeAttribute('aria-current')); b.setAttribute('aria-current','true'); window.scrollTo({top:0,behavior:'smooth'}); }));
+
+    // robust direct attach for send if loop didn't run
+    const sendBtn = document.querySelector('[data-target="send"]');
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('send').style.display = 'block';
+        document.querySelectorAll('.nav-btn').forEach(n=>n.removeAttribute('aria-current'));
+        this.setAttribute('aria-current','true');
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    }
+
+    loadAds();
+    console.log('init complete');
+  }catch(e){ console.error('init failed', e); }
 })();
 </script>
 </body>
