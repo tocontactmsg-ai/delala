@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>الدلالة — مشرف الإعلانات (Redesign v2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f7fb;
+  --panel:#ffffff;
+  --muted:#6b7280;
+  --accent1:#0b84ff;
+  --accent2:#00c2a8;
+  --glass: rgba(255,255,255,0.8);
+  --success: #16a34a;
+  --danger: #ef4444;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#052035}
+.container{max-width:1200px;margin:22px auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column}
+.title{font-size:20px;font-weight:800}
+.subtitle{color:var(--muted);font-size:13px}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;padding:10px 14px;border-radius:12px;border:0;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.btn.ghost{background:transparent;border:1px solid rgba(11,132,255,0.12);color:var(--accent1)}
+.btn.icon{padding:8px 10px;border-radius:10px}
+.input{padding:10px;border-radius:10px;border:1px solid rgba(11,132,255,0.06);min-width:220px}
+.panel{margin-top:16px;background:var(--panel);border-radius:14px;padding:14px;box-shadow:0 10px 30px rgba(6,20,40,0.06)}
+.topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px}
+.card{background:linear-gradient(180deg,#fff,#fbfeff);border-radius:12px;padding:12px;box-shadow:0 10px 24px rgba(6,20,40,0.06);transition:transform .12s}
+.card:hover{transform:translateY(-8px)}
+.thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,132,255,0.04)}
+.meta{margin-top:10px}
+.name{font-weight:800;font-size:15px}
+.desc{color:var(--muted);font-size:13px;max-height:3.4em;overflow:hidden}
+.row{display:flex;gap:8px;align-items:center}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#eef6ff;color:var(--accent1);font-weight:700}
+.controls-right{display:flex;gap:8px;align-items:center}
+.dropzone{padding:18px;border-radius:10px;border:2px dashed rgba(11,132,255,0.12);text-align:center;background:#fbfeff;cursor:pointer;transition:background .12s}
+.dropzone.drag{background:#eef8ff}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:12px;color:var(--muted);font-size:13px}
+.search{padding:10px;border-radius:10px;border:1px solid rgba(11,132,255,0.06);min-width:260px}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(6,20,40,0.36),rgba(6,20,40,0.36));z-index:120}
+.modal.open{display:flex}
+.modalCard{background:#fff;border-radius:12px;padding:14px;width:min(920px,96%);max-height:92vh;overflow:auto}
+.form-field{width:100%;padding:10px;border-radius:10px;border:1px solid #eef6ff;margin-top:8px}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.kbd{background:#f1f5f9;padding:4px 8px;border-radius:6px;border:1px solid #e6eef8;font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;background:#052035;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(5,32,53,0.18);z-index:200;display:none}
+.toast.show{display:block}
+.toolbar{display:flex;gap:8px;align-items:center}
+.chips{display:flex;gap:8px;align-items:center}
+.chip{padding:8px 12px;border-radius:999px;background:#f1f5f9;border:1px solid #e6eef8;cursor:pointer}
+.filter-count{padding:6px 8px;border-radius:8px;background:#eef6ff;color:var(--accent1);font-weight:700}
+.skeleton{height:160px;background:linear-gradient(90deg,#f3f6fa,#eef6ff,#f3f6fa);border-radius:10px}
+@media(max-width:760px){ .thumb{height:140px} .search{min-width:140px} .topbar{flex-direction:column;align-items:stretch} }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <div class="title">الدلالة — مشرف الإعلانات (v2)</div>
+      <div class="subtitle">واجهة تفاعلية: سحب/إفلات، فلترة، معاينة سريعة، تحميل وتصدير</div>
+    </div>
+
+    <div class="controls">
+      <label class="btn ghost" id="chooseBtn">📁 اختر
+        <input id="fileInput" type="file" multiple webkitdirectory directory accept="image/*" style="display:none" />
+      </label>
+      <button class="btn" id="scanBtn">🔍 مسح الملفات</button>
+      <button class="btn ghost" id="importJsonBtn">📥 استيراد JSON</button>
+      <input id="jsonInput" type="file" accept="application/json" style="display:none" />
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="topbar">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="dropzone" id="dropzone">اسحب وأفلت الصور هنا أو اضغط للاختيار</div>
+        <div class="small">يدعم الصور التي تحتوي علامة <code>ELDELALA_PAYLOAD</code></div>
+      </div>
+
+      <div class="controls-right">
+        <input id="search" class="search" placeholder="ابحث بالمرجع أو العنوان أو السعر" />
+        <div class="toolbar">
+          <div class="chips">
+            <div class="chip" id="filterAll">الكل</div>
+            <div class="chip" id="filterWithPayload">مع بيانات</div>
+            <div class="chip" id="filterNoPayload">بدون بيانات</div>
+          </div>
+          <button id="exportAllBtn" class="btn ghost" disabled>📤 تنزيل ads.json</button>
+          <button id="saveLocalBtn" class="btn">💾 حفظ محلي</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <div class="small">العناصر المكتشفة: <span id="count" class="filter-count">0</span></div>
+      <div class="small">اختصارات: <span class="kbd">Space</span> مسح القائمة • <span class="kbd">Ctrl+F</span> بحث</div>
+    </div>
+  </div>
+
+  <div class="footer">تعمل هذه الواجهة محلياً — لا تُرسل أي شيء للخادم.</div>
+</div>
+
+<!-- modal -->
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="modalCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong id="modalRef">تفاصيل</strong>
+      <div style="display:flex;gap:8px">
+        <button id="closeModal" class="btn ghost">✖ إغلاق</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:360px 1fr;gap:12px;margin-top:12px">
+      <div>
+        <img id="modalImg" src="" style="width:360px;height:260px;object-fit:cover;border-radius:10px;border:1px solid #eef6ff" />
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <input id="replaceFile" type="file" accept="image/*" class="form-field" />
+          <button id="downloadImgBtn" class="btn ghost">⬇ تنزيل</button>
+        </div>
+      </div>
+      <div>
+        <label>العنوان</label>
+        <input id="modalTitle" class="form-field" />
+        <label>السعر</label>
+        <input id="modalPrice" class="form-field" />
+        <label>الهاتف</label>
+        <input id="modalPhone" class="form-field" />
+        <label>الوصف</label>
+        <textarea id="modalDesc" rows="6" class="form-field"></textarea>
+
+        <div class="actions">
+          <button id="saveBtn" class="btn">💾 حفظ</button>
+          <button id="downloadJsonBtn" class="btn ghost">📄 تحميل JSON</button>
+          <button id="removeBtn" class="btn ghost">🗑️ حذف</button>
+        </div>
+        <pre id="modalRaw" style="margin-top:12px;background:#fbfdff;padding:8px;border-radius:8px;border:1px solid #eef6ff;white-space:pre-wrap;display:none"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* v2 — Improved interactions, fixed index mapping, nicer UX */
+const MARKER = 'ELDELALA_PAYLOAD:';
+const markerBytes = new TextEncoder().encode(MARKER);
+const STORAGE_KEY = 'eldelala_admin_v2';
+
+const fileInput = document.getElementById('fileInput');
+const dropzone = document.getElementById('dropzone');
+const scanBtn = document.getElementById('scanBtn');
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+const searchEl = document.getElementById('search');
+const exportAllBtn = document.getElementById('exportAllBtn');
+const importJsonBtn = document.getElementById('importJsonBtn');
+const jsonInput = document.getElementById('jsonInput');
+const saveLocalBtn = document.getElementById('saveLocalBtn');
+const filterAll = document.getElementById('filterAll');
+const filterWithPayload = document.getElementById('filterWithPayload');
+const filterNoPayload = document.getElementById('filterNoPayload');
+
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modalImg');
+const modalRef = document.getElementById('modalRef');
+const modalTitle = document.getElementById('modalTitle');
+const modalPrice = document.getElementById('modalPrice');
+const modalPhone = document.getElementById('modalPhone');
+const modalDesc = document.getElementById('modalDesc');
+const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+const saveBtn = document.getElementById('saveBtn');
+const removeBtn = document.getElementById('removeBtn');
+const closeModalBtn = document.getElementById('closeModal');
+const replaceFile = document.getElementById('replaceFile');
+const downloadImgBtn = document.getElementById('downloadImgBtn');
+const toast = document.getElementById('toast');
+
+let ads = []; // array of normalized objects {id, ref, title, price, phone, description, created_at, imageDataUrl, _hasPayload}
+let selectedAdId = null;
+let currentFilter = 'all';
+
+function showToast(msg, ms=2200){ toast.textContent = msg; toast.classList.add('show'); setTimeout(()=> toast.classList.remove('show'), ms); }
+
+function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"]/,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+function normalize(raw){
+  return {
+    id: raw.id || uid(),
+    ref: raw.ref_code || raw.ref || raw.code || raw.id || '',
+    title: raw.name || raw.title || raw.headline || '',
+    price: raw.price || raw.p || '',
+    phone: raw.contact || raw.phone || raw.tel || '',
+    description: raw.description || raw.desc || raw.body || '',
+    created_at: raw.created_at || new Date().toISOString(),
+    imageDataUrl: raw.image || raw.thumb || raw.imageDataUrl || '',
+    _hasPayload: !!(raw && (raw.ref || raw.title || raw.price || raw.description))
+  };
+}
+
+function setCount(){ countEl.textContent = ads.length; exportAllBtn.disabled = ads.length === 0; }
+
+// find marker in byte array (backwards)
+function findLastMarkerIndex(bytes, marker){
+  if(marker.length === 0 || bytes.length < marker.length) return -1;
+  for(let i = bytes.length - marker.length; i >= 0; i--){
+    let ok=true;
+    for(let j=0;j<marker.length;j++){ if(bytes[i+j] !== marker[j]){ ok=false; break; } }
+    if(ok) return i;
+  }
+  return -1;
+}
+function extractBase64FromBytes(bytes, start){
+  let s = '';
+  for(let i = start; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+  const m = s.match(/^[A-Za-z0-9+/=\r\n]+/);
+  return m ? m[0].replace(/\s+/g,'') : '';
+}
+function base64ToUtf8(b64){
+  try{ const bin = atob(b64); const u8 = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i] = bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u8);}catch(e){ try{ return atob(b64); }catch(_){ return null; } }
+}
+
+async function handleFile(file){
+  try{
+    const buf = await file.arrayBuffer();
+    const raw = new Uint8Array(buf);
+    const pos = findLastMarkerIndex(raw, markerBytes);
+    let payload = null;
+    if(pos >= 0){
+      const start = pos + markerBytes.length;
+      const b64 = extractBase64FromBytes(raw, start);
+      if(b64){
+        try{ const txt = base64ToUtf8(b64); payload = JSON.parse(txt); }
+        catch(e){ /* ignore parse errors */ }
+      }
+    } else {
+      // try detection in tail (fallback)
+      const textTail = new TextDecoder().decode(raw.slice(Math.max(0, raw.length - 4000)));
+      const m = textTail.match(/data:application\/json;base64,([A-Za-z0-9+/=\r\n]+)/);
+      if(m){ try{ payload = JSON.parse(atob(m[1])); }catch(_){} }
+    }
+
+    const imageUrl = URL.createObjectURL(new Blob([raw], {type: file.type || 'image/jpeg'}));
+    if(payload){
+      const n = normalize(payload);
+      n.imageDataUrl = payload.image && payload.image.startsWith('data:') ? payload.image : imageUrl;
+      n._hasPayload = true;
+      ads.push(n);
+    } else {
+      const n = normalize({ id: uid(), title: file.name, description: '', created_at: new Date().toISOString(), imageDataUrl: imageUrl });
+      n._hasPayload = false;
+      ads.push(n);
+    }
+  }catch(e){ console.error(e); showToast('خطأ أثناء قراءة الملف'); }
+}
+
+async function scanList(files){
+  const arr = Array.from(files || []);
+  if(!arr.length) return showToast('لم يتم اختيار ملفات');
+  showToast('جارٍ الفحص...');
+  for(let i=0;i<arr.length;i++){
+    await handleFile(arr[i]);
+  }
+  saveToLocal(); renderGrid(); setCount(); showToast('انتهى الفحص');
+}
+
+function renderGrid(){
+  grid.innerHTML = '';
+  const filterText = searchEl.value.trim().toLowerCase();
+  const list = ads.filter(a=>{
+    if(currentFilter === 'with' && !a._hasPayload) return false;
+    if(currentFilter === 'without' && a._hasPayload) return false;
+    if(!filterText) return true;
+    return (a.ref+' '+a.title+' '+a.price+' '+a.description).toLowerCase().includes(filterText);
+  });
+  if(!list.length){ grid.innerHTML = '<div style="padding:18px" class="small">لا توجد نتائج</div>'; return; }
+  list.forEach((a)=>{
+    const el = document.createElement('div'); el.className='card';
+    const thumb = a.imageDataUrl ? `<img class="thumb" src="${a.imageDataUrl}" alt="">` : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#9aa4b2">لا توجد صورة</div>`;
+    el.innerHTML = `
+      ${thumb}
+      <div class="meta">
+        <div class="name">${escapeHtml(a.title||'(بدون عنوان)')}</div>
+        <div class="desc">${escapeHtml(a.description||'')}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <div class="badge">${escapeHtml(a.price||'-')}</div>
+          <div class="small" style="margin-left:auto">${escapeHtml(a.ref||a.id)}</div>
+        </div>
+      </div>
+    `;
+    el.dataset.adId = a.id;
+    el.addEventListener('click', ()=> openModalById(a.id));
+    grid.appendChild(el);
+  });
+}
+
+function openModalById(adId){
+  selectedAdId = adId;
+  const a = ads.find(x=>x.id === adId);
+  if(!a) return;
+  modalRef.textContent = a.ref || a.id;
+  modalImg.src = a.imageDataUrl || '';
+  modalTitle.value = a.title;
+  modalPrice.value = a.price;
+  modalPhone.value = a.phone;
+  modalDesc.value = a.description;
+  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
+}
+function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); selectedAdId = null; }
+
+saveBtn.addEventListener('click', ()=>{
+  if(!selectedAdId) return;
+  const idx = ads.findIndex(x=>x.id===selectedAdId); if(idx<0) return;
+  ads[idx].title = modalTitle.value.trim();
+  ads[idx].price = modalPrice.value.trim();
+  ads[idx].phone = modalPhone.value.trim();
+  ads[idx].description = modalDesc.value.trim();
+  saveToLocal(); renderGrid(); showToast('تم الحفظ'); closeModal();
+});
+
+removeBtn.addEventListener('click', ()=>{
+  if(!selectedAdId) return;
+  const idx = ads.findIndex(x=>x.id===selectedAdId); if(idx<0) return;
+  if(!confirm('تأكيد حذف العنصر؟')) return;
+  ads.splice(idx,1); saveToLocal(); renderGrid(); setCount(); closeModal(); showToast('حُذف العنصر');
+});
+
+closeModalBtn.addEventListener('click', closeModal);
+
+downloadJsonBtn.addEventListener('click', ()=>{
+  if(!selectedAdId) return; const a = ads.find(x=>x.id===selectedAdId); if(!a) return;
+  const blob = new Blob([JSON.stringify(a, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob); const ael = document.createElement('a'); ael.href = url; ael.download = (a.ref||a.id)+'.json'; document.body.appendChild(ael); ael.click(); ael.remove(); URL.revokeObjectURL(url);
+});
+
+downloadImgBtn.addEventListener('click', ()=>{
+  if(!selectedAdId) return; const a = ads.find(x=>x.id===selectedAdId); if(!a) return;
+  if(!a.imageDataUrl){ showToast('لا توجد صورة'); return; }
+  // create temporary link
+  const ael = document.createElement('a'); ael.href = a.imageDataUrl; ael.download = (a.ref||a.id)+'.png'; document.body.appendChild(ael); ael.click(); ael.remove();
+});
+
+replaceFile.addEventListener('change', async (e)=>{
+  const f = e.target.files[0]; if(!f) return; const idx = ads.findIndex(x=>x.id===selectedAdId); if(idx<0) return;
+  const url = URL.createObjectURL(f); ads[idx].imageDataUrl = url; saveToLocal(); renderGrid(); modalImg.src = url; showToast('تم استبدال الصورة');
+});
+
+// file interactions
+scanBtn.addEventListener('click', ()=>{
+  if(fileInput.files.length) scanList(fileInput.files);
+  else showToast('اختر صورًا أو اسحبها');
+});
+
+dropzone.addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', ()=> scanList(fileInput.files));
+
+dropzone.addEventListener('dragover', (e)=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', ()=>{ dropzone.classList.remove('drag'); });
+dropzone.addEventListener('drop', (e)=>{ e.preventDefault(); dropzone.classList.remove('drag'); const dt = e.dataTransfer; if(dt && dt.files) scanList(dt.files); });
+
+// search & filters
+searchEl.addEventListener('input', ()=> renderGrid());
+filterAll.addEventListener('click', ()=>{ currentFilter='all'; renderGrid(); });
+filterWithPayload.addEventListener('click', ()=>{ currentFilter='with'; renderGrid(); });
+filterNoPayload.addEventListener('click', ()=>{ currentFilter='without'; renderGrid(); });
+
+// export/import & local storage
+exportAllBtn.addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(ads, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'ads.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+importJsonBtn.addEventListener('click', ()=> jsonInput.click());
+jsonInput.addEventListener('change', async ()=>{
+  const f = jsonInput.files[0]; if(!f) return; const txt = await f.text();
+  try{
+    const data = JSON.parse(txt);
+    const arr = Array.isArray(data) ? data : (data && data.ads ? data.ads : [data]);
+    for(const r of arr) ads.push(normalize(r));
+    saveToLocal(); renderGrid(); setCount(); showToast('تم استيراد JSON');
+  }catch(e){ showToast('خطأ بقراءة JSON'); }
+});
+
+saveLocalBtn.addEventListener('click', ()=>{ saveToLocal(); showToast('تم الحفظ محليًا'); });
+function saveToLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(ads)); }
+function loadFromLocal(){ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ try{ ads = JSON.parse(raw) }catch(_){} } setCount(); renderGrid(); }
+
+// keyboard shortcuts
+document.addEventListener('keydown', (e)=>{
+  if(e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA'){
+    if(confirm('مسح كل العناصر من الواجهة (البيانات المحلية ستبقى)؟')){ ads = []; saveToLocal(); renderGrid(); setCount(); showToast('تم المسح'); }
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f'){ e.preventDefault(); searchEl.focus(); searchEl.select(); }
+});
+
+// initialize
+window.addEventListener('load', ()=>{ loadFromLocal(); setCount(); });
+</script>
+</body>
+</html>
