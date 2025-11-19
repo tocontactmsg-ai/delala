@@ -415,7 +415,7 @@ renderGrid([]);
               const base = window.location.href.split('#')[0];
               const adLink = base + '#ad-' + payload.ref_code;
               const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nسأرفق البطاقة (${payload.ref_code}_eldelala.png). ${adLink}`;
-              openWa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+              openWa.href = 'https://wa.me/+249 99 861 5193?text=' + encodeURIComponent(msg);
               openWa.target = '_blank';
               openWa.textContent = 'فتح WhatsApp لإرسال البطاقة (اضغط لفتح)';
             }
