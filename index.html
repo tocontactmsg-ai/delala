@@ -92,11 +92,11 @@
 </h1>
 <br>
         <div style="display:grid;gap:8px">
-          <input id="f_name" placeholder="عنوان الإعلان">
+          <input id="f_name" placeholder="اسم الإعلان">
           <input id="f_price" placeholder="السعر">
           <textarea id="f_desc" placeholder="وصف الإعلان" rows="4"></textarea>
           <input id="f_loc" placeholder="الموقع">
-          <input id="f_contact" placeholder="وسيلة التواصل">
+          <input id="f_contact" placeholder="رقم التواصل">
           <input id="f_cat" placeholder="التصنيف">
           <div><input id="f_file" type="file" accept="image/*"></div>
 
@@ -190,7 +190,7 @@ tocontactmsg@gmail.com  </div>
         <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال</a>
         <button id="modalDownloadCard" class="btn" style="display:none">⬇ تنزيل البطاقة</button>
       </div>
-      <div class="small muted">ملاحظة: تأكد من صحة البيانات قبل النشر.</div>
+      <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
     </div>
   </div>
 </div>
@@ -198,11 +198,7 @@ tocontactmsg@gmail.com  </div>
 <button id="adminBtn" class="adminBtn" style="display:none">🔧 Admin</button>
 <div id="adminPanel" class="adminPanel" style="display:none"></div>
 <script>
-fetch('./ads.json')
-  .then(r => r.json())
-  .then(data => { ads = data; renderGrid(ads); });
-
- /* Utilities */
+/* Utilities */
 const CFG_KEY = 'static_ads_cfg_v1';
 const CACHE_KEY = 'static_ads_cache_v1';
 const MARKER = 'ELDELALA_PAYLOAD:';
@@ -356,7 +352,7 @@ renderGrid([]);
       if(submitBtn.disabled) return;
       submitBtn.disabled = true;
       showStatus('جارٍ تجهيز الإعلان...');
-      if(!f_name.value || f_name.value.trim().length < 2){ showStatus('الرجاء إدخال عنوان للإعلان', true); submitBtn.disabled = false; return; }
+      if(!f_name.value || f_name.value.trim().length < 2){ showStatus('الرجاء إدخال اسم للإعلان', true); submitBtn.disabled = false; return; }
       if(!agree.checked){ showStatus('يجب الموافقة على الشروط', true); submitBtn.disabled = false; return; }
 
       const ref = genRef();
