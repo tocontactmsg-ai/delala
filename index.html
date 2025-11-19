@@ -198,7 +198,11 @@ tocontactmsg@gmail.com  </div>
 <button id="adminBtn" class="adminBtn" style="display:none">🔧 Admin</button>
 <div id="adminPanel" class="adminPanel" style="display:none"></div>
 <script>
-/* Utilities */
+fetch('./ads.json')
+  .then(r => r.json())
+  .then(data => { ads = data; renderGrid(ads); });
+
+ /* Utilities */
 const CFG_KEY = 'static_ads_cfg_v1';
 const CACHE_KEY = 'static_ads_cache_v1';
 const MARKER = 'ELDELALA_PAYLOAD:';
