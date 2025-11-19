@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>الدلالة — مشرف الإعلانات (Phone Dashboard)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--muted:#6b7280;--accent1:#0b84ff;--accent2:#00c2a8}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#052035}
+.app{max-width:1200px;margin:28px auto;padding:14px}
+.header{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:800}
+.title{font-size:18px;font-weight:800}
+.subtitle{color:var(--muted);font-size:13px}
+.top-controls{display:flex;gap:10px;align-items:center}
+.btn{background:transparent;border:0;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 8px 20px rgba(11,132,255,0.12)}
+.btn.ghost{background:transparent;border:1px solid rgba(6,20,40,0.06);color:var(--muted)}
+.searchbar{display:flex;align-items:center;gap:8px;background:#fff;padding:8px;border-radius:12px;box-shadow:0 6px 18px rgba(10,20,40,0.03)}
+.searchbar input{border:0;background:transparent;padding:8px;outline:none;min-width:220px}
+.panel{margin-top:16px;background:rgba(255,255,255,0.95);border-radius:14px;padding:12px;box-shadow:0 12px 30px rgba(12,40,80,0.06)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:linear-gradient(180deg,#ffffff,#fbfeff);border-radius:12px;padding:8px;box-shadow:0 6px 18px rgba(8,20,40,0.04);transition:transform .15s}
+.thumb{width:100%;height:130px;object-fit:cover;border-radius:8px;border:1px solid rgba(11,132,255,0.04);background:#f6fbff}
+.small{font-size:13px;color:var(--muted)}
+.fab{position:fixed;left:22px;bottom:28px;padding:12px 16px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 14px 40px rgba(11,132,255,0.16);border:0;font-weight:800}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#052035;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(5,32,53,0.18);z-index:200;display:none}
+.tabs{display:flex;gap:8px}
+.tab{padding:8px 12px;border-radius:10px;cursor:pointer}
+.tab.active{background:linear-gradient(90deg,#e8f6ff,#f0fffb);font-weight:800}
+.sidebar{width:360px;padding:12px;background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(8,20,40,0.04);}
+.row{display:flex;gap:8px;align-items:center}
+.form-field{width:100%;padding:10px;border-radius:10px;border:1px solid #eef6ff;margin-top:8px}
+.actions{display:flex;gap:8px;margin-top:12px}
+.list-item{padding:8px;border-radius:8px;border:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center}
+@media(max-width:900px){ .layout{flex-direction:column} .sidebar{width:100%} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">دل</div>
+      <div>
+        <div class="title">الدلالة — مشرف الإعلانات</div>
+        <div class="subtitle">أدخل رقم المرسل، وافتح لوحة عرض المُفصّلة</div>
+      </div>
+    </div>
+
+    <div class="top-controls">
+      <div class="tabs">
+        <div class="tab active" data-tab="browse">التصفح</div>
+        <div class="tab" data-tab="dashboard">لوحة</div>
+      </div>
+
+      <div class="searchbar" title="ابحث بالمرجع أو العنوان أو رقم المرسل">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" stroke="#0b84ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="search" placeholder="ابحث بالمرجع/العنوان/رقم" />
+      </div>
+
+      <button class="btn ghost" id="importJsonBtn">📥 استيراد JSON</button>
+      <button class="btn primary" id="exportFillBtn">📤 تصدير & ملء</button>
+    </div>
+  </div>
+
+  <div class="panel layout" style="display:flex;gap:12px">
+    <div style="flex:1">
+      <div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        <div class="small">العناصر: <strong id="count">0</strong></div>
+        <div style="display:flex;gap:8px">
+          <button id="scanBtn" class="btn ghost">🔍 فحص مجلد</button>
+          <button id="saveLocalBtn" class="btn primary">💾 حفظ</button>
+        </div>
+      </div>
+
+      <div id="grid" class="grid"></div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="sideTitle">تفاصيل</strong>
+        <div><button id="closeSide" class="btn ghost">✖</button></div>
+      </div>
+
+      <div id="sideBody" style="margin-top:8px">
+        <div class="small">اختر إعلانًا من الواجهة أو ابحث لعرض التفاصيل. يمكنك إدخال رقم المستلم وحفظه.</div>
+
+        <div style="margin-top:12px">
+          <label>مرجع / عنوان</label>
+          <input id="sideRef" class="form-field" readonly />
+          <label style="margin-top:8px">العنوان</label>
+          <input id="sideTitleInput" class="form-field" readonly />
+          <label style="margin-top:8px">أرقام مُكتشفة</label>
+          <div id="sidePhones" style="display:flex;flex-direction:column;gap:6px;margin-top:6px"></div>
+          <label style="margin-top:8px">أدخل رقم الوارد (الذي تواصل معك)</label>
+          <input id="manualPhone" class="form-field" placeholder="أدخل رقم المستلم هنا" />
+          <div class="actions">
+            <button id="applyPhone" class="btn primary">✔ تطبيق وحفظ</button>
+            <button id="markArchived" class="btn ghost">📥 أرشفة المرسل</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <label>تفاصيل JSON (سطر إرشادي)</label>
+            <textarea id="sideJson" rows="6" class="form-field" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<input id="fileInput" type="file" multiple webkitdirectory directory accept="image/*" style="display:none" />
+<input id="jsonInput" type="file" accept="application/json" style="display:none" />
+<div id="toast" class="toast">Toast</div>
+
+<script>
+// Lightweight app: load ads, allow selecting ad, entering received phone, save
+const STORAGE_KEY = 'eldelala_admin_modern_v1';
+const ARCHIVE_KEY = 'EL_ARCHIVE_V1';
+
+const fileInput = document.getElementById('fileInput');
+const jsonInput = document.getElementById('jsonInput');
+const scanBtn = document.getElementById('scanBtn');
+const exportFillBtn = document.getElementById('exportFillBtn');
+const importJsonBtn = document.getElementById('importJsonBtn');
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+const searchEl = document.getElementById('search');
+const saveLocalBtn = document.getElementById('saveLocalBtn');
+const toast = document.getElementById('toast');
+
+const side = document.getElementById('sidebar');
+const sideRef = document.getElementById('sideRef');
+const sideTitleInput = document.getElementById('sideTitleInput');
+const sidePhones = document.getElementById('sidePhones');
+const manualPhone = document.getElementById('manualPhone');
+const applyPhone = document.getElementById('applyPhone');
+const sideJson = document.getElementById('sideJson');
+const markArchived = document.getElementById('markArchived');
+const closeSide = document.getElementById('closeSide');
+const sideTitleLabel = document.getElementById('sideTitle');
+
+let ads = [];
+let selectedId = null;
+
+function showToast(msg, ms=2000){ toast.textContent = msg; toast.style.display='block'; clearTimeout(toast._t); toast._t = setTimeout(()=>toast.style.display='none', ms); }
+function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+// simple phone finder (keeps short)
+function findPhonesInString(text){ if(!text) return []; const re = /(\+?\d[\d\s\-().]{6,})/g; const out=[]; let m; while((m=re.exec(String(text)))!==null){ let p=m[0].replace(/[^+0-9]/g,''); if(p.length>=7 && p.length<=16) out.push(p); if(out.length>=8) break; } return Array.from(new Set(out)); }
+
+function normalize(raw){
+  return {
+    id: raw.id || uid(),
+    ref: raw.ref_code || raw.ref || raw.code || raw.id || '',
+    title: raw.name || raw.title || raw.headline || raw.fileName || '',
+    price: raw.price || raw.p || '',
+    description: raw.description || raw.desc || raw.body || '',
+    created_at: raw.created_at || new Date().toISOString(),
+    imageDataUrl: raw.image || raw.thumb || raw.imageDataUrl || raw._blobUrl || '',
+    _hasPayload: !!(raw && (raw.ref || raw.title || raw.price || raw.description)),
+    phones: (()=>{ const p = []; if(raw && raw.contact) p.push(...findPhonesInString(raw.contact)); if(raw && raw.phone) p.push(...findPhonesInString(raw.phone)); p.push(...findPhonesInString(raw.description)); if(raw && raw.fileName) p.push(...findPhonesInString(raw.fileName)); return Array.from(new Set(p)); })(),
+    preferred_phone: raw && (raw.preferred_phone || raw.phone || null) || null
+  };
+}
+
+function saveToLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(ads)); showToast('تم الحفظ'); updateCount(); }
+function loadFromLocal(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) ads = JSON.parse(raw); }catch(e){ ads=[]; } updateCount(); renderGrid(); }
+function updateCount(){ countEl.textContent = ads.length; }
+
+function renderGrid(){ grid.innerHTML=''; const q=(searchEl.value||'').trim().toLowerCase(); const list = ads.filter(a=>{ if(!q) return true; return (a.ref+' '+a.title+' '+(a.preferred_phone||'')+' '+a.phones.join(' ')).toLowerCase().includes(q); }); if(!list.length){ grid.innerHTML='<div class="small">لا توجد نتائج</div>'; return; } list.forEach(a=>{ const el=document.createElement('div'); el.className='card'; el.innerHTML=`<div style="height:130px;overflow:hidden;border-radius:8px">${a.imageDataUrl?`<img src="${a.imageDataUrl}" class="thumb" alt="${esc(a.title)}">`:'<div style="height:130px;display:grid;place-items:center;background:#f6fbff;color:#9aa4b2;border-radius:8px">لا توجد صورة</div>'}</div><div style="margin-top:8px;"> <div style="font-weight:800">${esc(a.title||a.ref||a.id)}</div><div class="small" style="margin-top:6px">${esc(a.preferred_phone|| (a.phones[0]||''))}</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn" data-act="open" data-id="${a.id}">🔎 تفاصيل</button><button class="btn ghost" data-act="copy" data-id="${a.id}">📋 نسخ JSON</button></div></div>`; el.querySelector('[data-act="open"]').addEventListener('click', ()=> openSide(a.id)); el.querySelector('[data-act="copy"]').addEventListener('click', ()=> copyJson(a.id)); grid.appendChild(el); }); }
+
+function openSide(id){ const a = ads.find(x=>x.id===id); if(!a) return; selectedId = id; sideTitleLabel.textContent = 'تفاصيل الإعلان'; sideRef.value = a.ref||a.id; sideTitleInput.value = a.title; sidePhones.innerHTML=''; if(a.phones && a.phones.length){ a.phones.forEach(p=>{ const b = document.createElement('button'); b.className='btn ghost'; b.style.marginBottom='6px'; b.textContent = p; b.addEventListener('click', ()=> { manualPhone.value = p; }); sidePhones.appendChild(b); }); } else { sidePhones.innerHTML='<div class="small">لم تُكتشف أرقام</div>'; }
+  manualPhone.value = a.preferred_phone || '';
+  sideJson.value = JSON.stringify(a, null, 2);
+  side.style.display='block'; }
+
+function closeSideFn(){ selectedId=null; side.style.display='none'; }
+closeSide.addEventListener('click', closeSideFn);
+
+applyPhone.addEventListener('click', ()=>{
+  if(!selectedId) return showToast('اختر إعلاناً أولاً');
+  const a = ads.find(x=>x.id===selectedId); if(!a) return;
+  const p = (manualPhone.value||'').trim(); if(!p) return showToast('أدخل رقماً');
+  // simple clean
+  const clean = p.replace(/[^+0-9]/g,'');
+  if(!a.phones.includes(clean)) a.phones.unshift(clean);
+  a.preferred_phone = clean;
+  saveToLocal(); renderGrid(); openSide(selectedId); showToast('تم تعيين الرقم وحفظه');
+});
+
+markArchived.addEventListener('click', ()=>{
+  if(!selectedId) return showToast('اختر إعلاناً');
+  const a = ads.find(x=>x.id===selectedId); if(!a) return;
+  const arch = loadArchive(); arch.unshift(Object.assign({}, a, {archived_at:new Date().toISOString()})); localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch)); showToast('تم أرشفة المرسل');
+});
+
+function copyJson(id){ const a = ads.find(x=>x.id===id); if(!a) return; navigator.clipboard?.writeText(JSON.stringify(a,null,2)).then(()=> showToast('تم نسخ JSON')) .catch(()=> { const ta=document.createElement('textarea'); ta.value=JSON.stringify(a,null,2); document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); showToast('تم نسخ JSON'); }); }
+
+function loadArchive(){ try{ return JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]'); }catch(e){ return []; } }
+
+// import JSON
+importJsonBtn.addEventListener('click', ()=> jsonInput.click());
+jsonInput.addEventListener('change', async ()=>{ const f = jsonInput.files[0]; if(!f) return; try{ const txt = await f.text(); const data = JSON.parse(txt); const arr = Array.isArray(data)? data : (data && data.ads ? data.ads : [data]); for(const r of arr) ads.unshift(normalize(r)); saveToLocal(); renderGrid(); updateCount(); showToast('تم استيراد JSON'); }catch(e){ showToast('خطأ بقراءة JSON'); } });
+
+// export & fill flow: show items missing preferred phone and allow user to fill quickly
+exportFillBtn.addEventListener('click', ()=>{
+  // collect items missing preferred_phone
+  const missing = ads.filter(a=>!a.preferred_phone);
+  if(!missing.length) return showToast('كل الإعلانات لديها رقم مفضل');
+  // open a quick fill UI in modal-like prompt loop (simple and fast)
+  (async ()=>{
+    for(const item of missing){
+      const promptVal = prompt(`إدخل رقم المستلم للإعلان: ${item.ref||item.title||item.id}\n(اترك فارغاً لتخطي)` , item.phones && item.phones[0] ? item.phones[0] : '');
+      if(promptVal===null) break; // user cancelled
+      const clean = promptVal.replace(/[^+0-9]/g,'').trim(); if(clean){ item.preferred_phone = clean; if(!item.phones.includes(clean)) item.phones.unshift(clean); }
+    }
+    saveToLocal(); renderGrid(); updateCount(); // after filling, export JSON file
+    const blob = new Blob([JSON.stringify(ads,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ads_filled.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showToast('تم التصدير وحفظ الأرقام المملوءة');
+  })();
+});
+
+// file scan (reuse previous marker extraction logic to parse payloads)
+const MARKER = 'ELDELALA_PAYLOAD:';
+const markerBytes = new TextEncoder().encode(MARKER);
+function findLastMarkerIndex(bytes, marker){ if(marker.length===0||bytes.length<marker.length) return -1; for(let i=bytes.length-marker.length;i>=0;i--){ let ok=true; for(let j=0;j<marker.length;j++){ if(bytes[i+j]!==marker[j]){ ok=false; break; } } if(ok) return i; } return -1; }
+function extractBase64FromBytes(bytes, start){ let s=''; for(let i=start;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); const m = s.match(/^[A-Za-z0-9+/=\r\n]+/); return m?m[0].replace(/\s+/g,'') : ''; }
+function base64ToUtf8(b64){ try{ const bin = atob(b64); const u8 = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u8);}catch(e){ try{ return atob(b64);}catch(_){return null;} } }
+
+async function handleFile(file){ try{ const buf = await file.arrayBuffer(); const raw = new Uint8Array(buf); const pos = findLastMarkerIndex(raw, markerBytes); let payload = null; if(pos>=0){ const start = pos + markerBytes.length; const b64 = extractBase64FromBytes(raw, start); if(b64){ try{ const txt = base64ToUtf8(b64); payload = JSON.parse(txt); }catch(e){} } } else { const textTail = new TextDecoder().decode(raw.slice(Math.max(0, raw.length - 4000))); const m = textTail.match(/data:application\/json;base64,([A-Za-z0-9+/=\r\n]+)/); if(m){ try{ payload = JSON.parse(atob(m[1])); }catch(_){} } }
+    const blobUrl = URL.createObjectURL(new Blob([raw], {type: file.type || 'image/jpeg'}));
+    if(payload){ const n = normalize(payload); n.imageDataUrl = payload.image && payload.image.startsWith('data:') ? payload.image : blobUrl; n._hasPayload = true; n._fileName = file.name; ads.unshift(n); } else { const n = normalize({ id: uid(), title: file.name, description: '', created_at: new Date().toISOString(), _blobUrl: blobUrl, fileName: file.name }); n._hasPayload = false; ads.unshift(n); }
+  }catch(e){ console.error(e); showToast('خطأ أثناء قراءة الملف'); } }
+
+async function scanList(files){ const arr = Array.from(files||[]); if(!arr.length) return showToast('لم يتم اختيار ملفات'); showToast('جارٍ الفحص...'); for(let i=0;i<arr.length;i++){ await handleFile(arr[i]); } saveToLocal(); renderGrid(); updateCount(); showToast('انتهى الفحص'); }
+scanBtn.addEventListener('click', ()=> fileInput.click()); fileInput.addEventListener('change', ()=> scanList(fileInput.files));
+
+searchEl.addEventListener('input', ()=> renderGrid());
+saveLocalBtn.addEventListener('click', ()=> saveToLocal());
+
+// tabs
+document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); const tab = t.dataset.tab; if(tab==='dashboard'){ openDashboard(); } else { closeDashboard(); } }));
+
+function openDashboard(){ // simple modern dashboard: show counts and recent archived
+  const arch = loadArchive(); const uniqueSenders = Array.from(new Set(arch.map(x=>x.sender_email).filter(Boolean)));
+  const html = `
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="list-item">الإجمالي: <strong>${ads.length}</strong></div>
+      <div class="list-item">المؤرشف: <strong>${arch.length}</strong></div>
+      <div class="list-item">مرسلون مميزون: <strong>${uniqueSenders.length}</strong></div>
+      <div style="margin-top:6px"><strong>أحدث الأرشيف</strong></div>
+      ${arch.slice(0,6).map(a=>`<div class="list-item">${esc(a.sender_email||'---')} · ${esc(a.ref||a.title||a.id)}</div>`).join('')}
+    </div>
+  `;
+  sideRef.value='لوحة الملخص'; sideTitleInput.value='لوحة'; sidePhones.innerHTML=''; manualPhone.value=''; sideJson.value=html; side.style.display='block'; }
+function closeDashboard(){ side.style.display='none'; }
+
+// archive loader
+function loadArchive(){ try{ return JSON.parse(localStorage.getItem(ARCHIVE_KEY)||'[]'); }catch(e){ return []; } }
+
+// initial
+window.addEventListener('load', ()=> loadFromLocal());
+
+</script>
+</body>
+</html>

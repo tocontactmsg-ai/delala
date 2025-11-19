@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>الدلالة — مشرف الإعلانات (Stats + Categories)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--muted:#6b7280;--accent1:#0b84ff;--accent2:#00c2a8}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#052035}
+.app{max-width:1200px;margin:28px auto;padding:16px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:800}
+.searchbar{display:flex;align-items:center;gap:8px;background:#fff;padding:8px;border-radius:12px}
+.btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+.btn.ghost{background:#fff;border:1px solid rgba(6,20,40,0.06)}
+.btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+.layout{display:flex;gap:12px;margin-top:12px}
+.left{flex:1}
+.right{width:360px}
+.panel{background:#fff;padding:12px;border-radius:12px;box-shadow:0 12px 30px rgba(12,40,80,0.06)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+.card{border-radius:10px;padding:10px;background:linear-gradient(180deg,#fff,#fbfeff);box-shadow:0 8px 20px rgba(8,20,40,0.04)}
+.small{font-size:13px;color:var(--muted)}
+.stat-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.stat-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;border:1px solid #f1f5f9}
+.pbar{height:10px;border-radius:6px;background:#eef6ff;overflow:hidden}
+.pbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,20,40,0.36);z-index:120}
+.modal.open{display:flex}
+.modalCard{background:#fff;border-radius:12px;padding:14px;width:min(900px,96%);max-height:92vh;overflow:auto}
+.form-field{width:100%;padding:10px;border-radius:10px;border:1px solid #eef6ff;margin-top:8px}
+@media(max-width:920px){ .right{display:none} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="logo">دل</div>
+      <div>
+        <div style="font-weight:900">الدلالة — مشرف الإعلانات</div>
+        <div class="small">لوحة إحصاءات ومرجع سريع للإعلانات</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="searchbar"><input id="search" placeholder="ابحث بالمرجع/العنوان/رقم/موقع/تصنيف" /></div>
+      <button id="dashToggle" class="btn ghost">📊 إظهار الإحصاءات</button>
+      <button id="importJsonBtn" class="btn ghost">📥 استيراد</button>
+      <button id="exportAllBtn" class="btn primary" disabled>📤 تصدير</button>
+      <input id="jsonInput" type="file" accept="application/json" style="display:none" />
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="left">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>الإعلانات</strong>
+          <div class="small">انقر على بطاقة لعرض التفاصيل</div>
+        </div>
+        <div id="grid" class="grid"></div>
+      </div>
+    </div>
+
+    <div class="right panel" id="statsPanel" style="display:none">
+      <strong>لوحة الإحصاءات</strong>
+      <div style="margin-top:10px">
+        <div class="small">مُلخّص المرسلين (عدد الإعلانات و آخر تاريخ)</div>
+        <div id="sendersList" class="stat-list"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">نسبة الإعلانات حسب التصنيف</div>
+        <div id="catList" class="stat-list"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">نسبة الإعلانات حسب الموقع</div>
+        <div id="locList" class="stat-list"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">تفاصيل سريعة</div>
+        <table class="table" id="summaryTable"><thead><tr><th>مفتاح</th><th>قيمة</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="modalCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong id="modalRef">تفاصيل</strong>
+      <div><button id="closeModal" class="btn ghost">✖ إغلاق</button></div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div style="display:flex;gap:12px;align-items:center">
+        <img id="modalImg" src="" style="width:140px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #eef6ff" />
+        <div style="flex:1">
+          <input id="modalTitle" class="form-field" />
+          <input id="modalRefInput" class="form-field" placeholder="مرجع" />
+        </div>
+      </div>
+
+      <label style="margin-top:8px">التصنيف</label>
+      <input id="modalCategory" class="form-field" placeholder="category" />
+      <label style="margin-top:8px">الموقع</label>
+      <input id="modalLocation" class="form-field" placeholder="location" />
+      <label style="margin-top:8px">السعر</label>
+      <input id="modalPrice" class="form-field" />
+      <label style="margin-top:8px">الهاتف المفضل</label>
+      <input id="modalPhone" class="form-field" />
+      <label style="margin-top:8px">الوصف</label>
+      <textarea id="modalDesc" rows="6" class="form-field"></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="saveBtn" class="btn primary">💾 حفظ</button>
+        <button id="deleteBtn" class="btn ghost">🗑 حذف</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#052035;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(5,32,53,0.18);z-index:200;display:none">Toast</div>
+
+<script>
+// Enhanced Control-modern: added dashboard with sender counts, categories & locations percentages
+const STORAGE_KEY = 'eldelala_admin_modern_v1';
+const grid = document.getElementById('grid');
+const searchEl = document.getElementById('search');
+const dashToggle = document.getElementById('dashToggle');
+const statsPanel = document.getElementById('statsPanel');
+const sendersList = document.getElementById('sendersList');
+const catList = document.getElementById('catList');
+const locList = document.getElementById('locList');
+const summaryTable = document.getElementById('summaryTable').querySelector('tbody');
+const exportAllBtn = document.getElementById('exportAllBtn');
+const importJsonBtn = document.getElementById('importJsonBtn');
+const jsonInput = document.getElementById('jsonInput');
+
+// modal refs
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modalImg');
+const modalRef = document.getElementById('modalRef');
+const modalTitle = document.getElementById('modalTitle');
+const modalRefInput = document.getElementById('modalRefInput');
+const modalCategory = document.getElementById('modalCategory');
+const modalLocation = document.getElementById('modalLocation');
+const modalPrice = document.getElementById('modalPrice');
+const modalPhone = document.getElementById('modalPhone');
+const modalDesc = document.getElementById('modalDesc');
+const closeModal = document.getElementById('closeModal');
+const saveBtn = document.getElementById('saveBtn');
+const deleteBtn = document.getElementById('deleteBtn');
+
+let ads = [];
+let selectedId = null;
+
+function showToast(msg,ms=1800){ const t=document.getElementById('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',ms); }
+function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
+function esc(s){ return String(s||'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+
+function normalize(raw){
+  return {
+    id: raw.id || uid(),
+    ref: raw.ref_code || raw.ref || raw.code || raw.id || '',
+    title: raw.name || raw.title || raw.headline || raw.fileName || '',
+    category: raw.category || raw.cat || raw.type || '',
+    location: raw.location || raw.city || raw.area || '',
+    price: raw.price || raw.p || '',
+    phone: raw.contact || raw.phone || raw.tel || '',
+    description: raw.description || raw.desc || raw.body || '',
+    created_at: raw.created_at || new Date().toISOString(),
+    imageDataUrl: raw.image || raw.thumb || raw.imageDataUrl || raw._blobUrl || '',
+    _hasPayload: !!(raw && (raw.ref || raw.title || raw.price || raw.description))
+  };
+}
+
+function renderGrid(){ grid.innerHTML=''; const q=(searchEl.value||'').trim().toLowerCase(); const list = ads.filter(a=>{ if(!q) return true; return (a.ref+' '+a.title+' '+a.category+' '+a.location+' '+(a.phone||'')+' '+a.description).toLowerCase().includes(q); }); if(!list.length){ grid.innerHTML='<div style="padding:30px;border-radius:12px;text-align:center;color:#6b7280">لا توجد نتائج</div>'; return; }
+  list.forEach(a=>{ const el=document.createElement('article'); el.className='card'; el.innerHTML=`<div style="height:140px;overflow:hidden;border-radius:8px">${a.imageDataUrl?`<img src="${a.imageDataUrl}" style="width:100%;height:140px;object-fit:cover">`:'<div style="height:140px;display:grid;place-items:center;background:#f6fbff;color:#9aa4b2">لا توجد صورة</div>'}</div><div style="padding-top:8px"><div style="font-weight:800">${esc(a.title||a.ref||a.id)}</div><div class="small">${esc(a.category||'غير محدد')} · ${esc(a.location||'غير معروف')}</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px"><div class="small">${esc(a.price||'-')}</div><div><button class="btn ghost" data-act="open" data-id="${a.id}">🔎</button></div></div></div>`; el.querySelector('[data-act="open"]').addEventListener('click', ()=> openModal(a.id)); el.addEventListener('click', (e)=>{ if(e.target.closest('button')) return; openModal(a.id); }); grid.appendChild(el); }); }
+
+function openModal(id){ const a = ads.find(x=>x.id===id); if(!a) return; selectedId=id; modalRef.textContent = a.ref || a.id; modalImg.src = a.imageDataUrl || ''; modalTitle.value = a.title; modalRefInput.value = a.ref || ''; modalCategory.value = a.category || ''; modalLocation.value = a.location || ''; modalPrice.value = a.price || ''; modalPhone.value = a.phone || ''; modalDesc.value = a.description || ''; modal.classList.add('open'); }
+closeModal.addEventListener('click', ()=>{ modal.classList.remove('open'); selectedId=null; });
+saveBtn.addEventListener('click', ()=>{ if(!selectedId) return; const idx=ads.findIndex(x=>x.id===selectedId); if(idx<0) return; ads[idx].title = modalTitle.value.trim(); ads[idx].ref = modalRefInput.value.trim(); ads[idx].category = modalCategory.value.trim(); ads[idx].location = modalLocation.value.trim(); ads[idx].price = modalPrice.value.trim(); ads[idx].phone = modalPhone.value.trim(); ads[idx].description = modalDesc.value.trim(); saveToLocal(); renderGrid(); computeStats(); showToast('تم الحفظ'); modal.classList.remove('open'); selectedId=null; });
+deleteBtn.addEventListener('click', ()=>{ if(!selectedId) return; if(!confirm('تأكيد حذف العنصر؟')) return; const idx=ads.findIndex(x=>x.id===selectedId); if(idx>=0) ads.splice(idx,1); saveToLocal(); renderGrid(); computeStats(); showToast('تم الحذف'); modal.classList.remove('open'); selectedId=null; });
+
+function saveToLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(ads)); exportAllBtn.disabled = ads.length===0; }
+function loadFromLocal(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw) ads = JSON.parse(raw); }catch(e){ ads=[]; } renderGrid(); computeStats(); }
+
+// compute stats: senders (by phone), count & last date; categories %; locations %
+function computeStats(){ // senders: group by phone
+  const byPhone = {}; const byCat = {}; const byLoc = {};
+  ads.forEach(a=>{ const phone = a.phone || '(غير معلوم)'; if(!byPhone[phone]) byPhone[phone] = {count:0, last:null}; byPhone[phone].count++; const d = new Date(a.created_at).toISOString(); if(!byPhone[phone].last || byPhone[phone].last < d) byPhone[phone].last = d; const c = a.category || 'غير محدد'; byCat[c] = (byCat[c]||0)+1; const l = a.location || 'غير معروف'; byLoc[l] = (byLoc[l]||0)+1; });
+  // render senders
+  sendersList.innerHTML=''; const phones = Object.keys(byPhone).sort((x,y)=>byPhone[y].count-byPhone[x].count);
+  phones.forEach(p=>{ const row=document.createElement('div'); row.className='stat-item'; row.innerHTML = `<div><strong>${esc(p)}</strong><div class="small">${byPhone[p].count} إعلان · آخر: ${new Date(byPhone[p].last).toLocaleString()}</div></div><div style="text-align:right"><div style="font-weight:800">${byPhone[p].count}</div></div>`; sendersList.appendChild(row); });
+  // categories
+  catList.innerHTML=''; const total = ads.length || 1; Object.keys(byCat).sort((a,b)=>byCat[b]-byCat[a]).forEach(k=>{ const pct = Math.round((byCat[k]/total)*100); const item=document.createElement('div'); item.className='stat-item'; item.innerHTML = `<div>${esc(k)}</div><div style="width:140px"><div class="pbar"><i style="width:${pct}%"></i></div><div class="small" style="text-align:right">${pct}%</div></div>`; catList.appendChild(item); });
+  // locations
+  locList.innerHTML=''; Object.keys(byLoc).sort((a,b)=>byLoc[b]-byLoc[a]).forEach(k=>{ const pct = Math.round((byLoc[k]/total)*100); const item=document.createElement('div'); item.className='stat-item'; item.innerHTML = `<div>${esc(k)}</div><div style="width:140px"><div class="pbar"><i style="width:${pct}%"></i></div><div class="small" style="text-align:right">${pct}%</div></div>`; locList.appendChild(item); });
+  // summary table
+  summaryTable.innerHTML = '';
+  addSummaryRow('إجمالي الإعلانات', total);
+  addSummaryRow('تعداد المرسلين (مميز)', Object.keys(byPhone).length);
+  addSummaryRow('تصنيفات فريدة', Object.keys(byCat).length);
+  addSummaryRow('مواقع فريدة', Object.keys(byLoc).length);
+}
+function addSummaryRow(k,v){ const tr = document.createElement('tr'); tr.innerHTML = `<td>${esc(k)}</td><td>${esc(v)}</td>`; summaryTable.appendChild(tr); }
+
+// import JSON
+importJsonBtn.addEventListener('click', ()=> jsonInput.click());
+jsonInput.addEventListener('change', async ()=>{ const f = jsonInput.files[0]; if(!f) return; try{ const txt = await f.text(); const data = JSON.parse(txt); const arr = Array.isArray(data)?data:(data&&data.ads?data.ads:[data]); for(const r of arr) ads.unshift(normalize(r)); saveToLocal(); renderGrid(); computeStats(); showToast('تم استيراد JSON'); }catch(e){ showToast('خطأ بقراءة JSON'); } });
+
+// export
+exportAllBtn.addEventListener('click', ()=>{ const blob = new Blob([JSON.stringify(ads,null,2)],{type:'application/json'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ads.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast('تم التصدير'); });
+
+// dashboard toggle
+dashToggle.addEventListener('click', ()=>{ statsPanel.style.display = statsPanel.style.display==='none' ? 'block' : 'none'; if(statsPanel.style.display==='block') computeStats(); });
+
+// open file input and scanning (reuse marker extraction)
+const MARKER = 'ELDELALA_PAYLOAD:';
+const markerBytes = new TextEncoder().encode(MARKER);
+function findLastMarkerIndex(bytes, marker){ if(marker.length === 0 || bytes.length < marker.length) return -1; for(let i = bytes.length - marker.length; i >= 0; i--){ let ok=true; for(let j=0;j<marker.length;j++){ if(bytes[i+j] !== marker[j]){ ok=false; break; } } if(ok) return i; } return -1; }
+function extractBase64FromBytes(bytes, start){ let s=''; for(let i=start;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); const m = s.match(/^[A-Za-z0-9+/=\r\n]+/); return m ? m[0].replace(/\s+/g,'') : ''; }
+function base64ToUtf8(b64){ try{ const bin = atob(b64); const u8 = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u8); }catch(e){ try{ return atob(b64); }catch(_){ return null; } } }
+
+async function handleFile(file){ try{ const buf = await file.arrayBuffer(); const raw = new Uint8Array(buf); const pos = findLastMarkerIndex(raw, markerBytes); let payload = null; if(pos >= 0){ const start = pos + markerBytes.length; const b64 = extractBase64FromBytes(raw,start); if(b64){ try{ const txt = base64ToUtf8(b64); payload = JSON.parse(txt); }catch(e){} } } else { const textTail = new TextDecoder().decode(raw.slice(Math.max(0, raw.length - 4000))); const m = textTail.match(/data:application\/json;base64,([A-Za-z0-9+/=\r\n]+)/); if(m){ try{ payload = JSON.parse(atob(m[1])); }catch(_){} } }
+  const blobUrl = URL.createObjectURL(new Blob([raw],{type:file.type||'image/jpeg'})); let n; if(payload){ n = normalize(payload); n.imageDataUrl = payload.image && payload.image.startsWith('data:') ? payload.image : blobUrl; n._hasPayload = true; n._fileName = file.name; } else { n = normalize({ id: uid(), title: file.name, description:'', created_at:new Date().toISOString(), _blobUrl:blobUrl, fileName:file.name }); n._hasPayload = false; } ads.unshift(n); }catch(e){ console.error(e); showToast('خطأ أثناء قراءة الملف'); } }
+
+async function scanList(files){ const arr = Array.from(files||[]); if(!arr.length) return showToast('لم يتم اختيار ملفات'); showToast('جارٍ الفحص...'); for(let i=0;i<arr.length;i++){ await handleFile(arr[i]); } saveToLocal(); renderGrid(); computeStats(); showToast('انتهى الفحص'); }
+
+// dropzone wiring
+const fileInputEl = document.getElementById('fileInput');
+const dropzone = fileInputEl ? document.getElementById('fileInput').parentNode : null;
+if(dropzone){ /* keep original choose button behavior handled elsewhere */ }
+
+// search
+searchEl.addEventListener('input', ()=> renderGrid());
+
+// init
+window.addEventListener('load', ()=> loadFromLocal());
+</script>
+</body>
+</html>
