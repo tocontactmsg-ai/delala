@@ -245,7 +245,7 @@ function renderGrid(list){
   });
   countEl.textContent = list.length + ' إعلان';
 }
-<script>
+
 /* --- تحميل ads.json وتحويله إلى الشكل المتوقع --- */
 async function loadLocalAds(){
   try{
@@ -300,7 +300,7 @@ async function loadLocalAds(){
 window.addEventListener('load', ()=> {
   loadLocalAds();
 });
-</script>
+
 
 /* Open details modal */
 const modal = document.getElementById('modal');
