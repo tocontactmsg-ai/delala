@@ -245,6 +245,62 @@ function renderGrid(list){
   });
   countEl.textContent = list.length + ' إعلان';
 }
+<script>
+/* --- تحميل ads.json وتحويله إلى الشكل المتوقع --- */
+async function loadLocalAds(){
+  try{
+    // مسار الملف — إن كانت الصفحة على نفس المجلد: './ads.json'
+    const resp = await fetch('./ads.json', {cache: "no-cache"});
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
+    const raw = await resp.json();
+
+    // raw قد يكون مصفوفة أو كائن؛ نتوقع مصفوفة
+    const arr = Array.isArray(raw) ? raw : (raw.items || []);
+    // حوّل الحقول إلى النموذج الذي يستخدمه تطبيقك
+    ads = arr.map(it => {
+      return {
+        ref_code: it.ref || it.id || it.ref_code || '',
+        name: it.title || it.name || it.ad_title || '',
+        price: it.price || it.amount || '',
+        description: it.description || it.desc || '',
+        location: it.location || it.city || '',
+        contact: it.phone || it.contact || it.phoneNumber || '',
+        category: it.category || it.cat || 'عام',
+        // إذا توجد صورة مخزنة كـ dataUrl أو blob URL
+        thumb: it.thumb || it.imageDataUrl || it.image || '',
+        // احتفظ باسم الملف إن وُجد
+        _fileName: it._fileName || ''
+      };
+    });
+
+    // تمّ التحميل — اعرضها
+    renderGrid(ads);
+
+    // املأ قائمة الاقسام (فلتر) تلقائياً
+    const cats = [...new Set(ads.map(a => a.category || 'عام'))];
+    catFilter.innerHTML = '<option value="">كل الاقسام</option>' + cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+
+    // cap: لو أردت تحميل إعلان مع علامة #ad-REF في التحميل الحالي
+    const hash = location.hash.replace('#','');
+    if(hash.startsWith('ad-')){
+      const ref = hash.slice(3);
+      const found = ads.find(x => x.ref_code === ref);
+      if(found) openDetails(found);
+    }
+
+  }catch(err){
+    console.warn('تعذر تحميل ads.json:', err);
+    // أظهر رسالة للمستخدم
+    document.getElementById('noitems').style.display='block';
+    countEl.textContent = 'خطأ في تحميل الإعلانات';
+  }
+}
+
+// استدعى التحميل بعد إعداد الصفحة
+window.addEventListener('load', ()=> {
+  loadLocalAds();
+});
+</script>
 
 /* Open details modal */
 const modal = document.getElementById('modal');
