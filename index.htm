@@ -31,7 +31,7 @@
   .meta{display:flex;gap:8px;align-items:center;margin-top:auto;flex-wrap:wrap}
   .badge{background:#eef8ff;color:#0078d7;padding:6px 8px;border-radius:999px;font-weight:700}
   .small{font-size:13px;color:#333}
-  /* Modal improvements */
+
   .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:999}
   .modal.open{display:flex}
   .modalCard{background:#fff;border-radius:12px;max-width:920px;width:96%;max-height:92vh;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
@@ -74,14 +74,13 @@
   </div>
 
   <main>
-    <!-- HOME: ads grid -->
+  
     <section id="home" aria-live="polite">
       <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
       <div id="noitems" style="display:none;text-align:center;margin-top:12px" class="small">لا توجد إعلانات</div>
       <button id="loadMore" class="loadMore" style="display:none">عرض المزيد</button>
     </section>
 
-    <!-- SEND: ad form (unchanged) -->
     <section id="send" style="display:none">
       <div class="panel">
         <h2>لتقديم طلب موافقة علي اعلان : </h2>
@@ -119,7 +118,7 @@
       </div>
     </section>
 
-    <!-- PRIVACY -->
+   
     <section id="privacy" style="display:none">
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
@@ -131,7 +130,7 @@
   </main>
 </div>
 
-<!-- Modal -->
+
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modalCard" role="document" aria-labelledby="modalTitle">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
@@ -149,10 +148,10 @@
     </div>
 
     <div class="modalTop">
-      <!-- modalMedia: we keep only the main image element; thumbnails removed/hidden -->
+   
       <div class="modalMedia" id="modalMedia">
         <img id="modalMainImg" src="" alt="صورة الإعلان" style="display:none" />
-        <!-- thumbnails intentionally removed to avoid the tiny preview -->
+    
       </div>
 
       <div class="modalBody">
@@ -247,7 +246,7 @@ const modalClose = document.getElementById('modalClose');
 
 modalClose.addEventListener('click', ()=>{ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
 
-/* OPEN DETAILS - simplified: DO NOT create thumbnails or small previews */
+
 function openDetails(item){
   modalTitle.textContent = item.name || 'بدون عنوان';
   modalMeta.textContent = `رمز: ${item.ref_code||''}`;
@@ -258,7 +257,7 @@ function openDetails(item){
   modalPrice.textContent = item.price || '-';
   modalContact.textContent = item.contact || '-';
 
-  // Show main image only if present. Do NOT show small thumbnail strip.
+
   if(item._blobUrl){
     modalMainImg.src = item._blobUrl;
     modalMainImg.style.display = 'block';
@@ -266,19 +265,18 @@ function openDetails(item){
     modalMainImg.src = item.thumb;
     modalMainImg.style.display = 'block';
   } else {
-    // No image: hide the image element entirely to avoid the small box
+   
     modalMainImg.src = '';
     modalMainImg.style.display = 'none';
   }
 
-  // contact / call
+
   if(item.contact && item.contact.trim()){
     modalCall.style.display = 'inline-block';
     const phoneDigits = (item.contact.match(/[+0-9][0-9() \\-]{4,}/) || [])[0] || item.contact;
     modalCall.href = 'tel:' + phoneDigits.replace(/\s+/g,'').replace(/[^+0-9]/g,'');
   } else modalCall.style.display = 'none';
 
-  // Download card if present
   if(window.lastEmbeddedBlob && window.lastRef === (item.ref_code||'')){
     modalDownloadCard.style.display = 'inline-block';
     modalDownloadCard.onclick = function(e){
@@ -302,13 +300,12 @@ function openDetails(item){
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
 }
 
-/* Filters + sorting */
+
 function applyFiltersAndRender(){
   const q = (qEl && qEl.value || '').trim().toLowerCase();
   const cat = (catFilter && catFilter.value || '').trim();
   let out = ads.slice();
 
-  // filter by category if selected
   if(cat){
     out = out.filter(a => (a.category||'').toString() === cat);
   }
@@ -321,7 +318,7 @@ function applyFiltersAndRender(){
     });
   }
 
-  // Sort: primary by category (alphabetical), secondary by name (alphabetical)
+  
   out.sort((A,B) => {
     const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
     if(aCat !== 0) return aCat;
@@ -331,12 +328,10 @@ function applyFiltersAndRender(){
   renderGrid(out);
 }
 
-/* Minimal load: show empty grid initially */
+
 renderGrid([]);
 
-/* ----------------- helper functions for images, canvas, QR (unchanged, left intact) ----------------- */
-/* ... keep the existing image/canvas/embed helper functions from your original file ... */
-/* For brevity here we keep your functions unchanged: downscalePngBlob, embedJsonInImageBlob, etc. */
+
 
 async function jsonToBase64String(obj){
   const json = JSON.stringify(obj);
@@ -371,12 +366,11 @@ async function downscalePngBlob(blob, maxW=900, maxH=600){
   return await new Promise(res=>c.toBlob(res, 'image/png'));
 }
 
-/* buildVisualAndDataURL - keep as in your file or the earlier adjusted one - not modified here for brevity */
+
 async function buildVisualAndDataURL(file, data = {}, opts = { compact: true }) {
   // simplified wrapper that returns a placeholder image if building fails
   try{
-    // (your existing implementation was long; assuming it's present unchanged)
-    // For safety, draw a simple placeholder if file missing:
+
     const W = 900, H = 600;
     const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     const ctx = cv.getContext('2d');
@@ -396,7 +390,7 @@ async function buildVisualAndDataURL(file, data = {}, opts = { compact: true }) 
   }
 }
 
-/* ---------------- Submission handler (card generation) ---------------- */
+
 (function(){
   const submitBtn = document.getElementById('submitBtn');
   const submitStatus = document.getElementById('submitStatus');
@@ -503,7 +497,7 @@ async function buildVisualAndDataURL(file, data = {}, opts = { compact: true }) 
   });
 })();
 
-/* ---------------- Load ads JSON and wire filters ---------------- */
+
 async function loadAdsJson(){
   try{
     const r = await fetch('./ads.json', {cache:'no-cache'});
@@ -525,7 +519,6 @@ async function loadAdsJson(){
       };
     });
 
-    // populate category filter (unique + sorted using localeCompare)
     try{
       const cats = [...new Set(ads.map(a=>a.category||'عام'))];
       cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
@@ -533,7 +526,6 @@ async function loadAdsJson(){
       if(cf) cf.innerHTML = '<option value="">كل الاقسام</option>' + cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
     }catch(e){ console.warn('category populate', e); }
 
-    // ensure filter handlers exist
     if(qEl){
       qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(), 220));
     }
@@ -543,7 +535,7 @@ async function loadAdsJson(){
     const refresh = document.getElementById('refresh');
     if(refresh) refresh.addEventListener('click', ()=>{ loadAdsJson(); });
 
-    // initial render with filters applied
+
     applyFiltersAndRender();
   }catch(err){
     console.error('loadAdsJson failed', err);
