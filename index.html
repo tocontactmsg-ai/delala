@@ -4,6 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>الدلالة — إعلانات</title>
+
+<!-- تقليل الكاش قدر الإمكان -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
@@ -139,7 +145,7 @@
               <div class="small">لم يتم إنشاء بطاقة PNG، لكن يمكنك استخدام رمز الإعلان وبياناته.</div>
             </div>
             <div id="previewCard" class="subCard" style="display:none">
-              <div class="small" style="margin-bottom:6px">معاينة البطاقة (يظهر فيها رمز الإعلان بشكل واضح):</div>
+              <div class="small" style="margin-bottom:6px">معاينة البطاقة (الصورة + الرمز + العبارة):</div>
               <div id="previewCanvasWrap"></div>
             </div>
           </div>
@@ -205,12 +211,12 @@
 </div>
 
 <script>
-/*** إعداد GitHub + cache buster ***/
+/*** GitHub + cache buster ***/
 const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'delala';
 const GITHUB_BRANCH = 'main';
 const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.0.0'; // غيّر الرقم لما تعدّل الكود بقوة
+const CACHE_BUSTER  = 'v1.0.0';
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
@@ -349,7 +355,7 @@ async function openDetails(item){
   modal.setAttribute('aria-hidden','false');
 }
 
-/* تحميل الإعلانات من GitHub API */
+/* تحميل الإعلانات من GitHub */
 async function loadAdsFromGithub(){
   const noItemsEl = document.getElementById('noitems');
   try{
@@ -420,11 +426,7 @@ async function loadAdsFromGithub(){
   }
 }
 
-qEl && qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(),220));
-catFilter && catFilter.addEventListener('change', ()=>applyFiltersAndRender());
-document.getElementById('refresh').addEventListener('click', loadAdsFromGithub);
-
-/* ===== كود صناعة كرت PNG مع ref كبير + تضمين JSON ===== */
+/* ===== كود صناعة كرت PNG: صورة + ref + "نشكرك علي استخدامك موقع الدلالة" ===== */
 
 const MARKER = 'ELDELALA_PAYLOAD:';
 
@@ -494,15 +496,15 @@ async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.
   return c.toDataURL('image/webp', quality);
 }
 
-/* صورة افتراضية لو ما في صورة مرفوعة */
+/* صورة افتراضية لو ما في صورة */
 async function createPlaceholderImageBlob(){
   const c = document.createElement('canvas');
   c.width = 900;
-  c.height = 600;
+  c.height = 900;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#0b84ff';
+  ctx.fillStyle = '#e5f0ff';
   ctx.fillRect(0,0,c.width,c.height);
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#111827';
   ctx.font = 'bold 40px Tajawal, sans-serif';
   ctx.textAlign = 'center';
   ctx.fillText('الدلالة', c.width/2, c.height/2 - 10);
@@ -512,7 +514,7 @@ async function createPlaceholderImageBlob(){
   return dataUrlToBlob(dataURL);
 }
 
-/* تحويل canvas إلى PNG Blob بطريقة متوافقة */
+/* تحويل canvas إلى PNG Blob */
 function canvasToPngBlob(canvas){
   return new Promise((resolve,reject)=>{
     if(canvas.toBlob){
@@ -528,7 +530,7 @@ function canvasToPngBlob(canvas){
   });
 }
 
-/* صناعة كرت PNG فيه ref كبير وواضح */
+/* كرت PNG بسيط: صورة + ref + عبارة شكر */
 async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   const baseDataUrl = await fileOrBlobToDataUrl(fileOrBlob);
   const img = await new Promise((resolve,reject)=>{
@@ -539,88 +541,81 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   });
 
   const W = 900;
-  const H = 1200;
+  const H = 1100;
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // خلفية
-  ctx.fillStyle = '#ffffff';
+  // خلفية بسيطة
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#f5f8ff');
+  grad.addColorStop(1,'#e8f5ff');
+  ctx.fillStyle = grad;
   ctx.fillRect(0,0,W,H);
 
-  // هيدر
-  const headerH = 120;
-  const grad = ctx.createLinearGradient(0,0,W,0);
-  grad.addColorStop(0,'#0078d7');
-  grad.addColorStop(1,'#00c2a8');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,W,headerH);
-
+  // إطار أبيض وسط الصفحة
+  const cardX = 60;
+  const cardY = 60;
+  const cardW = W - 120;
+  const cardH = H - 120;
   ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 42px Tajawal, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('الدلالة', W/2, 55);
-  ctx.font = '20px Tajawal, sans-serif';
-  ctx.fillText('إعلان موثق برقم مرجعي', W/2, 90);
+  ctx.beginPath();
+  const r = 30;
+  ctx.moveTo(cardX+r, cardY);
+  ctx.lineTo(cardX+cardW-r, cardY);
+  ctx.quadraticCurveTo(cardX+cardW, cardY, cardX+cardW, cardY+r);
+  ctx.lineTo(cardX+cardW, cardY+cardH-r);
+  ctx.quadraticCurveTo(cardX+cardW, cardY+cardH, cardX+cardW-r, cardY+cardH);
+  ctx.lineTo(cardX+r, cardY+cardH);
+  ctx.quadraticCurveTo(cardX, cardY+cardH, cardX, cardY+cardH-r);
+  ctx.lineTo(cardX, cardY+r);
+  ctx.quadraticCurveTo(cardX, cardY, cardX+r, cardY);
+  ctx.closePath();
+  ctx.fill();
 
-  // صورة الإعلان داخل إطار
-  const imgX = 60;
-  const imgY = headerH + 20;
-  const imgW = W - 120;
-  const imgH = 500;
-  const ratio = Math.min(imgW / img.width, imgH / img.height);
+  // صورة الإعلان في أعلى الكرت
+  const imgMargin = 40;
+  const imgAreaX = cardX + imgMargin;
+  const imgAreaY = cardY + imgMargin;
+  const imgAreaW = cardW - imgMargin*2;
+  const imgAreaH = 550;
+
+  const ratio = Math.min(imgAreaW / img.width, imgAreaH / img.height);
   const drawW = img.width * ratio;
   const drawH = img.height * ratio;
-  const dx = imgX + (imgW - drawW)/2;
-  const dy = imgY + (imgH - drawH)/2;
+  const dx = imgAreaX + (imgAreaW - drawW)/2;
+  const dy = imgAreaY + (imgAreaH - drawH)/2;
 
-  ctx.fillStyle = '#e5f0ff';
-  ctx.roundRect ? ctx.roundRect(imgX, imgY, imgW, imgH, 24) : ctx.fillRect(imgX, imgY, imgW, imgH);
-  if(ctx.roundRect) ctx.fill();
   ctx.save();
-  if(ctx.roundRect){
-    ctx.clip();
-    ctx.drawImage(img, dx, dy, drawW, drawH);
-  }else{
-    ctx.drawImage(img, dx, dy, drawW, drawH);
-  }
+  ctx.beginPath();
+  const ir = 26;
+  ctx.moveTo(imgAreaX+ir, imgAreaY);
+  ctx.lineTo(imgAreaX+imgAreaW-ir, imgAreaY);
+  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY, imgAreaX+imgAreaW, imgAreaY+ir);
+  ctx.lineTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH-ir);
+  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH, imgAreaX+imgAreaW-ir, imgAreaY+imgAreaH);
+  ctx.lineTo(imgAreaX+ir, imgAreaY+imgAreaH);
+  ctx.quadraticCurveTo(imgAreaX, imgAreaY+imgAreaH, imgAreaX, imgAreaY+imgAreaH-ir);
+  ctx.lineTo(imgAreaX, imgAreaY+ir);
+  ctx.quadraticCurveTo(imgAreaX, imgAreaY, imgAreaX+ir, imgAreaY);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(img, dx, dy, drawW, drawH);
   ctx.restore();
 
-  // نصوص الإعلان الأساسية
-  const baseY = imgY + imgH + 40;
-  ctx.fillStyle = '#111827';
-  ctx.textAlign = 'right';
-  ctx.font = 'bold 28px Tajawal, sans-serif';
-  ctx.fillText(payload.name || 'إعلان', W-60, baseY);
-
-  ctx.font = '20px Tajawal, sans-serif';
-  ctx.fillStyle = '#374151';
-  const desc = (payload.description || '').substring(0,120);
-  ctx.fillText(desc, W-60, baseY + 34);
-
-  ctx.font = 'bold 24px Tajawal, sans-serif';
-  ctx.fillStyle = '#047857';
-  ctx.fillText(payload.price || '', W-60, baseY + 80);
-
-  ctx.font = '18px Tajawal, sans-serif';
-  ctx.fillStyle = '#4b5563';
-  ctx.fillText(payload.location || '', W-60, baseY + 110);
-
-  // مستطيل كبير للـ ref في الأسفل
-  const refBoxH = 120;
-  const refY = H - refBoxH - 40;
-  ctx.fillStyle = '#0b84ff';
-  ctx.roundRect ? ctx.roundRect(80, refY, W-160, refBoxH, 28) : ctx.fillRect(80, refY, W-160, refBoxH);
-  if(ctx.roundRect) ctx.fill();
-
-  ctx.fillStyle = '#ffffff';
+  // ref code كبير تحت الصورة
+  const refText = payload.ref_code || '';
   ctx.textAlign = 'center';
-  ctx.font = '20px Tajawal, sans-serif';
-  ctx.fillText('رمز الإعلان', W/2, refY + 32);
 
-  ctx.font = 'bold 56px Tajawal, sans-serif';
-  ctx.fillText(payload.ref_code || '', W/2, refY + 86);
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 52px Tajawal, sans-serif';
+  ctx.fillText(refText, W/2, imgAreaY + imgAreaH + 120);
+
+  // عبارة الشكر تحتها
+  ctx.fillStyle = '#4b5563';
+  ctx.font = '24px Tajawal, sans-serif';
+  ctx.fillText('نشكرك علي استخدامك موقع الدلالة', W/2, imgAreaY + imgAreaH + 170);
 
   const pngBlob = await canvasToPngBlob(canvas);
   const pngDataUrl = canvas.toDataURL('image/png');
@@ -688,7 +683,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         image: ''
       };
 
-      // تجهيز الصورة (إن لم تُرفع، نستخدم placeholder)
+      // تجهيز الصورة
       let fileOrBlob;
       if(f_file.files && f_file.files[0]){
         fileOrBlob = f_file.files[0];
@@ -696,7 +691,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         fileOrBlob = await createPlaceholderImageBlob();
       }
 
-      // صورة WEBP داخل JSON لتقليل الحجم في الإعلانات
+      // تخزين WEBP داخل JSON
       try{
         const webpDataUrl = await imageFileToWebpDataUrl(fileOrBlob, 900, 900, 0.8);
         payload.image = webpDataUrl;
@@ -705,7 +700,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         payload.image = '';
       }
 
-      // إنشاء كرت PNG جميل مع ref كبير
+      // إنشاء الكرت
       let card;
       try{
         card = await createCardPngFromImageFileOrBlob(fileOrBlob, payload);
@@ -727,7 +722,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         document.getElementById('previewCard').style.display='none';
       }
 
-      // تضمين JSON داخل PNG (لو نجح إنشاء الكرت)
+      // تضمين JSON داخل PNG
       if(card && card.blob){
         try{
           const embedded = await embedJsonInImageBlob(card.blob, payload);
@@ -762,7 +757,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         fallbackBox.style.display = 'block';
       }
 
-      showStatus('تم إنشاء الإعلان. يمكنك تحميل البطاقة واستخدام رمز الإعلان.', false);
+      showStatus('تم إنشاء البطاقة. يمكنك تحميلها الآن.', false);
     }catch(err){
       console.error(err);
       showStatus('حدث خطأ أثناء الإنشاء (تفاصيل في Console).', true);
