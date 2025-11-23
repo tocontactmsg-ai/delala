@@ -349,16 +349,32 @@ async function openDetails(item){
 
 /* تحميل الإعلانات من GitHub API مباشرة */
 async function loadAdsFromGithub(){
+  const ni = document.getElementById('noitems');
   try{
     const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
+    console.log('Fetching ads from:', contentsUrl);
+
     const res = await fetch(contentsUrl);
-    if(!res.ok) throw new Error('HTTP '+res.status);
+    if(!res.ok){
+      // نطبع تفاصيل الخطأ في الكونسول وعلى الشاشة
+      const txt = await res.text();
+      console.error('GitHub API error:', res.status, txt);
+      if(ni){
+        ni.style.display='block';
+        ni.innerHTML =
+          'خطأ من GitHub API:<br>' +
+          'status: ' + res.status + '<br>' +
+          '<small>' + escapeHtml(txt.slice(0,200)) + '</small>';
+      }
+      if(countEl) countEl.textContent = '0 إعلان';
+      return;
+    }
+
     const files = await res.json();
 
     const jsonFiles = files.filter(f =>
       f.type === 'file' &&
-      f.name.toLowerCase().endsWith('.json') &&
-      f.name.toLowerCase() !== 'list.json'
+      f.name.toLowerCase().endsWith('.json')
     );
 
     const loaded = [];
@@ -366,7 +382,10 @@ async function loadAdsFromGithub(){
       try{
         const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
         const r2 = await fetch(rawUrl);
-        if(!r2.ok) continue;
+        if(!r2.ok){
+          console.warn('raw fetch failed for', f.name, r2.status);
+          continue;
+        }
         const data = await r2.json();
         const ad = {
           ref_code: data.ref_code || data.ref || f.name.replace(/\.json$/i,''),
@@ -393,6 +412,29 @@ async function loadAdsFromGithub(){
       if(ccmp !== 0) return ccmp;
       return (a.name || '').toString().localeCompare((b.name || '').toString(), 'ar');
     });
+
+    // تعبئة الفلاتر
+    try{
+      const cats = [...new Set(ads.map(a=>a.category||'عام'))];
+      cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
+      const cf = document.getElementById('catFilter');
+      if(cf){
+        cf.innerHTML = '<option value="">كل الاقسام</option>' +
+          cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      }
+    }catch(e){ console.warn('category populate', e); }
+
+    applyFiltersAndRender();
+  }catch(err){
+    console.error('loadAdsFromGithub catch error:', err);
+    if(ni){
+      ni.style.display='block';
+      ni.textContent =
+        'تعذر تحميل الإعلانات (خطأ في الاتصال أو في GitHub API). راجع الكونسول في المتصفح لمعرفة التفاصيل.';
+    }
+    if(countEl) countEl.textContent = '0 إعلان';
+  }
+}
 
     // تصنيف الأقسام
     try{
