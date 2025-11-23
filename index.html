@@ -4,141 +4,114 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>الدلالة — إعلانات</title>
-<meta name="description" content="موقع الدلالة لعرض الإعلانات المبوبة: عقارات، سيارات، موبايلات وغيرها.">
-<meta name="robots" content="index,follow">
-<meta property="og:title" content="الدلالة — إعلانات مبوبة">
-<meta property="og:description" content="تصفح أحدث الإعلانات المبوبة في السودان: عقارات، سيارات، موبايلات وأكثر.">
-<meta property="og:type" content="website">
-
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
   body{margin:0;background:#f7fbff;color:#0b1320;line-height:1.4}
   .container{max-width:1100px;margin:16px auto;padding:12px}
-  header{background:#0078d7;color:#fff;padding:12px;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-  .brand{display:flex;align-items:center;gap:8px}.brand .title{font-size:24px;font-weight:900}.logoCircle{width:32px;height:32px;border-radius:999px;background:#fff;color:#0078d7;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;box-shadow:0 2px 6px rgba(15,23,42,0.2);margin-inline-start:4px}
-  nav{display:flex;gap:8px;flex-wrap:wrap}
-  nav button{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;cursor:pointer}
-  nav button[aria-current="true"]{background:#fff;color:#0078d7;border:0}
+  header{background:#0078d7;color:#fff;padding:12px;border-radius:14px;box-shadow:0 12px 40px rgba(0,120,215,0.35);margin-bottom:16px}
+  header .brand{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .brand .title{font-size:24px;font-weight:900}
+  nav[aria-label="واجهة"]{display:flex;gap:8px;flex-wrap:wrap}
+  nav[aria-label="واجهة"] button{
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.4);
+    padding:6px 10px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:13px;
+  }
+  nav[aria-label="واجهة"] button[aria-current="true"]{
+    background:#fff;
+    color:#0078d7;
+    border-color:#fff;
+  }
+
   .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
-  input, textarea, select{padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff}
-  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer}
+  input, textarea, select{
+    padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff
+  }
+  textarea{min-height:80px;resize:vertical}
+  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
   .btn.alt{background:#6b7280}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+
   .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:14px}
   @media (min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
   @media (min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
-  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 26px rgba(11,19,32,0.06);display:flex;flex-direction:column;transition:transform .12s}
-  .card:hover{transform:translateY(-6px)}
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.09);display:flex;flex-direction:column;transition:transform .12s;cursor:pointer}
+  .card:hover{transform:translateY(-4px)}
   .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;position:relative}
   .media img{width:100%;height:100%;object-fit:cover;display:block}
   .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
-  .title{font-weight:700;font-size:17px}
-  .desc{color:#334155;font-size:14px;max-height:3.2em;overflow:hidden;text-overflow:ellipsis}
-  .meta{display:flex;gap:8px;align-items:center;margin-top:auto;flex-wrap:wrap}
-  .badge{background:#eef8ff;color:#0078d7;padding:6px 8px;border-radius:999px;font-weight:700}
-  .small{font-size:13px;color:#333}
+  .title{font-weight:700;font-size:16px}
+  .desc{font-size:13px;color:#4b5563;max-height:3.6em;overflow:hidden}
+  .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280}
+  .badge{background:#eff6ff;color:#1d4ed8;padding:4px 8px;border-radius:999px;font-size:11px}
+  .price{font-weight:700;color:#047857}
+  footer{font-size:12px;color:#6b7280;text-align:center;margin-top:18px}
+  .small{font-size:12px}
+  .muted{color:#6b7280}
+  .panel{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(15,23,42,0.08);margin-top:8px}
+  .subCard{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:10px;margin-top:10px}
+  .refBox{background:#eff6ff;border-radius:10px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .refCode{font-family:monospace;font-size:16px;font-weight:800}
+  .fullDesc{white-space:pre-wrap;font-size:14px;color:#111827}
+  .detailsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+  .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
+  .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
 
-  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:999}
-  .modal.open{display:flex}
-  .modalCard{background:#fff;border-radius:12px;max-width:920px;width:96%;max-height:92vh;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
-  .modalTop{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
-  .modalMedia{width:420px;max-width:100%;min-width:260px;background:#f4f6f9;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:8px}
-  .modalMedia img{width:100%;height:auto;object-fit:contain;border-radius:8px}
-  .thumbRow{display:flex;gap:8px;overflow-x:auto;padding-top:6px}
-  .thumbRow img{width:64px;height:48px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
-  .thumbRow img.selected{border-color:#0b84ff}
-  .modalBody{flex:1;display:flex;flex-direction:column;gap:8px}
-  .detailsList{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .detailsItem{background:#fbfdff;padding:10px;border-radius:8px;border:1px solid #eef6ff}
-  @media(max-width:820px){
-    .modalTop{flex-direction:column}
-    .modalMedia{width:100%}
+  main > section{display:none}
+  main > section.active{display:block}
+
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:999;padding:12px}
+  .modal[aria-hidden="false"]{display:flex}
+  .modalCard{background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,0.5);display:flex;flex-direction:column}
+  .modalMain{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr);gap:12px;padding:12px}
+  .modalImage{background:#020617;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .modalImage img{max-width:100%;max-height:360px;display:block}
+  .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .modalActions{display:flex;gap:8px;flex-wrap:wrap}
+
+  @media(max-width:720px){
+    .modalMain{grid-template-columns:1fr}
+    .modalImage{order:-1}
     .detailsList{grid-template-columns:1fr}
   }
-
-  /* Hide the tiny preview floating artifacts if any */
-  .tiny-preview, img.small-thumb, .thumbRow.small { display:none !important; }
 </style>
-
-<!-- Mobile-cleanup & builder artifact hide -->
-<style>
-/* Strongly hide visual builder artifacts: safe selectors */
-.visual-builder, .vb, .builder-preview, .built-card, .editor-only,
-.tiny-preview, .small-thumb, .thumbRow.small, #previewCard,
-[class*="builder"], [id*="builder"], [class*="visual"], [id*="visual"], .preview-only {
-  display:none !important;
-  visibility:hidden !important;
-  height:0 !important;
-  width:0 !important;
-  overflow:hidden !important;
-}
-
-/* Ensure main grid is mobile-friendly */
-#grid { display:grid !important; gap:12px !important;
-       grid-template-columns: repeat(1, 1fr) !important; }
-@media(min-width:560px){ #grid{ grid-template-columns: repeat(2, 1fr) !important; } }
-@media(min-width:900px){ #grid{ grid-template-columns: repeat(3, 1fr) !important; } }
-
-/* Make cards consistent and touch-friendly */
-.card, .ad-card, .listing-card { border-radius:12px !important; overflow:hidden !important;
-  box-shadow:0 6px 18px rgba(11,19,32,0.06) !important; display:flex !important; flex-direction:column !important;
-  min-height:120px !important; }
-.card .media img, .ad-card .media img { width:100% !important; height:160px !important; object-fit:cover !important; }
-
-/* Prevent downsizing images with CSS (preserve quality) but constrain layout */
-.media img { max-width:100%; height:auto; }
-
-/* Make header/nav responsive if present */
-header, .site-header { display:flex !important; flex-wrap:wrap !important; align-items:center !important; justify-content:space-between !important; gap:8px; }
-.menu-toggle{ display:inline-block !important; }
-
-/* Hide any inline builder toolbar or floating toolbars */
-[class*="toolbar"], .vb-toolbar, .editor-toolbar, .builder-toolbar { display:none !important; }
-
-/* Accessibility */
-button, a { touch-action:manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.06); }
-
-/* If thumbnails are injected multiple times, hide duplicates by attribute */
-img[data-builder-thumb="true"]{ display:none !important; }
-
-/* Avoid downscaling via width attributes on imgs that may be added by builders */
-img[width][height]{ max-width:100% !important; height:auto !important; }
-
-/* Ensure forms stack nicely on mobile */
-form, .panel, .controls { width:100% !important; box-sizing:border-box !important; }
-</style>
-
 </head>
 <body>
 <div class="container" id="app">
   <header>
-    <div class="brand"><div class="logoCircle">دل</div><div class="title">الدلالة</div></div>
-    <nav aria-label="واجهة">
-      <button data-target="home" class="nav-btn" aria-current="true">الرئيسية</button>
-      <button data-target="send" class="nav-btn">أرسل إعلانك</button>
-      <button data-target="privacy" class="nav-btn">سياسة الخصوصية</button>
-    </nav>
+    <div class="brand">
+      <div class="title">الدلالة</div>
+      <nav aria-label="واجهة">
+        <button type="button" class="nav-btn" data-target="home" aria-current="true">الرئيسية</button>
+        <button type="button" class="nav-btn" data-target="send">أرسل إعلانك</button>
+        <button type="button" class="nav-btn" data-target="privacy">سياسة الخصوصية</button>
+      </nav>
+    </div>
   </header>
-  <div class="controls" role="search" aria-label="بحث وتحكم">
+
+  <div class="controls" id="listControls" role="search" aria-label="بحث وتحكم">
     <div style="flex:1;min-width:180px"><input id="q" type="search" placeholder="ابحث بالعنوان أو الرمز أو الموقع"></div>
     <div style="width:200px"><select id="catFilter"><option value="">كل الاقسام</option></select></div>
     <div style="display:flex;gap:8px;align-items:center">
-      <button id="refresh" class="btn alt">⟳ تحديث</button>
+      <button id="refresh" class="btn alt" type="button">⟳ تحديث</button>
       <div id="count" class="small" aria-live="polite">تحميل...</div>
     </div>
   </div>
 
   <main>
-  
-    <section id="home" aria-live="polite">
+    <section id="home" class="active" aria-live="polite">
       <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
       <div id="noitems" style="display:none;text-align:center;margin-top:12px" class="small">لا توجد إعلانات</div>
-      <button id="loadMore" class="loadMore" style="display:none">عرض المزيد</button>
     </section>
 
-    <section id="send" style="display:none">
+    <section id="send">
       <div class="panel">
-        <h2>لتقديم طلب موافقة علي اعلان : </h2>
+        <h2>لتقديم طلب موافقة على إعلان:</h2>
         <div style="display:grid;gap:8px">
           <input id="f_name" placeholder="اسم الإعلان">
           <input id="f_price" placeholder="السعر">
@@ -152,61 +125,62 @@ form, .panel, .controls { width:100% !important; box-sizing:border-box !importan
             <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
           </label>
           <div style="display:flex;gap:8px;align-items:center">
-            <button id="submitBtn" class="btn">بدء</button>
+            <button id="submitBtn" class="btn" type="button">بدء</button>
             <div id="submitStatus" class="small"></div>
           </div>
           <div id="afterSubmit" style="display:none;margin-top:8px">
             <div>رمز الإعلان الخاص بك:</div>
             <div class="refBox" style="margin-top:6px">
-              <div id="refCode" class="refCode" style="background:#f0f9ff;padding:6px 12px;border-radius:10px;color:#0078d7;font-weight:800"></div>
-              <a id="openWa" class="small" target="_blank" style="margin-left:8px;color:#0078d7;display:none"></a>
-              <button id="downloadEmbedded" class="btn alt" style="margin-left:8px;display:none">تحميل البطاقة</button>
+              <div id="refCode" class="refCode"></div>
+              <a id="openWa" class="btn alt" target="_blank" style="display:none">فتح واتساب</a>
+              <button id="downloadEmbeddedBtn" class="btn" style="display:none" type="button">⬇ تنزيل البطاقة</button>
             </div>
-          </div>
-          <div id="fallbackJson" style="display:none;margin-top:8px">
-            <div class="small">لن يتم نشر اعلانك مالم ترسل لنا البطاقة. بعد التحميل يمكنك أن تجد البطاقة في المستندات.</div>
-          </div>
-          <div id="previewCard" class="subCard" style="display:none">
-            <div id="previewCanvasWrap"></div>
+            <div id="fallbackJson" style="display:none;margin-top:8px">
+              <div class="small">لم يتم إنشاء بطاقة PNG، لكن يمكنك استخدام رمز الإعلان وبياناته.</div>
+            </div>
+            <div id="previewCard" class="subCard" style="display:none">
+              <div class="small" style="margin-bottom:6px">معاينة البطاقة (يظهر فيها رمز الإعلان بشكل واضح):</div>
+              <div id="previewCanvasWrap"></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-   
-    <section id="privacy" style="display:none">
+    <section id="privacy">
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
-        <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px">
-باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط... (المتبقي كما في الأصل)
+        <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
+باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط:
+- الموقع يعرض إعلانات مقدمة من مستخدمين ولا يتحمل مسؤولية صحة المعلومات.
+- يجب عليك التأكد بنفسك من هوية البائع/المشتري قبل أي تعامل مالي.
+- لا نقوم بتخزين بياناتك الحساسة في قاعدة بيانات عامة من خلال هذه الصفحة الثابتة.
+- قد يتم تطوير النظام لاحقاً بإضافة لوحة تحكم أو نظام خلفي، وعندها سيتم تحديث سياسة الخصوصية.
         </div>
       </div>
     </section>
   </main>
+
+  <footer>
+    <div>الدلالة — تأكد دائماً من صحة المعلومات بنفسك قبل التعامل.</div>
+  </footer>
 </div>
 
-
+<!-- Modal -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modalCard" role="document" aria-labelledby="modalTitle">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div>
-        <div id="modalTitle" style="font-weight:800;font-size:18px"></div>
-        <div id="modalMeta" class="small" style="margin-top:6px"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <div class="refBox">
-          <div id="modalRef" class="refCode"></div>
-          <button id="modalCopy" class="copyBtn">نسخ الرمز</button>
+    <div style="padding:10px 12px;border-bottom:1px solid #e5e7eb">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <div id="modalTitle" style="font-weight:800;font-size:18px"></div>
+          <div id="modalMeta" class="small" style="margin-top:6px"></div>
         </div>
-        <button id="modalClose" class="btn alt">إغلاق</button>
+        <button id="modalClose" class="btn alt" type="button">إغلاق</button>
       </div>
     </div>
-
-    <div class="modalTop">
-   
-      <div class="modalMedia" id="modalMedia">
-        <img id="modalMainImg" src="" alt="صورة الإعلان" style="display:none" />
-    
+    <div class="modalMain">
+      <div class="modalImage">
+        <img id="modalMainImg" src="" alt="" style="max-width:100%;max-height:100%;display:none" />
       </div>
 
       <div class="modalBody">
@@ -220,11 +194,10 @@ form, .panel, .controls { width:100% !important; box-sizing:border-box !importan
       </div>
     </div>
 
-    <div class="modalFooter" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-      <div style="display:flex;gap:8px;align-items:center">
-        <a id="modalWhats" class="btn" target="_blank">مشاركة عبر WhatsApp</a>
+    <div class="modalFooter">
+      <div class="modalActions">
+        <a id="modalWhats" class="btn" target="_blank" rel="noopener">مشاركة عبر WhatsApp</a>
         <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال</a>
-        <button id="modalDownloadCard" class="btn" style="display:none">⬇ تنزيل البطاقة</button>
       </div>
       <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
     </div>
@@ -232,133 +205,75 @@ form, .panel, .controls { width:100% !important; box-sizing:border-box !importan
 </div>
 
 <script>
-/* Utilities */
-const CFG_KEY = 'static_ads_cfg_v1';
-const CACHE_KEY = 'static_ads_cache_v1';
-const MARKER = 'ELDELALA_PAYLOAD:';
-
-/*** GitHub config for ads JSON files ***/
+/*** إعداد GitHub + cache buster ***/
 const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'delala';
-const GITHUB_BRANCH = 'main';    // غيّرها إذا استخدمت فرعًا آخر
-const ADS_DIR       = 'ads';     // مجلد الإعلانات داخل الريبو
+const GITHUB_BRANCH = 'main';
+const ADS_DIR       = 'ads';
+const CACHE_BUSTER  = 'v1.0.0'; // غيّر الرقم لما تعدّل الكود بقوة
 
-
-function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 
-/* Simple local dataset (in-memory) */
-let ads = []; // will hold objects {ref_code,name,price,description,location,contact,category,image,thumb,_blobUrl,...}
-const grid = document.getElementById('grid');
-const qEl = document.getElementById('q');
-const catFilter = document.getElementById('catFilter');
-const countEl = document.getElementById('count');
-const loadMoreBtn = document.getElementById('loadMore');
-
-/* Navigation */
+/* تبويبات */
+const listControls = document.getElementById('listControls');
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    document.querySelectorAll('main > section').forEach(s=> s.style.display='none');
-    document.getElementById(btn.dataset.target).style.display='block';
+    const target = btn.dataset.target;
+    document.querySelectorAll('main > section').forEach(s=> s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(n=>n.removeAttribute('aria-current'));
     btn.setAttribute('aria-current','true');
+    listControls.style.display = (target === 'home') ? 'flex' : 'none';
     window.scrollTo({top:0,behavior:'smooth'});
   });
 });
 
-/* Render grid */
+/* بيانات الإعلانات */
+let ads = [];
+const grid = document.getElementById('grid');
+const qEl = document.getElementById('q');
+const catFilter = document.getElementById('catFilter');
+const countEl = document.getElementById('count');
+
 function renderGrid(list){
+  const noItems = document.getElementById('noitems');
   grid.innerHTML='';
   list = list || [];
-  if(!list.length){ document.getElementById('noitems').style.display='block'; countEl.textContent='0 إعلان'; return; }
-  document.getElementById('noitems').style.display='none';
+  if(!list.length){
+    noItems.style.display='block';
+    countEl.textContent='0 إعلان';
+    return;
+  }
+  noItems.style.display='none';
   list.forEach(a=>{
-    const el = document.createElement('div'); el.className='card';
-    const thumb = a.thumb || a._blobUrl || '';
-    const mediaHtml = thumb ? `<img src="${escapeHtml(thumb)}" alt="${escapeHtml(a.name||'')}">` : `<div class="noimg small">لا صورة</div>`;
-    el.innerHTML = `<div class="media">${mediaHtml}</div>
-      <div class="body"><div class="title">${escapeHtml(a.name||'')}</div>
-      <div class="desc">${escapeHtml(a.description||'')}</div>
-      <div class="meta"><div class="badge">${escapeHtml(a.category||'عام')}</div><div style="margin-left:auto" class="small">${escapeHtml(a.ref_code||'')}</div></div></div>`;
-    el.addEventListener('click', ()=> openDetails(a));
+    const el = document.createElement('div');
+    el.className='card';
+    if(a.ref_code) el.id = 'ad-' + a.ref_code;
+    const mediaHtml = a.image
+      ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">`
+      : '<div class="small muted">لا توجد صورة</div>';
+    el.innerHTML = `
+      <div class="media">${mediaHtml}</div>
+      <div class="body">
+        <div class="title">${escapeHtml(a.name||'')}</div>
+        <div class="desc">${escapeHtml(a.description||'')}</div>
+        <div class="meta">
+          <div class="badge">${escapeHtml(a.category||'عام')}</div>
+          <div class="price">${escapeHtml(a.price||'')}</div>
+        </div>
+        <div class="meta">
+          <div class="small">${escapeHtml(a.location||'')}</div>
+          <div class="small">${escapeHtml(a.ref_code||'')}</div>
+        </div>
+      </div>
+    `;
+    el.addEventListener('click', ()=>openDetails(a));
     grid.appendChild(el);
   });
   countEl.textContent = list.length + ' إعلان';
 }
-
-/* Modal references */
-const modal = document.getElementById('modal');
-const modalMainImg = document.getElementById('modalMainImg');
-const modalTitle = document.getElementById('modalTitle');
-const modalMeta = document.getElementById('modalMeta');
-const modalRef = document.getElementById('modalRef');
-const modalDescription = document.getElementById('modalDescription');
-const modalLoc = document.getElementById('modalLoc');
-const modalCat = document.getElementById('modalCat');
-const modalPrice = document.getElementById('modalPrice');
-const modalContact = document.getElementById('modalContact');
-const modalWhats = document.getElementById('modalWhats');
-const modalCall = document.getElementById('modalCall');
-const modalDownloadCard = document.getElementById('modalDownloadCard');
-const modalClose = document.getElementById('modalClose');
-
-modalClose.addEventListener('click', ()=>{ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); });
-
-
-function openDetails(item){
-  modalTitle.textContent = item.name || 'بدون عنوان';
-  modalMeta.textContent = `رمز: ${item.ref_code||''}`;
-  modalRef.textContent = item.ref_code||'';
-  modalDescription.textContent = item.description||'-';
-  modalLoc.textContent = item.location||'-';
-  modalCat.textContent = item.category||'عام';
-  modalPrice.textContent = item.price || '-';
-  modalContact.textContent = item.contact || '-';
-
-
-  if(item._blobUrl){
-    modalMainImg.src = item._blobUrl;
-    modalMainImg.style.display = 'block';
-  } else if(item.thumb){
-    modalMainImg.src = item.thumb;
-    modalMainImg.style.display = 'block';
-  } else {
-   
-    modalMainImg.src = '';
-    modalMainImg.style.display = 'none';
-  }
-
-
-  if(item.contact && item.contact.trim()){
-    modalCall.style.display = 'inline-block';
-    const phoneDigits = (item.contact.match(/[+0-9][0-9() \\-]{4,}/) || [])[0] || item.contact;
-    modalCall.href = 'tel:' + phoneDigits.replace(/\s+/g,'').replace(/[^+0-9]/g,'');
-  } else modalCall.style.display = 'none';
-
-  if(window.lastEmbeddedBlob && window.lastRef === (item.ref_code||'')){
-    modalDownloadCard.style.display = 'inline-block';
-    modalDownloadCard.onclick = function(e){
-      e.stopPropagation();
-      const url = URL.createObjectURL(window.lastEmbeddedBlob);
-      const a = document.createElement('a'); a.href = url; a.download = (item.ref_code||'card') + '_eldelala.png';
-      document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1200);
-    };
-  } else if(item._blobUrl){
-    modalDownloadCard.style.display = 'inline-block';
-    modalDownloadCard.onclick = function(e){
-      e.stopPropagation();
-      const a = document.createElement('a'); a.href = item._blobUrl; a.download = (item.ref_code||'card') + '_image.png';
-      document.body.appendChild(a); a.click(); a.remove();
-    };
-  } else modalDownloadCard.style.display = 'none';
-
-  modalWhats.href = `https://wa.me/?text=${encodeURIComponent((item.name || '') + ' - ' + (window.location.href.split('#')[0] + '#ad-' + (item.ref_code||'')))}`;
-  modalWhats.target = '_blank';
-
-  modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
-}
-
 
 function applyFiltersAndRender(){
   const q = (qEl && qEl.value || '').trim().toLowerCase();
@@ -368,200 +283,77 @@ function applyFiltersAndRender(){
   if(cat){
     out = out.filter(a => (a.category||'').toString() === cat);
   }
-
-  // filter by query (search in name, description, location, ref)
   if(q){
     out = out.filter(a => {
       const hay = ((a.name || '') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.ref_code||'')).toLowerCase();
       return hay.indexOf(q) !== -1;
     });
   }
-
-  
-  out.sort((A,B) => {
-    const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
-    if(aCat !== 0) return aCat;
-    return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
-  });
-
   renderGrid(out);
 }
 
+/* Modal */
+const modal = document.getElementById('modal');
+const modalMainImg = document.getElementById('modalMainImg');
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalDescription = document.getElementById('modalDescription');
+const modalLoc = document.getElementById('modalLoc');
+const modalCat = document.getElementById('modalCat');
+const modalPrice = document.getElementById('modalPrice');
+const modalContact = document.getElementById('modalContact');
+const modalWhats = document.getElementById('modalWhats');
+const modalCall = document.getElementById('modalCall');
+const modalClose = document.getElementById('modalClose');
 
-renderGrid([]);
-
-
-
-async function jsonToBase64String(obj){
-  const json = JSON.stringify(obj);
-  const utf8 = unescape(encodeURIComponent(json));
-  return btoa(utf8);
+function closeModal(){
+  modal.setAttribute('aria-hidden','true');
+  modal.classList.remove('open');
 }
-async function blobToUint8(blob){
-  const ab = await blob.arrayBuffer();
-  return new Uint8Array(ab);
-}
-async function embedJsonInImageBlob(imageBlob, payloadObj){
-  const origBytes = await blobToUint8(imageBlob);
-  const markerBytes = new TextEncoder().encode(MARKER);
-  const b64 = await jsonToBase64String(payloadObj);
-  const b64Bytes = new TextEncoder().encode(b64);
-  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
-  out.set(origBytes,0);
-  out.set(markerBytes, origBytes.length);
-  out.set(b64Bytes, origBytes.length + markerBytes.length);
-  return new Blob([out], { type: imageBlob.type || 'image/png' });
-}
-async function downscalePngBlob(blob, maxW=900, maxH=600){
-  const dataUrl = await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(blob); });
-  const img = await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=dataUrl; });
-  let w = img.width, h = img.height;
-  const scale = Math.min(1, maxW / w, maxH / h);
-  const cw = Math.max(200, Math.round(w * scale));
-  const ch = Math.max(200, Math.round(h * scale));
-  const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-  const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, cw, ch);
-  return await new Promise(res=>c.toBlob(res, 'image/png'));
-}
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
+async function openDetails(item){
+  modalTitle.textContent = item.name || 'بدون عنوان';
+  modalMeta.textContent = `رمز: ${item.ref_code||''}`;
+  modalDescription.textContent = item.description||'-';
+  modalLoc.textContent = item.location||'-';
+  modalCat.textContent = item.category||'عام';
+  modalPrice.textContent = item.price || '-';
+  modalContact.textContent = item.contact || '-';
 
-async function buildVisualAndDataURL(file, data = {}, opts = { compact: true }) {
-  // simplified wrapper that returns a placeholder image if building fails
-  try{
-
-    const W = 900, H = 600;
-    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const ctx = cv.getContext('2d');
-    ctx.fillStyle = '#0b1220'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle = '#fff'; ctx.font = '600 40px Tajawal, sans-serif';
-    ctx.textAlign = 'center'; ctx.fillText(data.ref_code || 'REF', W/2, H/2);
-    const blob = await new Promise(r=>cv.toBlob(r,'image/png'));
-    const dataURL = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-    return { blob, dataURL, canvas: cv };
-  }catch(e){
-    console.warn('buildVisualAndDataURL fallback', e);
-    const cv = document.createElement('canvas'); cv.width=900; cv.height=600;
-    const ctx = cv.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,900,600);
-    const blob = await new Promise(r=>cv.toBlob(r,'image/png'));
-    const dataURL = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
-    return { blob, dataURL, canvas: cv };
+  if(item.image){
+    modalMainImg.src = item.image;
+    modalMainImg.style.display = 'block';
+  } else {
+    modalMainImg.src = '';
+    modalMainImg.style.display = 'none';
   }
+
+  if(item.contact && item.contact.trim()){
+    modalCall.style.display = 'inline-block';
+    const phoneDigits = (item.contact.match(/[+0-9][0-9() \-]{4,}/) || [])[0] || item.contact;
+    modalCall.href = 'tel:' + phoneDigits.replace(/\s+/g,'').replace(/[^+0-9]/g,'');
+  } else {
+    modalCall.style.display = 'none';
+  }
+
+  const base = window.location.href.split('#')[0];
+  const deepLink = base + '#ad-' + (item.ref_code||'');
+  const msg = (item.name||'') + '\n' + (item.price||'') + '\n' + deepLink;
+  modalWhats.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  modalWhats.target = '_blank';
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
 }
 
-
-(function(){
-  const submitBtn = document.getElementById('submitBtn');
-  const submitStatus = document.getElementById('submitStatus');
-  const afterSubmit = document.getElementById('afterSubmit');
-  const refCodeEl = document.getElementById('refCode');
-  const downloadEmbeddedBtn = document.getElementById('downloadEmbedded');
-  const openWa = document.getElementById('openWa');
-  const f_name = document.getElementById('f_name');
-  const f_price = document.getElementById('f_price');
-  const f_desc = document.getElementById('f_desc');
-  const f_loc = document.getElementById('f_loc');
-  const f_contact = document.getElementById('f_contact');
-  const f_cat = document.getElementById('f_cat');
-  const f_file = document.getElementById('f_file');
-  const agree = document.getElementById('agree');
-  const previewCanvasWrap = document.getElementById('previewCanvasWrap');
-  const fallbackBox = document.getElementById('fallbackJson');
-
-  let lastEmbeddedBlob = null;
-  let lastRef = null;
-  window.lastEmbeddedBlob = lastEmbeddedBlob;
-  window.lastRef = lastRef;
-
-  function showStatus(msg, isError=false){ submitStatus.textContent = msg; submitStatus.style.color = isError ? '#b45309' : '#0b84ff'; }
-
-  submitBtn && submitBtn.addEventListener('click', async ()=>{
-    try{
-      if(submitBtn.disabled) return;
-      submitBtn.disabled = true;
-      showStatus('جارٍ تجهيز الإعلان...');
-      if(!f_name.value || f_name.value.trim().length < 2){ showStatus('الرجاء إدخال اسم للإعلان', true); submitBtn.disabled = false; return; }
-      if(!agree.checked){ showStatus('يجب الموافقة على الشروط', true); submitBtn.disabled = false; return; }
-
-      const ref = genRef();
-      lastRef = ref;
-      refCodeEl.textContent = ref;
-      afterSubmit.style.display = 'block';
-      downloadEmbeddedBtn.style.display = 'none';
-      if(openWa) openWa.style.display = 'none';
-      showStatus('جاري إنشاء البطاقة...');
-
-      const payload = {
-        ref_code: ref,
-        name: f_name.value.trim(),
-        price: f_price.value.trim(),
-        description: f_desc.value.trim(),
-        location: f_loc.value.trim(),
-        contact: f_contact.value.trim(),
-        category: f_cat.value.trim(),
-        created_at: new Date().toISOString(),
-        image: ''
-      };
-
-      let inputFile = f_file.files && f_file.files[0] ? f_file.files[0] : null;
-      let fileToUse = inputFile;
-      if(!fileToUse){
-        const c = document.createElement('canvas'); c.width=2; c.height=2;
-        const ctx = c.getContext('2d'); ctx.fillStyle='white'; ctx.fillRect(0,0,2,2);
-        fileToUse = await new Promise(r=>c.toBlob(r,'image/png')).then(b=> new File([b],'placeholder.png',{type:'image/png'}));
-      }
-
-      const built = await buildVisualAndDataURL(fileToUse, payload, { compact: true });
-      const visualBlob = built.blob;
-      previewCanvasWrap.innerHTML = '';
-      const imgEl = document.createElement('img'); imgEl.style.width='100%'; imgEl.src = built.dataURL; previewCanvasWrap.appendChild(imgEl);
-      document.getElementById('previewCard').style.display='block';
-
-      let smallPng;
-      try{ smallPng = await downscalePngBlob(visualBlob, 900, 600); }catch(e){ smallPng = visualBlob; }
-
-      const embedded = await embedJsonInImageBlob(smallPng, payload);
-      lastEmbeddedBlob = embedded;
-      window.lastEmbeddedBlob = lastEmbeddedBlob;
-      window.lastRef = lastRef;
-
-      if(typeof lastEmbeddedBlob === 'object'){
-        const url = URL.createObjectURL(lastEmbeddedBlob);
-        downloadEmbeddedBtn.style.display = 'inline-block';
-        downloadEmbeddedBtn.onclick = function(){
-          const a = document.createElement('a'); a.href = url; a.download = payload.ref_code + '_eldelala.png';
-          document.body.appendChild(a); a.click();
-          setTimeout(()=>{ URL.revokeObjectURL(url); a.remove();
-            if(openWa){
-              openWa.style.display = 'inline-block';
-              const base = window.location.href.split('#')[0];
-              const adLink = base + '#ad-' + payload.ref_code;
-              const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\nالعنوان: ${payload.name || '-'}\nالسعر: ${payload.price || '-'}\nسأرفق البطاقة (${payload.ref_code}_eldelala.png). ${adLink}`;
-              openWa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
-              openWa.target = '_blank';
-              openWa.textContent = 'فتح WhatsApp لإرسال البطاقة (اضغط لفتح)';
-            }
-          },800);
-        };
-      }
-
-      showStatus('تم إنشاء البطاقة — يمكنك الآن تحميلها.');
-      fallbackBox.style.display = 'block';
-    }catch(err){
-      console.error(err);
-      showStatus('حدث خطأ أثناء الإنشاء.', true);
-    }finally{
-      submitBtn.disabled = false;
-    }
-  });
-})();
-
-
-async function loadAdsJson(){
+/* تحميل الإعلانات من GitHub API */
+async function loadAdsFromGithub(){
   const noItemsEl = document.getElementById('noitems');
   try{
-    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
-    console.log('Fetching ads list from:', contentsUrl);
+    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}&v=${CACHE_BUSTER}`;
     const res = await fetch(contentsUrl);
     if(!res.ok){
       const txt = await res.text();
@@ -583,7 +375,7 @@ async function loadAdsJson(){
     const loaded = [];
     for(const f of jsonFiles){
       try{
-        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
+        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}?v=${CACHE_BUSTER}`;
         const r2 = await fetch(rawUrl);
         if(!r2.ok){
           console.warn('raw fetch failed for', f.name, r2.status);
@@ -593,11 +385,11 @@ async function loadAdsJson(){
         const ad = {
           ref_code: data.ref_code || data.ref || f.name.replace(/\.json$/i,''),
           name: data.name || data.title || '',
+          description: data.description || data.desc || '',
+          location: data.location || data.loc || '',
           price: data.price || data.amount || '',
-          description: data.description || data.desc || data.body || '',
-          location: data.location || data.city || data.loc || '',
           contact: data.contact || data.phone || data.tel || '',
-          category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
+          category: (data.category || data.cat || data.type || '').toString().trim() || 'عام',
           image: data.image || data.thumb || data.imageDataUrl || ''
         };
         loaded.push(ad);
@@ -611,25 +403,15 @@ async function loadAdsJson(){
     try{
       const cats = [...new Set(ads.map(a=>a.category||'عام'))];
       cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
-      const cf = document.getElementById('catFilter');
-      if(cf){
-        cf.innerHTML = '<option value="">كل الاقسام</option>' +
+      if(catFilter){
+        catFilter.innerHTML = '<option value="">كل الاقسام</option>' +
           cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
       }
     }catch(e){ console.warn('category populate', e); }
 
-    if(qEl){
-      qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(), 220));
-    }
-    if(catFilter){
-      catFilter.addEventListener('change', ()=>applyFiltersAndRender());
-    }
-    const refresh = document.getElementById('refresh');
-    if(refresh) refresh.addEventListener('click', ()=>{ loadAdsJson(); });
-
     applyFiltersAndRender();
   }catch(err){
-    console.error('loadAdsJson failed', err);
+    console.error('loadAdsFromGithub failed', err);
     if(noItemsEl){
       noItemsEl.style.display='block';
       noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات GitHub).';
@@ -638,84 +420,363 @@ async function loadAdsJson(){
   }
 }
 
-window.addEventListener('load', ()=>{ setTimeout(()=>loadAdsJson(), 50); });
+qEl && qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(),220));
+catFilter && catFilter.addEventListener('change', ()=>applyFiltersAndRender());
+document.getElementById('refresh').addEventListener('click', loadAdsFromGithub);
 
-</script>
+/* ===== كود صناعة كرت PNG مع ref كبير + تضمين JSON ===== */
 
+const MARKER = 'ELDELALA_PAYLOAD:';
 
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  try {
-    // Selectors commonly injected by visual builders
-    const selectors = [
-      '.visual-builder', '.vb', '.builder-preview', '.built-card', '.editor-only',
-      '.tiny-preview', '.small-thumb', '.thumbRow.small', '#previewCard', '#adminPanel', '#adminBtn',
-      '[class*=\"builder\"]', '[id*=\"builder\"]', '[class*=\"visual\"]', '[id*=\"visual\"]',
-      '.preview-only', '.vb-toolbar', '.editor-toolbar', '.builder-toolbar', '[data-builder]'
-    ];
-    const nodes = document.querySelectorAll(selectors.join(','));
-    nodes.forEach(n => {
-      // remove node but keep its children if it looks like a wrapper with real content
-      try {
-        if(n && n.parentNode){
-          // If wrapper contains only builder-specific markers (no meaningful text or images), remove entirely
-          const imgs = n.querySelectorAll('img');
-          const hasMeaningful = imgs.length > 0 || (n.textContent && n.textContent.trim().length > 6);
-          if(!hasMeaningful) {
-            n.remove();
-          } else {
-            // If it contains images/text that might be real content, move them up and remove wrapper
-            const parent = n.parentNode;
-            while(n.firstChild) parent.insertBefore(n.firstChild, n);
-            n.remove();
-          }
-        }
-      } catch(e) { n.remove(); }
-    });
+function dataUrlToBlob(dataUrl){
+  const parts = dataUrl.split(',');
+  const meta = parts[0];
+  const data = parts[1] || '';
+  const mimeMatch = meta.match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+  const bin = atob(data);
+  const len = bin.length;
+  const u8 = new Uint8Array(len);
+  for(let i=0;i<len;i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: mime });
+}
 
-    // Remove duplicate images that small builder previews sometimes inject with class names
-    const allImgs = Array.from(document.querySelectorAll('img'));
-    const seen = new Map();
-    allImgs.forEach(img=>{
-      const key = (img.getAttribute('src') || '') + '|' + (img.getAttribute('alt')||'');
-      if(seen.has(key)){
-        // if this img is very small in layout and likely a builder preview, remove
-        if((img.naturalWidth && img.naturalWidth < 120) || img.width < 120) img.remove();
-      } else {
-        seen.set(key, img);
+async function blobToUint8(blob){
+  const ab = await blob.arrayBuffer();
+  return new Uint8Array(ab);
+}
+
+function jsonToBase64String(obj){
+  const json = JSON.stringify(obj);
+  const utf8 = unescape(encodeURIComponent(json));
+  return btoa(utf8);
+}
+
+async function embedJsonInImageBlob(imageBlob, payloadObj){
+  const origBytes = await blobToUint8(imageBlob);
+  const markerBytes = new TextEncoder().encode(MARKER);
+  const b64 = jsonToBase64String(payloadObj);
+  const b64Bytes = new TextEncoder().encode(b64);
+  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
+  out.set(origBytes,0);
+  out.set(markerBytes, origBytes.length);
+  out.set(b64Bytes, origBytes.length + markerBytes.length);
+  return new Blob([out], { type: imageBlob.type || 'image/png' });
+}
+
+async function fileOrBlobToDataUrl(fileOrBlob){
+  return new Promise((resolve,reject)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>resolve(fr.result);
+    fr.onerror = reject;
+    fr.readAsDataURL(fileOrBlob);
+  });
+}
+
+async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.8){
+  const dataURL = await fileOrBlobToDataUrl(file);
+  const img = await new Promise((resolve, reject)=>{
+    const i = new Image();
+    i.onload = ()=>resolve(i);
+    i.onerror = reject;
+    i.src = dataURL;
+  });
+  let w = img.width, h = img.height;
+  const scale = Math.min(1, maxW / w, maxH / h);
+  const cw = Math.max(1, Math.round(w * scale));
+  const ch = Math.max(1, Math.round(h * scale));
+  const c = document.createElement('canvas');
+  c.width = cw; c.height = ch;
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, cw, ch);
+  return c.toDataURL('image/webp', quality);
+}
+
+/* صورة افتراضية لو ما في صورة مرفوعة */
+async function createPlaceholderImageBlob(){
+  const c = document.createElement('canvas');
+  c.width = 900;
+  c.height = 600;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#0b84ff';
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 40px Tajawal, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('الدلالة', c.width/2, c.height/2 - 10);
+  ctx.font = '20px Tajawal, sans-serif';
+  ctx.fillText('إعلان بدون صورة', c.width/2, c.height/2 + 30);
+  const dataURL = c.toDataURL('image/png');
+  return dataUrlToBlob(dataURL);
+}
+
+/* تحويل canvas إلى PNG Blob بطريقة متوافقة */
+function canvasToPngBlob(canvas){
+  return new Promise((resolve,reject)=>{
+    if(canvas.toBlob){
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png');
+    }else{
+      try{
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataUrlToBlob(dataURL));
+      }catch(e){
+        reject(e);
       }
-    });
-
-    // Normalize cards into #grid if elements are found elsewhere
-    const grid = document.getElementById('grid');
-    if(grid){
-      // find common listing nodes that might be outside grid
-      const candidates = document.querySelectorAll('.listing-card, .ad-card, .card, [data-ad-entry]');
-      candidates.forEach(c=>{
-        if(!grid.contains(c)) {
-          grid.appendChild(c);
-        }
-        c.classList.add('card');
-      });
     }
+  });
+}
 
-    // Ensure images maintain natural resolution (don't force downscale via srcset removal)
-    document.querySelectorAll('img').forEach(img=>{
-      img.removeAttribute('srcset'); // prevent responsive srcset that downsizes to tiny images
-      img.style.maxWidth = '100%';
-      img.style.height = 'auto';
-      // mark builder-preview duplicates if any
-      if((img.width && img.width < 80) || (img.naturalWidth && img.naturalWidth < 80)) {
-        img.setAttribute('data-builder-thumb','true');
+/* صناعة كرت PNG فيه ref كبير وواضح */
+async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
+  const baseDataUrl = await fileOrBlobToDataUrl(fileOrBlob);
+  const img = await new Promise((resolve,reject)=>{
+    const i = new Image();
+    i.onload = ()=>resolve(i);
+    i.onerror = reject;
+    i.src = baseDataUrl;
+  });
+
+  const W = 900;
+  const H = 1200;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // خلفية
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,W,H);
+
+  // هيدر
+  const headerH = 120;
+  const grad = ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#0078d7');
+  grad.addColorStop(1,'#00c2a8');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,headerH);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 42px Tajawal, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('الدلالة', W/2, 55);
+  ctx.font = '20px Tajawal, sans-serif';
+  ctx.fillText('إعلان موثق برقم مرجعي', W/2, 90);
+
+  // صورة الإعلان داخل إطار
+  const imgX = 60;
+  const imgY = headerH + 20;
+  const imgW = W - 120;
+  const imgH = 500;
+  const ratio = Math.min(imgW / img.width, imgH / img.height);
+  const drawW = img.width * ratio;
+  const drawH = img.height * ratio;
+  const dx = imgX + (imgW - drawW)/2;
+  const dy = imgY + (imgH - drawH)/2;
+
+  ctx.fillStyle = '#e5f0ff';
+  ctx.roundRect ? ctx.roundRect(imgX, imgY, imgW, imgH, 24) : ctx.fillRect(imgX, imgY, imgW, imgH);
+  if(ctx.roundRect) ctx.fill();
+  ctx.save();
+  if(ctx.roundRect){
+    ctx.clip();
+    ctx.drawImage(img, dx, dy, drawW, drawH);
+  }else{
+    ctx.drawImage(img, dx, dy, drawW, drawH);
+  }
+  ctx.restore();
+
+  // نصوص الإعلان الأساسية
+  const baseY = imgY + imgH + 40;
+  ctx.fillStyle = '#111827';
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 28px Tajawal, sans-serif';
+  ctx.fillText(payload.name || 'إعلان', W-60, baseY);
+
+  ctx.font = '20px Tajawal, sans-serif';
+  ctx.fillStyle = '#374151';
+  const desc = (payload.description || '').substring(0,120);
+  ctx.fillText(desc, W-60, baseY + 34);
+
+  ctx.font = 'bold 24px Tajawal, sans-serif';
+  ctx.fillStyle = '#047857';
+  ctx.fillText(payload.price || '', W-60, baseY + 80);
+
+  ctx.font = '18px Tajawal, sans-serif';
+  ctx.fillStyle = '#4b5563';
+  ctx.fillText(payload.location || '', W-60, baseY + 110);
+
+  // مستطيل كبير للـ ref في الأسفل
+  const refBoxH = 120;
+  const refY = H - refBoxH - 40;
+  ctx.fillStyle = '#0b84ff';
+  ctx.roundRect ? ctx.roundRect(80, refY, W-160, refBoxH, 28) : ctx.fillRect(80, refY, W-160, refBoxH);
+  if(ctx.roundRect) ctx.fill();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  ctx.font = '20px Tajawal, sans-serif';
+  ctx.fillText('رمز الإعلان', W/2, refY + 32);
+
+  ctx.font = 'bold 56px Tajawal, sans-serif';
+  ctx.fillText(payload.ref_code || '', W/2, refY + 86);
+
+  const pngBlob = await canvasToPngBlob(canvas);
+  const pngDataUrl = canvas.toDataURL('image/png');
+  return { blob: pngBlob, dataURL: pngDataUrl };
+}
+
+/* جزء "أرسل إعلانك" */
+(function(){
+  const submitBtn = document.getElementById('submitBtn');
+  const submitStatus = document.getElementById('submitStatus');
+  const afterSubmit = document.getElementById('afterSubmit');
+  const refCodeEl = document.getElementById('refCode');
+  const openWa = document.getElementById('openWa');
+  const downloadEmbeddedBtn = document.getElementById('downloadEmbeddedBtn');
+  const f_name = document.getElementById('f_name');
+  const f_price = document.getElementById('f_price');
+  const f_desc = document.getElementById('f_desc');
+  const f_loc = document.getElementById('f_loc');
+  const f_contact = document.getElementById('f_contact');
+  const f_cat = document.getElementById('f_cat');
+  const f_file = document.getElementById('f_file');
+  const agree = document.getElementById('agree');
+  const previewCanvasWrap = document.getElementById('previewCanvasWrap');
+  const fallbackBox = document.getElementById('fallbackJson');
+
+  function showStatus(msg, isError=false){
+    submitStatus.textContent = msg;
+    submitStatus.style.color = isError ? '#b45309' : '#0b84ff';
+  }
+
+  submitBtn && submitBtn.addEventListener('click', async ()=>{
+    try{
+      if(submitBtn.disabled) return;
+      submitBtn.disabled = true;
+      showStatus('جارٍ تجهيز الإعلان...');
+
+      if(!f_name.value || f_name.value.trim().length < 2){
+        showStatus('الرجاء إدخال اسم للإعلان', true);
+        submitBtn.disabled = false;
+        return;
       }
-    });
+      if(!agree.checked){
+        showStatus('يجب الموافقة على الشروط', true);
+        submitBtn.disabled = false;
+        return;
+      }
 
-    // Final small tidy: hide any leftover elements with inline style that indicate builder preview
-    document.querySelectorAll('[style*=\"builder\"], [style*=\"preview\"]').forEach(n=>n.remove());
+      const ref = genRef();
+      refCodeEl.textContent = ref;
+      afterSubmit.style.display = 'block';
+      downloadEmbeddedBtn.style.display = 'none';
+      if(openWa) openWa.style.display = 'none';
+      fallbackBox.style.display = 'none';
+      showStatus('جاري إنشاء البطاقة...');
 
-  } catch(e){ console.warn('cleanup script error', e); }
+      const payload = {
+        ref_code: ref,
+        name: f_name.value.trim(),
+        price: f_price.value.trim(),
+        description: f_desc.value.trim(),
+        location: f_loc.value.trim(),
+        contact: f_contact.value.trim(),
+        category: f_cat.value.trim(),
+        created_at: new Date().toISOString(),
+        image: ''
+      };
+
+      // تجهيز الصورة (إن لم تُرفع، نستخدم placeholder)
+      let fileOrBlob;
+      if(f_file.files && f_file.files[0]){
+        fileOrBlob = f_file.files[0];
+      }else{
+        fileOrBlob = await createPlaceholderImageBlob();
+      }
+
+      // صورة WEBP داخل JSON لتقليل الحجم في الإعلانات
+      try{
+        const webpDataUrl = await imageFileToWebpDataUrl(fileOrBlob, 900, 900, 0.8);
+        payload.image = webpDataUrl;
+      }catch(e){
+        console.warn('failed to convert to webp, keeping image empty', e);
+        payload.image = '';
+      }
+
+      // إنشاء كرت PNG جميل مع ref كبير
+      let card;
+      try{
+        card = await createCardPngFromImageFileOrBlob(fileOrBlob, payload);
+      }catch(e){
+        console.error('failed to create card png', e);
+        card = null;
+      }
+
+      // معاينة
+      previewCanvasWrap.innerHTML = '';
+      if(card && card.dataURL){
+        const imgEl = document.createElement('img');
+        imgEl.style.width='100%';
+        imgEl.style.borderRadius='12px';
+        imgEl.src = card.dataURL;
+        previewCanvasWrap.appendChild(imgEl);
+        document.getElementById('previewCard').style.display='block';
+      }else{
+        document.getElementById('previewCard').style.display='none';
+      }
+
+      // تضمين JSON داخل PNG (لو نجح إنشاء الكرت)
+      if(card && card.blob){
+        try{
+          const embedded = await embedJsonInImageBlob(card.blob, payload);
+          const url = URL.createObjectURL(embedded);
+          downloadEmbeddedBtn.style.display = 'inline-block';
+          downloadEmbeddedBtn.onclick = function(){
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = payload.ref_code + '_eldelala.png';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(()=>{
+              URL.revokeObjectURL(url);
+              a.remove();
+              if(openWa){
+                openWa.style.display = 'inline-block';
+                const base = window.location.href.split('#')[0];
+                const adLink = base + '#ad-' + payload.ref_code;
+                const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
+                openWa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+                openWa.target = '_blank';
+              }
+            }, 800);
+          };
+        }catch(e){
+          console.error('failed to embed JSON into PNG', e);
+          downloadEmbeddedBtn.style.display = 'none';
+          fallbackBox.style.display = 'block';
+        }
+      }else{
+        downloadEmbeddedBtn.style.display = 'none';
+        fallbackBox.style.display = 'block';
+      }
+
+      showStatus('تم إنشاء الإعلان. يمكنك تحميل البطاقة واستخدام رمز الإعلان.', false);
+    }catch(err){
+      console.error(err);
+      showStatus('حدث خطأ أثناء الإنشاء (تفاصيل في Console).', true);
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+})();
+
+/* تحميل الإعلانات عند فتح الصفحة */
+window.addEventListener('load', ()=>{
+  document.getElementById('home').classList.add('active');
+  loadAdsFromGithub();
 });
 </script>
-
 </body>
 </html>
