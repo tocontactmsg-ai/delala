@@ -24,7 +24,7 @@
   }
   nav[aria-label="واجهة"] button[aria-current="true"]{
     background:#fff;
-    color:#0078d7;
+    color:#0078د7;
     border-color:#fff;
   }
 
@@ -61,8 +61,10 @@
   .detailsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
   .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
   .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
+
   main > section{display:none}
   main > section.active{display:block}
+
   .modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:999;padding:12px}
   .modal[aria-hidden="false"]{display:flex}
   .modalCard{background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,0.5);display:flex;flex-direction:column}
@@ -71,6 +73,7 @@
   .modalImage img{max-width:100%;max-height:360px;display:block}
   .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
   .modalActions{display:flex;gap:8px;flex-wrap:wrap}
+
   @media(max-width:720px){
     .modalMain{grid-template-columns:1fr}
     .modalImage{order:-1}
@@ -162,6 +165,7 @@
   </footer>
 </div>
 
+<!-- Modal -->
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modalCard" role="document" aria-labelledby="modalTitle">
     <div style="padding:10px 12px;border-bottom:1px solid #e5e7eb">
@@ -200,16 +204,17 @@
 </div>
 
 <script>
-/*** إعداد GitHub — غيّر هذه القيم حسب مستودعك ***/
-const GITHUB_OWNER  = 'tocontactmsg-ai';   // ← غيّرها لاسم حسابك
-const GITHUB_REPO   = 'delala';   // ← غيّرها لاسم الريبو
+/*** إعداد GitHub — عدّل هذه القيم حسب مستودعك ***/
+const GITHUB_OWNER  = 'tocontactmsg-ai';   // ← غيّرها
+const GITHUB_REPO   = 'delala';   // ← غيّرها
 const GITHUB_BRANCH = 'main';           // أو 'gh-pages' حسب إعدادك
-const ADS_DIR       = 'ads';            // مجلد الإعلانات داخل الريبو
+const ADS_DIR       = 'ads';            // مسار مجلد الإعلانات داخل الريبو
 
-function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 
+/* تبويبات */
 const listControls = document.getElementById('listControls');
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -223,6 +228,7 @@ document.querySelectorAll('.nav-btn').forEach(btn=>{
   });
 });
 
+/* بيانات الإعلانات */
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
@@ -341,7 +347,7 @@ async function openDetails(item){
   modal.setAttribute('aria-hidden','false');
 }
 
-/* تحميل الإعلانات من GitHub API */
+/* تحميل الإعلانات من GitHub API مباشرة */
 async function loadAdsFromGithub(){
   try{
     const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
@@ -351,7 +357,8 @@ async function loadAdsFromGithub(){
 
     const jsonFiles = files.filter(f =>
       f.type === 'file' &&
-      f.name.toLowerCase().endsWith('.json')
+      f.name.toLowerCase().endsWith('.json') &&
+      f.name.toLowerCase() !== 'list.json'
     );
 
     const loaded = [];
@@ -387,6 +394,7 @@ async function loadAdsFromGithub(){
       return (a.name || '').toString().localeCompare((b.name || '').toString(), 'ar');
     });
 
+    // تصنيف الأقسام
     try{
       const cats = [...new Set(ads.map(a=>a.category||'عام'))];
       cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
@@ -403,7 +411,7 @@ async function loadAdsFromGithub(){
     const ni = document.getElementById('noitems');
     if(ni){
       ni.style.display='block';
-      ni.textContent = 'تعذر تحميل الإعلانات. تأكد من أن مجلد /ads يحتوي ملفات JSON في GitHub وأن إعداد GITHUB_OWNER/REPO صحيح.';
+      ni.textContent = 'تعذر تحميل الإعلانات. تأكد من أن مجلد /ads يحتوي ملفات JSON في GitHub، وأن إعداد GITHUB_OWNER/REPO صحيح.';
     }
     if(countEl) countEl.textContent = '0 إعلان';
   }
@@ -414,7 +422,7 @@ qEl && qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(),220));
 catFilter && catFilter.addEventListener('change', ()=>applyFiltersAndRender());
 document.getElementById('refresh').addEventListener('click', loadAdsFromGithub);
 
-/* جزء أرسل إعلانك (إنشاء بطاقة PNG + JSON مدمج / اختياري نفس القديم) */
+/* جزء "أرسل إعلانك" كما كان (البطاقة PNG + JSON مدمج) — ممكن تستخدمه ولكن النشر الفعلي يتم عبر إضافة JSON في /ads */
 const MARKER = 'ELDELALA_PAYLOAD:';
 async function blobToUint8(blob){ const ab = await blob.arrayBuffer(); return new Uint8Array(ab); }
 function jsonToBase64String(obj){ const json = JSON.stringify(obj); const utf8 = unescape(encodeURIComponent(json)); return btoa(utf8); }
@@ -586,6 +594,7 @@ async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.
   });
 })();
 
+/* تحميل عند فتح الصفحة */
 window.addEventListener('load', ()=>{
   document.getElementById('home').classList.add('active');
   loadAdsFromGithub();
