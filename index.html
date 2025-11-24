@@ -176,11 +176,17 @@
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
         <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
-باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط:
-- الموقع يعرض إعلانات مقدمة من مستخدمين ولا يتحمل مسؤولية صحة المعلومات.
-- يجب عليك التأكد بنفسك من هوية البائع/المشتري قبل أي تعامل مالي.
-- لا نقوم بتخزين بياناتك الحساسة في قاعدة بيانات عامة من خلال هذه الصفحة الثابتة.
-- قد يتم تطوير النظام لاحقاً بإضافة لوحة تحكم أو نظام خلفي، وعندها سيتم تحديث سياسة الخصوصية.
+باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط. إذا لم توافق يرجى التوقف عن استخدام الموقع.
+يقدّم الموقع خدمة عرض الإعلانات والمحتوى التسويقي وروابط الأطراف الثالثة دون تقديم أي ضمانات حول دقتها أو مصداقيتها أو جودة المنتجات أو الخدمات المعروضة. 
+جميع التعاملات مع المعلنين تتم على مسؤوليتك الشخصية، والموقع ليس طرفًا فيها ولا يتحمل أي مسؤولية عن نتائجها.
+يجب عليك استخدام الموقع بطريقة قانونية، وعدم نشر أو إرسال أي محتوى مخالف أو مضلل أو منتهك لحقوق الآخرين، وعدم محاولة اختراق أو تعطيل الموقع أو استخدامه لجمع بيانات بشكل غير مشروع , أي استخدام غير مناسب قد يؤدي إلى حظر الدخول دون إشعار.
+جميع حقوق الملكية الفكرية المتعلقة بالموقع، بما في ذلك التصميم، الشعار، المحتوى، والأكواد، هي ملك للدلالة  يمنع نسخ أي جزء من الموقع أو استخدام علامته التجارية دون إذن مسبق.
+قد يحتوي الموقع على روابط خارجية والموقع غير مسؤول عن محتواها أو سلامتها. 
+قد يقوم الموقع بتعديل أو إزالة أي إعلان أو محتوى متى شاء دون الحاجة لذكر الأسباب.
+قد يتم جمع بعض البيانات الأساسية لتحسين تجربة الاستخدام مثل ملفات الارتباط وسجلات الاستخدام، ويمكن مشاركة هذه البيانات فقط للامتثال للقانون أو لحماية الخدمة من الهجمات.
+قد يتم تحديث هذه الشروط من وقت لآخر، ويعتبر استمرارك في استخدام الموقع موافقة على النسخة المحدثة.
+ 
+tocontactmsg@gmail.com 
         </div>
       </div>
     </section>
@@ -426,7 +432,18 @@ async function loadAdsFromGithub(){
       console.error('GitHub API error:', res.status, txt);
       if(noItemsEl){
         noItemsEl.style.display = 'block';
-        noItemsEl.innerHTML = 'تعذر تحميل الإعلانات من GitHub.<br>status: ' + res.status;
+        noItemsEl.innerHTML =async function loadAdsJson(){
+  const noItemsEl = document.getElementById('noitems');
+  try{
+    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
+    console.log('Fetching ads list from:', contentsUrl);
+    const res = await fetch(contentsUrl);
+    if(!res.ok){
+      const txt = await res.text();
+      console.error('GitHub API error:', res.status, txt);
+      if(noItemsEl){
+        noItemsEl.style.display = 'block';
+        noItemsEl.innerHTML = 'تعذر تحميل الإعلانات   <br>status: ' + res.status;
       }
       if(countEl) countEl.textContent = '0 إعلان';
       return;
@@ -438,34 +455,41 @@ async function loadAdsFromGithub(){
       f.name.toLowerCase().endsWith('.json')
     );
 
-    const loaded = [];
-    for(const f of jsonFiles){
+    // 🟢 حد أقصى لعدد الإعلانات في التحميل الأول
+    const MAX_ADS = 60; // غيّر الرقم لو حاب
+    const limitedFiles = jsonFiles.slice(0, MAX_ADS);
+
+    // 🟢 تحميل كل ملفات JSON بشكل متوازي بدل واحد واحد
+    const promises = limitedFiles.map(async (f) => {
       try{
-        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}?v=${CACHE_BUSTER}`;
+        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
         const r2 = await fetch(rawUrl);
         if(!r2.ok){
           console.warn('raw fetch failed for', f.name, r2.status);
-          continue;
+          return null;
         }
         const data = await r2.json();
-        const ad = {
+        return {
           ref_code: data.ref_code || data.ref || f.name.replace(/\.json$/i,''),
           name: data.name || data.title || '',
-          description: data.description || data.desc || '',
-          location: data.location || data.loc || '',
           price: data.price || data.amount || '',
+          description: data.description || data.desc || data.body || '',
+          location: data.location || data.city || data.loc || '',
           contact: data.contact || data.phone || data.tel || '',
-          category: (data.category || data.cat || data.type || '').toString().trim() || 'عام',
+          category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
           image: data.image || data.thumb || data.imageDataUrl || ''
         };
-        loaded.push(ad);
       }catch(e){
         console.warn('failed to load ad', f.name, e);
+        return null;
       }
-    }
+    });
+
+    const loaded = (await Promise.all(promises)).filter(Boolean);
 
     ads = loaded;
 
+    // تحديث الفلتر حسب التصنيف (مثل ما كان)
     try{
       const cats = [...new Set(ads.map(a=>a.category||'عام'))];
       cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
@@ -475,22 +499,16 @@ async function loadAdsFromGithub(){
       }
     }catch(e){ console.warn('category populate', e); }
 
-    if(qEl){
-      qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(), 220));
-    }
-    if(catFilter){
-      catFilter.addEventListener('change', ()=>applyFiltersAndRender());
-    }
-    if(document.getElementById('refresh')){
-      document.getElementById('refresh').onclick = ()=>{ loadAdsFromGithub(); };
-    }
-
     applyFiltersAndRender();
-    // 🔴 مهم: حاول فتح الإعلان الموجود في الـ hash بعد تحميل الإعلانات
-    openAdFromHash();
+
+    // لو في إعلانات أكثر من MAX_ADS ممكن نعرض ملاحظة صغيرة
+    if(jsonFiles.length > MAX_ADS && noItemsEl){
+      noItemsEl.style.display = 'block';
+      noItemsEl.innerHTML = `تم عرض أول ${MAX_ADS} إعلان فقط لتسريع التحميل.`;
+    }
 
   }catch(err){
-    console.error('loadAdsFromGithub failed', err);
+    console.error('loadAdsJson failed', err);
     if(noItemsEl){
       noItemsEl.style.display='block';
       noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات GitHub).';
@@ -498,6 +516,7 @@ async function loadAdsFromGithub(){
     if(countEl) countEl.textContent='0 إعلان';
   }
 }
+
 
 /* ===== كود صناعة كرت PNG: صورة + ref + "نشكرك علي استخدامك موقع الدلالة" ===== */
 
