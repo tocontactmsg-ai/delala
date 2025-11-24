@@ -118,7 +118,6 @@
     <section id="send">
       <div class="panel">
         <h2>لتقديم طلب موافقة على إعلان:</h2>
- <h2>املا البيانات - حمل بطاقة التاكيد - ارسلها عبر الواتساب</h2>
         <div style="display:grid;gap:8px">
           <input id="f_name" placeholder="اسم الإعلان">
           <input id="f_price" placeholder="السعر">
@@ -139,14 +138,14 @@
             <div>رمز الإعلان الخاص بك:</div>
             <div class="refBox" style="margin-top:6px">
               <div id="refCode" class="refCode"></div>
-              <a id="openWa" class="btn alt" target="_blank" style="display:none">ارسل البطاقة ستجدها ضمن المستندات</a>
+              <a id="openWa" class="btn alt" target="_blank" style="display:none">فتح واتساب</a>
               <button id="downloadEmbeddedBtn" class="btn" style="display:none" type="button">⬇ تنزيل البطاقة</button>
             </div>
             <div id="fallbackJson" style="display:none;margin-top:8px">
-              <div class="small">لم يتم إنشاء بطاقة PNG، قم بالمحاولة مرة اخري.</div>
+              <div class="small">لم يتم إنشاء بطاقة PNG، لكن يمكنك استخدام رمز الإعلان وبياناته.</div>
             </div>
             <div id="previewCard" class="subCard" style="display:none">
-              <div class="small" style="margin-bottom:6px">معاينة البطاقة:</div>
+              <div class="small" style="margin-bottom:6px">معاينة البطاقة (الصورة + الرمز + العبارة):</div>
               <div id="previewCanvasWrap"></div>
             </div>
           </div>
@@ -158,18 +157,12 @@
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
         <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
-
-باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط. إذا لم توافق يرجى التوقف عن استخدام الموقع.
-يقدّم الموقع خدمة عرض الإعلانات والمحتوى التسويقي وروابط الأطراف الثالثة دون تقديم أي ضمانات حول دقتها أو مصداقيتها أو جودة المنتجات أو الخدمات المعروضة. 
-جميع التعاملات مع المعلنين تتم على مسؤوليتك الشخصية، والموقع ليس طرفًا فيها ولا يتحمل أي مسؤولية عن نتائجها.
-يجب عليك استخدام الموقع بطريقة قانونية، وعدم نشر أو إرسال أي محتوى مخالف أو مضلل أو منتهك لحقوق الآخرين، وعدم محاولة اختراق أو تعطيل الموقع أو استخدامه لجمع بيانات بشكل غير مشروع , أي استخدام غير مناسب قد يؤدي إلى حظر الدخول دون إشعار.
-جميع حقوق الملكية الفكرية المتعلقة بالموقع، بما في ذلك التصميم، الشعار، المحتوى، والأكواد، هي ملك للدلالة  يمنع نسخ أي جزء من الموقع أو استخدام علامته التجارية دون إذن مسبق.
-قد يحتوي الموقع على روابط خارجية والموقع غير مسؤول عن محتواها أو سلامتها. 
-قد يقوم الموقع بتعديل أو إزالة أي إعلان أو محتوى متى شاء دون الحاجة لذكر الأسباب.
-قد يتم جمع بعض البيانات الأساسية لتحسين تجربة الاستخدام مثل ملفات الارتباط وسجلات الاستخدام، ويمكن مشاركة هذه البيانات فقط للامتثال للقانون أو لحماية الخدمة من الهجمات.
-قد يتم تحديث هذه الشروط من وقت لآخر، ويعتبر استمرارك في استخدام الموقع موافقة على النسخة المحدثة.
- 
-tocontactmsg@gmail.com 
+باستخدامك لموقع الدلالة فأنت توافق على هذه الشروط:
+- الموقع يعرض إعلانات مقدمة من مستخدمين ولا يتحمل مسؤولية صحة المعلومات.
+- يجب عليك التأكد بنفسك من هوية البائع/المشتري قبل أي تعامل مالي.
+- لا نقوم بتخزين بياناتك الحساسة في قاعدة بيانات عامة من خلال هذه الصفحة الثابتة.
+- قد يتم تطوير النظام لاحقاً بإضافة لوحة تحكم أو نظام خلفي، وعندها سيتم تحديث سياسة الخصوصية.
+        </div>
       </div>
     </section>
   </main>
@@ -302,7 +295,38 @@ function applyFiltersAndRender(){
       return hay.indexOf(q) !== -1;
     });
   }
+  out.sort((A,B) => {
+    const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
+    if(aCat !== 0) return aCat;
+    return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
+  });
   renderGrid(out);
+}
+
+/* فتح إعلان من الرابط (#ad-REF) */
+function openAdFromHash(){
+  try{
+    const hash = window.location.hash;
+    if(!hash || !hash.startsWith('#ad-')) return;
+    const ref = decodeURIComponent(hash.slice(4)).trim();
+    if(!ref) return;
+    const item = ads.find(a => (a.ref_code || '') === ref);
+    if(!item) return;
+
+    // تفعيل تبويب الرئيسية وإظهار الفلاتر
+    document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
+    const home = document.getElementById('home');
+    if(home) home.classList.add('active');
+    if(listControls) listControls.style.display = 'flex';
+    document.querySelectorAll('.nav-btn').forEach(btn=>{
+      if(btn.dataset.target === 'home') btn.setAttribute('aria-current','true');
+      else btn.removeAttribute('aria-current');
+    });
+
+    openDetails(item);
+  }catch(e){
+    console.warn('openAdFromHash error', e);
+  }
 }
 
 /* Modal */
@@ -357,6 +381,16 @@ async function openDetails(item){
   const msg = (item.name||'') + '\n' + (item.price||'') + '\n' + deepLink;
   modalWhats.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
   modalWhats.target = '_blank';
+
+  // تأكد من أن الـ hash في الرابط يعكس الإعلان المفتوح
+  try{
+    if(item.ref_code){
+      const newHash = '#ad-' + encodeURIComponent(item.ref_code);
+      if(window.location.hash !== newHash){
+        history.replaceState(null, '', base + newHash);
+      }
+    }
+  }catch(e){}
 
   modal.classList.add('open');
   modal.setAttribute('aria-hidden','false');
@@ -422,7 +456,20 @@ async function loadAdsFromGithub(){
       }
     }catch(e){ console.warn('category populate', e); }
 
+    if(qEl){
+      qEl.addEventListener('input', debounce(()=>applyFiltersAndRender(), 220));
+    }
+    if(catFilter){
+      catFilter.addEventListener('change', ()=>applyFiltersAndRender());
+    }
+    if(document.getElementById('refresh')){
+      document.getElementById('refresh').onclick = ()=>{ loadAdsFromGithub(); };
+    }
+
     applyFiltersAndRender();
+    // 🔴 مهم: حاول فتح الإعلان الموجود في الـ hash بعد تحميل الإعلانات
+    openAdFromHash();
+
   }catch(err){
     console.error('loadAdsFromGithub failed', err);
     if(noItemsEl){
@@ -779,6 +826,9 @@ window.addEventListener('load', ()=>{
   document.getElementById('home').classList.add('active');
   loadAdsFromGithub();
 });
+
+/* عند تغيير الـ hash (مثلاً لصق رابط إعلان جديد) */
+window.addEventListener('hashchange', openAdFromHash);
 </script>
 </body>
 </html>
