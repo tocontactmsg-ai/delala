@@ -3,256 +3,974 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>الدلالة — مشرف الإعلانات (GitHub JSON)</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;800&display=swap" rel="stylesheet">
+<title>الدلالة — مشرف الإعلانات</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{ --bg: #f4f7fb; --surface: rgba(255,255,255,0.95); --muted: #6b7280; --accent-start:#0b84ff; --accent-end:#00c2a8; --shadow: 0 12px 30px rgba(12,40,80,0.08); }
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#052035}
-.app{max-width:1200px;margin:24px auto;padding:18px}
-.header{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
-.brand{display:flex;gap:10px;align-items:center}
-.logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent-start),var(--accent-end));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 6px 20px rgba(11,132,255,0.14)}
-.title{font-size:18px;font-weight:800}
-.subtitle{color:var(--muted);font-size:13px}
-.top-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.btn{background:transparent;border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;display:inline-flex;gap:8px;align-items:center}
-.btn.primary{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;box-shadow:var(--shadow);border:0}
-.btn.ghost{background:transparent;border:1px solid rgba(6,20,40,0.06);color:var(--muted)}
-.searchbar{display:flex;align-items:center;gap:8px;background:var(--surface);padding:8px;border-radius:12px;box-shadow:0 6px 18px rgba(10,20,40,0.03)}
-.searchbar input{border:0;background:transparent;padding:8px;outline:none;min-width:220px}
-.panel{margin-top:18px;background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
-.controls-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.filters{display:flex;gap:8px;align-items:center}
-.filter{padding:8px 12px;border-radius:999px;background:#f7fbff;border:1px solid rgba(11,132,255,0.06);cursor:pointer;font-weight:700}
-.filter.active{background:linear-gradient(90deg,#e8f6ff,#f0fffb);border:1px solid rgba(0,194,168,0.12)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px}
-.card{background:linear-gradient(180deg,#ffffff,#fbfeff);border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(8,20,40,0.05);transition:transform .18s, box-shadow .18s,border .12s;position:relative;user-select:none}
-.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(8,20,40,0.08)}
-.thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,132,255,0.04)}
-.meta{margin-top:10px}
-.name{font-weight:800;font-size:14px}
-.desc{color:var(--muted);font-size:13px;height:3.6em;overflow:hidden}
-.row{display:flex;gap:8px;align-items:center}
-.badge{display:inline-block;padding:6px 10px;border-radius:10px;background:#eef6ff;color:var(--accent-start);font-weight:800}
-.card-actions{display:flex;gap:8px;align-items:center;margin-top:10px}
-.icon-btn{padding:8px;border-radius:10px;border:0;background:transparent;cursor:pointer}
-.dropzone{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:2px dashed rgba(11,132,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent);cursor:pointer}
-.dropzone.drag{background:linear-gradient(180deg,#eef8ff,#fbfeff)}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,20,40,0.36);z-index:120}
-.modal.open{display:flex}
-.modalCard{background:#fff;border-radius:12px;padding:14px;width:min(920px,96%);max-height:92vh;overflow:auto}
-.form-field{width:100%;padding:10px;border-radius:10px;border:1px solid #eef6ff;margin-top:8px}
-.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.small{font-size:13px;color:var(--muted)}
-.count{padding:6px 10px;border-radius:8px;background:#fff;border:1px solid rgba(6,20,40,0.03);font-weight:700}
-.posBadge{position:absolute;inset-inline-end:10px;top:10px;background:rgba(0,0,0,0.06);padding:6px 8px;border-radius:8px;font-weight:800}
-@media(max-width:720px){
-  .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
-  .thumb{height:140px}
-  .searchbar input{min-width:100px}
-  .header{flex-direction:column;align-items:stretch}
+:root{
+  --bg: #f4f7fb;
+  --bg-soft: #eef2ff;
+  --surface: #ffffff;
+  --surface-soft: rgba(255,255,255,0.92);
+  --border-subtle: rgba(148,163,184,0.35);
+  --muted: #6b7280;
+  --muted-soft: #9ca3af;
+  --accent: #2563eb;
+  --accent-soft: #e0edff;
+  --accent-strong: #0b84ff;
+  --danger: #ef4444;
+  --danger-soft: #fee2e2;
+  --success: #16a34a;
+  --shadow-soft: 0 10px 30px rgba(15,23,42,0.08);
+  --shadow-strong: 0 28px 80px rgba(15,23,42,0.16);
+  --radius: 16px;
+}
+
+/* RESET بسيط */
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+html,body{
+  height:100%;
+  margin:0;
+  padding:0;
+  font-family:'Tajawal',sans-serif;
+  color:#020617;
+  background:
+    radial-gradient(circle at 0 0, rgba(59,130,246,0.10) 0, transparent 50%),
+    radial-gradient(circle at 100% 0, rgba(14,165,233,0.10) 0, transparent 45%),
+    linear-gradient(180deg,#f8fafc,#eef2ff);
+}
+body{
+  -webkit-font-smoothing:antialiased;
+}
+
+/* LAYOUT الأساسي */
+.app{
+  max-width:1200px;
+  margin:24px auto;
+  padding:18px 14px 32px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
+
+/* الشعار */
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 25% 0, #ffffff 0, #dbeafe 40%, #2563eb 110%);
+  box-shadow:0 14px 32px rgba(15,23,42,0.32);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-inner{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#0ea5e9,#1d4ed8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 10px 26px rgba(8,47,73,0.55);
+}
+
+.logo-inner span{
+  color:#fff;
+  font-weight:800;
+  font-size:20px;
+  text-shadow:0 2px 8px rgba(15,23,42,0.7);
+}
+
+.title{
+  font-size:18px;
+  font-weight:800;
+  color:#0f172a;
+}
+.title small{
+  display:block;
+  font-size:12px;
+  margin-top:4px;
+  color:var(--muted);
+}
+
+/* أزرار أعلى الصفحة */
+.actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.chip{
+  font-size:11px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.9);
+  border:1px solid var(--border-subtle);
+  color:#111827;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.chip strong{
+  color:var(--accent-strong);
+}
+
+/* الأزرار العامة */
+.btn{
+  border-radius:999px;
+  border:1px solid transparent;
+  padding:8px 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:600;
+  background:#ffffff;
+  color:#0f172a;
+  transition:background .15s ease, box-shadow .15s ease, transform .08s ease, border-color .15s ease;
+}
+.btn span{
+  font-size:14px;
+}
+.btn:active{
+  transform:scale(0.98);
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,#2563eb,#0b84ff);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(37,99,235,0.40);
+}
+.btn.primary:hover{
+  box-shadow:0 14px 30px rgba(37,99,235,0.45);
+}
+
+.btn.outline{
+  background:rgba(255,255,255,0.96);
+  border-color:var(--border-subtle);
+}
+.btn.outline:hover{
+  border-color:rgba(37,99,235,0.45);
+  background:#f9fafb;
+}
+
+.btn.small{
+  padding:6px 10px;
+  font-size:12px;
+  box-shadow:none;
+}
+
+.btn.danger{
+  background:linear-gradient(135deg,#f97373,#ef4444);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(185,28,28,0.45);
+}
+.btn.danger:hover{
+  box-shadow:0 13px 28px rgba(185,28,28,0.53);
+}
+
+/* الواجهة الرئيسية */
+.main{
+  margin-top:8px;
+  display:grid;
+  grid-template-columns:2.1fr 1.35fr;
+  gap:14px;
+}
+@media(max-width:960px){
+  .main{
+    grid-template-columns:1fr;
+  }
+}
+
+/* البطاقات / الألواح */
+.panel{
+  background:var(--surface-soft);
+  border-radius:var(--radius);
+  padding:14px 12px 14px;
+  box-shadow:var(--shadow-soft);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(226,232,240,0.9);
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:6px;
+  margin-bottom:10px;
+}
+.panel-header h2{
+  margin:0;
+  font-size:14px;
+  font-weight:800;
+  color:#0f172a;
+}
+.panel-header .sub{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+/* أدوات أعلى البطاقات */
+.tools{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+/* منطقة السحب للبطاقات */
+.dropzone{
+  border-radius:var(--radius);
+  min-height:86px;
+  border:1.5px dashed rgba(148,163,184,0.9);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 12px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.98),rgba(239,246,255,0.95));
+  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .08s ease;
+}
+.dropzone--active{
+  border-color:var(--accent);
+  box-shadow:0 12px 26px rgba(37,99,235,0.22);
+  background:linear-gradient(135deg,#e0edff,#f4f7ff);
+  transform:translateY(-1px);
+}
+
+.drop-main{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.drop-icon{
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  background:radial-gradient(circle at 30% 0,#bfdbfe 0,#2563eb 30%,#1d4ed8 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#eff6ff;
+  font-size:20px;
+  box-shadow:0 12px 30px rgba(37,99,235,0.48);
+}
+.drop-text strong{
+  display:block;
+  font-size:13px;
+  margin-bottom:2px;
+}
+.drop-text span{
+  display:block;
+  font-size:11px;
+  color:var(--muted-soft);
+}
+
+.drop-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+}
+
+.hidden{
+  display:none;
+}
+
+/* البحث والفلاتر */
+.filters-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+  margin-bottom:6px;
+  align-items:center;
+}
+
+.search-input{
+  flex:1;
+  min-width:160px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.8);
+  background:rgba(255,255,255,0.95);
+  font-size:13px;
+}
+.search-input input{
+  border:0;
+  outline:none;
+  font-size:13px;
+  background:transparent;
+  width:100%;
+}
+.search-input input::placeholder{
+  color:#cbd5f5;
+}
+
+/* زر الفلتر */
+.filter-tag{
+  font-size:11px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(148,163,184,0.7);
+  background:rgba(255,255,255,0.97);
+  color:#4b5563;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  transition:background .15s ease, border-color .15s ease, color .15s ease, transform .08s ease;
+}
+.filter-tag:hover{
+  background:#eff6ff;
+}
+.filter-tag.active{
+  border-color:#2563eb;
+  color:#1d4ed8;
+  background:#e0f2fe;
+  transform:translateY(-1px);
+}
+
+/* وصف صغير */
+.stats{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+/* شبكة البطاقات */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+
+/* بطاقة إعلان */
+.card{
+  background:linear-gradient(180deg,#ffffff,#fbfeff);
+  border-radius:18px;
+  padding:10px;
+  box-shadow:0 10px 24px rgba(15,23,42,0.10);
+  border:1px solid rgba(226,232,240,0.95);
+  cursor:grab;
+  transition:transform .14s ease, box-shadow .18s ease, border .14s ease, background .14s ease;
+  position:relative;
+  user-select:none;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 32px rgba(15,23,42,0.18);
+  border-color:rgba(129,140,248,0.75);
+}
+.card.dragging{
+  opacity:0.60;
+  transform:scale(0.98);
+  border:2px dashed rgba(11,132,255,0.35);
+}
+
+/* صورة البطاقة */
+.thumb{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid rgba(11,132,255,0.04);
+  background:#e5e7eb;
+}
+
+/* بيانات البطاقة */
+.meta{
+  margin-top:10px;
+}
+.name{
+  font-weight:800;
+  font-size:14px;
+  color:#0f172a;
+  margin-bottom:2px;
+}
+.desc{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  height:3.5em;
+  overflow:hidden;
+}
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* شارة التصنيف */
+.badge{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#eef2ff;
+  color:#2563eb;
+  font-weight:700;
+  font-size:11px;
+}
+
+/* أزرار البطاقة */
+.card-actions{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-top:10px;
+}
+
+.icon-btn{
+  padding:6px 7px;
+  border-radius:10px;
+  border:1px solid rgba(226,232,240,0.9);
+  background:#f1f5f9;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  transition:background .15s ease, box-shadow .15s ease, transform .08s ease, border-color .15s ease;
+}
+.icon-btn:hover{
+  background:#e0edff;
+  border-color:rgba(129,140,248,0.7);
+}
+.icon-btn span{
+  pointer-events:none;
+}
+
+/* زر مسح التخزين */
+.fab{
+  position:fixed;
+  left:24px;
+  bottom:26px;
+  padding:12px 16px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#0ea5e9,#2563eb);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+  box-shadow:0 18px 40px rgba(11,132,255,0.30);
+  border:0;
+  z-index:40;
+}
+.fab span{
+  font-size:16px;
+}
+
+/* TOAST */
+#toast{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:20px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#020617;
+  color:#e5e7eb;
+  font-size:12px;
+  box-shadow:0 12px 30px rgba(15,23,42,0.7);
+  z-index:200;
+  display:none;
+}
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+}
+.modal.open{
+  display:flex;
+}
+.modal-dialog{
+  max-width:920px;
+  width:100%;
+  margin:10px;
+  background:#f9fafb;
+  border-radius:20px;
+  box-shadow:var(--shadow-strong);
+  overflow:hidden;
+}
+
+/* رأس المودال */
+.modal-header{
+  padding:10px 14px;
+  background:linear-gradient(135deg,#0ea5e9,#1d4ed8);
+  color:#eff6ff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.modal-header .info{
+  font-size:12px;
+}
+.modal-header .info strong{
+  display:block;
+  font-size:15px;
+}
+
+/* جسم المودال */
+.modal-body{
+  display:grid;
+  grid-template-columns:1.15fr 1.6fr;
+  gap:10px;
+  padding:12px 12px 10px;
+}
+@media(max-width:820px){
+  .modal-body{
+    grid-template-columns:1fr;
+  }
+}
+
+/* جزء الصورة */
+.modal-img-wrap{
+  background:radial-gradient(circle at top,#e0f2fe 0,#eff6ff 35%,#e5e7eb 100%);
+  border-radius:16px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.modal-img-wrap img{
+  max-width:100%;
+  max-height:330px;
+  border-radius:12px;
+  box-shadow:0 16px 40px rgba(15,23,42,0.45);
+}
+
+/* نموذج المودال */
+.modal-form{
+  display:grid;
+  gap:8px;
+}
+.modal-form label{
+  font-size:11px;
+  color:var(--muted);
+  display:block;
+  margin-bottom:2px;
+}
+.modal-form input,
+.modal-form textarea,
+.modal-form select{
+  width:100%;
+  padding:7px 9px;
+  border-radius:10px;
+  border:1px solid rgba(148,163,184,0.7);
+  font-size:13px;
+  font-family:'Tajawal',sans-serif;
+  background:#ffffff;
+  outline:none;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.modal-form input:focus,
+.modal-form textarea:focus,
+.modal-form select:focus{
+  border-color:rgba(37,99,235,0.80);
+  box-shadow:0 0 0 1px rgba(129,140,248,0.55);
+  background:#f9fafb;
+}
+.modal-form textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+/* تذييل المودال */
+.modal-footer{
+  padding:10px 12px;
+  border-top:1px solid rgba(148,163,184,0.35);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  background:#f1f5f9;
+}
+.modal-footer .left{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.modal-footer .right{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* نموذج إنشاء إعلان يدويًا في الـ aside */
+aside .modal-form{
+  margin-top:4px;
+}
+aside .modal-form input,
+aside .modal-form textarea{
+  background:rgba(255,255,255,0.96);
+}
+
+/* تصغير التفاصيل على الشاشات الصغيرة */
+@media(max-width:600px){
+  .title{
+    font-size:16px;
+  }
+  .title small{
+    font-size:11px;
+  }
+  .fab{
+    left:12px;
+    bottom:16px;
+    padding-inline:12px;
+  }
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="header">
+  <header class="header">
     <div class="brand">
-      <div class="logo">دل</div>
+      <div class="logo" aria-hidden="true">
+        <div class="logo-inner"><span>د</span></div>
+      </div>
       <div>
-        <div class="title">الدلالة — مشرف الإعلانات (ملفات JSON فقط)</div>
-        <div class="subtitle">استخدمه محليًا لتوليد ads/REF_CODE.json ثم ارفعها يدويًا إلى مجلد /ads في GitHub</div>
-      </div>
-    </div>
-    <div class="top-controls">
-      <label class="btn ghost">📁 اختر بطاقات PNG
-        <input id="fileInput" type="file" multiple accept="image/png,image/webp,image/jpeg" style="display:none" />
-      </label>
-      <button class="btn primary" id="newAdBtn">➕ إعلان جديد</button>
-      <div class="searchbar" title="بحث سريع">
-        <input id="search" placeholder="ابحث بالمرجع أو العنوان أو السعر" />
-      </div>
-      <button class="btn primary" id="scanBtn">🔍 فحص</button>
-      <button class="btn ghost" id="importJsonBtn">📥 استيراد إعلانات JSON موجودة</button>
-      <input id="jsonInput" type="file" multiple accept="application/json" style="display:none" />
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="controls-row">
-      <div class="dropzone" id="dropzone">اسحب وأفلت البطاقات هنا أو اضغط للاختيار</div>
-      <div style="margin-inline-start:auto;display:flex;gap:12px;align-items:center">
-        <div class="filters">
-          <div class="filter active" data-filter="all">الكل</div>
-          <div class="filter" data-filter="with">مع بيانات</div>
-          <div class="filter" data-filter="without">بدون بيانات</div>
+        <div class="title">
+          مشرف إعلانات الدلالة
+          <small>استخراج الإعلانات من بطاقات PNG + تعديلها + تنزيل JSON لمجلد /ads</small>
         </div>
-        <div class="small">العناصر: <span id="count" class="count">0</span></div>
       </div>
     </div>
+    <div class="actions">
+      <div class="chip">الحالة: <strong id="count">0 إعلان</strong></div>
+      <button class="btn outline" type="button" id="saveLocalBtn"><span>💾</span> حفظ محلي مؤقت</button>
+      <button class="btn primary" type="button" id="exportAllBtn"><span>📦</span> تصدير كل JSON</button>
+    </div>
+  </header>
 
-    <div id="grid" class="grid" aria-live="polite"></div>
+  <main class="main">
+    <!-- اللوحة الرئيسية للبطاقات -->
+    <section class="panel" aria-label="إدارة البطاقات الممسوحة">
+      <div class="panel-header">
+        <div>
+          <h2>البطاقات الممسوحة</h2>
+          <div class="sub">اسحب بطاقات PNG (&amp; الكروت) التي أنشأها الموقع هنا لاستخراج بياناتها</div>
+        </div>
+      </div>
 
-    <div style="margin-top:14px" class="small">
-      بعد تعديل الإعلانات أو إضافة جديدة، اضغط على كل إعلان ← زر <b>📄 تنزيل هذا الإعلان كـ ads/REF.json</b>، ثم ارفع هذه الملفات يدويًا إلى مجلد <code>/ads</code> في GitHub.
+      <div class="tools">
+        <div class="dropzone" id="dropzone">
+          <div class="drop-main">
+            <div class="drop-icon">📥</div>
+            <div class="drop-text">
+              <strong>اسحب وأفلت بطاقات PNG هنا</strong>
+              <span>أو انقر لاختيار ملفات من جهازك</span>
+            </div>
+          </div>
+          <div class="drop-actions">
+            <input type="file" id="fileInput" class="hidden" multiple accept="image/png,image/jpeg,image/webp" />
+            <button class="btn small outline" type="button" id="scanBtn">مسح ملفات…</button>
+            <button class="btn small outline" type="button" id="importJsonBtn">استيراد JSON</button>
+            <input type="file" id="jsonInput" class="hidden" multiple accept="application/json" />
+          </div>
+        </div>
+      </div>
+
+      <div class="filters-row">
+        <div class="search-input">
+          <span>🔍</span>
+          <input id="search" placeholder="بحث بالعنوان أو الرمز أو الموقع">
+        </div>
+        <button class="filter-tag active" data-filter="all">الكل</button>
+        <button class="filter-tag" data-filter="with">مع بيانات مدمجة</button>
+        <button class="filter-tag" data-filter="without">بدون بيانات</button>
+      </div>
+
+      <div class="stats">اسحب البطاقات لترتيبها، واضغط على أي بطاقة لفتح التفاصيل وتعديلها وتغيير الصورة وتنزيل JSON.</div>
+
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <!-- اللوحة الجانبية: إنشاء إعلان يدويًا -->
+    <aside class="panel" aria-label="إنشاء إعلان جديد">
+      <div class="panel-header">
+        <div>
+          <h2>إنشاء إعلان جديد يدويًا</h2>
+          <div class="sub">لإضافة إعلان جديد ثم تنزيل JSON (مع صورة WEBP إذا اخترتها)</div>
+        </div>
+      </div>
+
+      <div class="modal-form">
+        <div>
+          <label>رمز الإعلان (ref_code)</label>
+          <input id="newRef" placeholder="مثال: RABC123">
+        </div>
+        <div>
+          <label>عنوان الإعلان</label>
+          <input id="newTitle" placeholder="مثال: لابتوب بحالة ممتازة">
+        </div>
+        <div>
+          <label>السعر</label>
+          <input id="newPrice" placeholder="مثال: 350,000 SDG">
+        </div>
+        <div>
+          <label>رقم التواصل</label>
+          <input id="newPhone" placeholder="مثال: 0912xxxxxx">
+        </div>
+        <div>
+          <label>الموقع</label>
+          <input id="newLoc" placeholder="مثال: الخرطوم - بحري">
+        </div>
+        <div>
+          <label>التصنيف</label>
+          <input id="newCategory" placeholder="مثال: إلكترونيات">
+        </div>
+        <div>
+          <label>الوصف</label>
+          <textarea id="newDesc" placeholder="وصف مختصر للإعلان"></textarea>
+        </div>
+        <div>
+          <label>صورة الإعلان (اختيارية — تحفظ كـ WEBP داخل JSON)</label>
+          <input type="file" id="newImage" accept="image/*">
+        </div>
+        <div class="stats">ملاحظة: index.html يقرأ حقل <code>image</code> من JSON ويعرضه في البطاقة.</div>
+        <button class="btn primary" type="button" id="newDownloadJsonBtn"><span>📄</span> تنزيل JSON لهذا الإعلان</button>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<button id="fab" class="fab"><span>⚡</span> مسح التخزين المؤقت</button>
+
+<div id="toast">Toast</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal" aria-hidden="true" aria-label="تعديل بيانات الإعلان">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div class="info">
+        <strong id="modalRef">—</strong>
+        <span>تعديل بيانات الإعلان المستخرجة من البطاقة</span>
+      </div>
+      <button id="closeModal" class="btn small outline" type="button">إغلاق</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="معاينة البطاقة / صورة الإعلان" />
+        <div>
+          <label class="small" style="display:block;margin-bottom:4px;color:#6b7280">تغيير صورة الإعلان (تحفظ كـ WEBP داخل JSON)</label>
+          <input type="file" id="modalImgInput" accept="image/*">
+        </div>
+        <button class="btn small outline" type="button" id="downloadImgBtn">⬇ تنزيل الصورة الحالية</button>
+        <div class="stats">الصورة في JSON سترسل كـ data:image/webp;base64,... ويقوم index.html بعرضها مباشرة.</div>
+      </div>
+      <div class="modal-form">
+        <div>
+          <label>رمز الإعلان</label>
+          <input id="modalRefInput" placeholder="يستخدم أيضاً كاسم ملف JSON">
+        </div>
+        <div>
+          <label>عنوان الإعلان</label>
+          <input id="modalTitle" placeholder="عنوان واضح">
+        </div>
+        <div>
+          <label>السعر</label>
+          <input id="modalPrice" placeholder="مثال: 350,000 SDG">
+        </div>
+        <div>
+          <label>رقم التواصل</label>
+          <input id="modalPhone" placeholder="مثال: 0912xxxxxx">
+        </div>
+        <div>
+          <label>الموقع</label>
+          <input id="modalLoc" placeholder="مثال: الخرطوم - بحري">
+        </div>
+        <div>
+          <label>التصنيف</label>
+          <input id="modalCategory" placeholder="مثال: إلكترونيات">
+        </div>
+        <div>
+          <label>وصف الإعلان</label>
+          <textarea id="modalDesc" placeholder="اكتب وصفاً مختصراً وواضحاً"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="left">
+        <button class="btn primary" type="button" id="saveBtn"><span>💾</span> حفظ في القائمة</button>
+        <button class="btn outline" type="button" id="downloadJsonBtn"><span>📄</span> تنزيل JSON لهذا الإعلان</button>
+        <button class="btn danger" type="button" id="removeBtn"><span>🗑</span> حذف من القائمة</button>
+      </div>
+      <div class="right">
+        <span>1) حمّل البطاقة من صفحة الدلالة</span>
+        <span>2) اسحبها هنا</span>
+        <span>3) عدّل البيانات والصورة</span>
+        <span>4) نزّل JSON وارفعه في /ads</span>
+      </div>
     </div>
   </div>
 </div>
-
-<div id="modal" class="modal" aria-hidden="true">
-  <div class="modalCard">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <strong id="modalRef">تفاصيل</strong>
-      <button id="closeModal" class="btn ghost">✖ إغلاق</button>
-    </div>
-    <div style="display:grid;grid-template-columns:320px 1fr;gap:12px;margin-top:12px">
-      <div>
-        <img id="modalImg" src="" style="width:320px;height:240px;object-fit:cover;border-radius:10px;border:1px solid #eef6ff" />
-        <label style="margin-top:10px;display:block">تحديث صورة الإعلان</label>
-        <input id="modalImageFile" type="file" accept="image/*" class="form-field" />
-        <div class="small" style="margin-top:4px">
-          ستُحوَّل الصورة إلى WEBP وتُحفظ داخل حقل <code>image</code> في JSON.
-        </div>
-      </div>
-      <div>
-        <label>الرمز (REF_CODE)</label>
-        <input id="modalRefInput" class="form-field" />
-        <label>العنوان</label>
-        <input id="modalTitle" class="form-field" />
-        <label>السعر</label>
-        <input id="modalPrice" class="form-field" />
-        <label>الهاتف</label>
-        <input id="modalPhone" class="form-field" />
-        <label>الموقع</label>
-        <input id="modalLoc" class="form-field" />
-        <label>التصنيف</label>
-        <input id="modalCategory" class="form-field" />
-        <label>الوصف</label>
-        <textarea id="modalDesc" rows="6" class="form-field"></textarea>
-        <div class="actions">
-          <button id="saveBtn" class="btn primary">💾 حفظ</button>
-          <button id="downloadJsonBtn" class="btn ghost">📄 تنزيل هذا الإعلان كـ ads/REF.json</button>
-          <button id="removeBtn" class="btn ghost">🗑️ حذف</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="toast" style="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#052035;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(5,32,53,0.18);z-index:200;display:none">Toast</div>
 
 <script>
+/* ثابتات وتهيئة أساسية */
 const MARKER = 'ELDELALA_PAYLOAD:';
 const markerBytes = new TextEncoder().encode(MARKER);
+const STORAGE_KEY = 'eldelala_admin_with_webp_v1';
 
+/* عناصر DOM */
 const fileInput = document.getElementById('fileInput');
 const dropzone = document.getElementById('dropzone');
 const scanBtn = document.getElementById('scanBtn');
-const newAdBtn = document.getElementById('newAdBtn');
 const grid = document.getElementById('grid');
 const countEl = document.getElementById('count');
 const searchEl = document.getElementById('search');
+const exportAllBtn = document.getElementById('exportAllBtn');
 const importJsonBtn = document.getElementById('importJsonBtn');
 const jsonInput = document.getElementById('jsonInput');
-
+const saveLocalBtn = document.getElementById('saveLocalBtn');
+const filters = document.querySelectorAll('.filter-tag');
 const modal = document.getElementById('modal');
 const modalImg = document.getElementById('modalImg');
-const modalImageFile = document.getElementById('modalImageFile');
 const modalRef = document.getElementById('modalRef');
-const modalRefInput = document.getElementById('modalRefInput');
 const modalTitle = document.getElementById('modalTitle');
 const modalPrice = document.getElementById('modalPrice');
 const modalPhone = document.getElementById('modalPhone');
 const modalLoc = document.getElementById('modalLoc');
 const modalDesc = document.getElementById('modalDesc');
 const modalCategory = document.getElementById('modalCategory');
+const modalRefInput = document.getElementById('modalRefInput');
+const modalImgInput = document.getElementById('modalImgInput');
 const downloadJsonBtn = document.getElementById('downloadJsonBtn');
 const saveBtn = document.getElementById('saveBtn');
 const removeBtn = document.getElementById('removeBtn');
 const closeModalBtn = document.getElementById('closeModal');
+const downloadImgBtn = document.getElementById('downloadImgBtn');
 const toast = document.getElementById('toast');
-const filters = document.querySelectorAll('.filter');
+const fab = document.getElementById('fab');
+
+/* نموذج إنشاء إعلان جديد */
+const newRef = document.getElementById('newRef');
+const newTitle = document.getElementById('newTitle');
+const newPrice = document.getElementById('newPrice');
+const newPhone = document.getElementById('newPhone');
+const newLoc = document.getElementById('newLoc');
+const newCategory = document.getElementById('newCategory');
+const newDesc = document.getElementById('newDesc');
+const newImage = document.getElementById('newImage');
+const newDownloadJsonBtn = document.getElementById('newDownloadJsonBtn');
 
 let ads = [];
-let selectedAdId = null;
 let currentFilter = 'all';
+let selectedAdId = null;
 
-function showToast(msg, ms=2200){
+/* HELPERs بسيطة */
+function showToast(msg, ms=2000){
   toast.textContent = msg;
-  toast.style.display='block';
-  clearTimeout(toast._t);
+  toast.style.display = 'block';
+  if (toast._t) clearTimeout(toast._t);
   toast._t = setTimeout(()=>toast.style.display='none', ms);
 }
-function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
-function esc(s){ return String(s||'').replace(/[&<>"\\]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\\':'&#92;'}[c]||c)); }
 
+function uid(){
+  return 'a' + Math.random().toString(36).slice(2,9);
+}
+
+/* هروب نصوص HTML */
+function esc(s){
+  return String(s || '').replace(/[&<>"\\]/g, c => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    '\\':'\\\\'
+  }[c] || c));
+}
+
+/* توحيد شكل الإعلان داخل الكود */
 function normalize(raw){
   return {
     id: raw.id || uid(),
-    ref: raw.ref_code || raw.ref || raw.code || '',
-    title: raw.name || raw.title || '',
-    price: raw.price || '',
-    phone: raw.contact || raw.phone || '',
-    location: raw.location || '',
-    description: raw.description || '',
-    category: raw.category || 'عام',
-    image: raw.image || raw.thumb || raw.imageDataUrl || '',
+    ref: raw.ref_code || raw.ref || raw.code || raw.id || '',
+    title: raw.name || raw.title || raw.headline || raw.fileName || '',
+    price: raw.price || raw.p || '',
+    phone: raw.contact || raw.phone || raw.tel || '',
+    location: raw.location || raw.loc || raw.city || '',
+    description: raw.description || raw.desc || raw.body || '',
     created_at: raw.created_at || new Date().toISOString(),
-    _hasPayload: !!(raw && (raw.ref_code || raw.name || raw.description))
+    imageDataUrl: raw.image || raw.thumb || raw.imageDataUrl || raw._blobUrl || '',
+    category: raw.category || raw.cat || raw.type || raw.Category || 'عام',
+    _hasPayload: !!(raw && (raw.ref || raw.title || raw.price || raw.description))
   };
 }
 
-function toFullItem(a){
-  return {
-    ref_code: a.ref || a.id || '',
-    name: a.title || '',
-    description: a.description || '',
-    location: a.location || '',
-    price: a.price || '',
-    contact: a.phone || '',
-    category: a.category || 'عام',
-    image: a.image || '',
-    created_at: a.created_at || new Date().toISOString()
-  };
-}
-
-function setCount(){
-  countEl.textContent = ads.length;
-}
-
-function findLastMarkerIndex(bytes, marker){
-  if(marker.length === 0 || bytes.length < marker.length) return -1;
-  for(let i = bytes.length - marker.length; i >= 0; i--){
-    let ok=true; for(let j=0;j<marker.length;j++){ if(bytes[i+j] !== marker[j]){ ok=false; break; } }
-    if(ok) return i;
-  }
-  return -1;
-}
-function extractBase64FromBytes(bytes, start){
-  let s=''; for(let i=start;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]);
-  const m = s.match(/^[A-Za-z0-9+/=\r\n]+/);
-  return m ? m[0].replace(/\s+/g,'') : '';
-}
-function base64ToUtf8(b64){
+/* تخزين محلي */
+function saveToLocal(){
   try{
-    const bin = atob(b64);
-    const u8 = new Uint8Array(bin.length);
-    for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
-    return new TextDecoder('utf-8').decode(u8);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ads }));
   }catch(e){
-    try{ return atob(b64); }catch(_){ return null; }
+    console.warn('local save fail', e);
   }
 }
+function loadFromLocal(){
+  try{
+    const txt = localStorage.getItem(STORAGE_KEY);
+    if (!txt) return;
+    const data = JSON.parse(txt);
+    if (data && Array.isArray(data.ads)){
+      ads = data.ads.map(normalize);
+    }
+  }catch(e){
+    console.warn('local load fail', e);
+  }
+}
+function setCount(){
+  countEl.textContent = ads.length + ' إعلان';
+}
 
-/* تحويل صورة إلى WEBP للـ JSON */
-async function imageFileToWebpDataUrl(file, maxW=900, maxH=900, quality=0.8){
-  const dataURL = await new Promise((resolve,reject)=>{
+/* تحويل صورة إلى dataURL ثم WEBP مضغوط */
+function fileOrBlobToDataUrl(fileOrBlob){
+  return new Promise((resolve,reject)=>{
     const fr = new FileReader();
     fr.onload = ()=>resolve(fr.result);
     fr.onerror = reject;
-    fr.readAsDataURL(file);
+    fr.readAsDataURL(fileOrBlob);
   });
+}
+async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.8){
+  const dataURL = await fileOrBlobToDataUrl(file);
   const img = await new Promise((resolve,reject)=>{
     const i = new Image();
     i.onload = ()=>resolve(i);
@@ -264,7 +982,8 @@ async function imageFileToWebpDataUrl(file, maxW=900, maxH=900, quality=0.8){
   const cw = Math.max(1, Math.round(w * scale));
   const ch = Math.max(1, Math.round(h * scale));
   const c = document.createElement('canvas');
-  c.width = cw; c.height = ch;
+  c.width = cw;
+  c.height = ch;
   const ctx = c.getContext('2d');
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
@@ -272,279 +991,530 @@ async function imageFileToWebpDataUrl(file, maxW=900, maxH=900, quality=0.8){
   return c.toDataURL('image/webp', quality);
 }
 
-/* قراءة بطاقة PNG ومعرفة إن داخلها JSON أو لا */
-async function handleFile(file){
+/* فك الـ payload من البطاقة PNG */
+function base64ToUtf8(b64){
+  try{
+    const bin = atob(b64);
+    const u8 = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) u8[i] = bin.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(u8);
+  }catch(e){
+    try{
+      return atob(b64);
+    }catch(_){
+      return null;
+    }
+  }
+}
+function findLastMarkerIndex(bytes, markerBytes){
+  for (let i = bytes.length - markerBytes.length; i >= 0; i--){
+    let j=0;
+    for (; j<markerBytes.length; j++){
+      if (bytes[i+j] !== markerBytes[j]) break;
+    }
+    if (j === markerBytes.length) return i;
+  }
+  return -1;
+}
+function extractBase64FromBytes(bytes, start){
+  let s = '';
+  for (let i=start; i<bytes.length; i++){
+    const ch = String.fromCharCode(bytes[i]);
+    if (/[\r\n\t ]/.test(ch)) continue;
+    if (!/[A-Za-z0-9+/=]/.test(ch)) break;
+    s += ch;
+  }
+  return s || null;
+}
+
+/* التعامل مع ملف بطاقة واحد */
+async function handleCardFile(file){
   try{
     const buf = await file.arrayBuffer();
     const raw = new Uint8Array(buf);
     const pos = findLastMarkerIndex(raw, markerBytes);
     let payload = null;
 
-    if(pos >= 0){
+    if (pos >= 0){
       const start = pos + markerBytes.length;
       const b64 = extractBase64FromBytes(raw, start);
-      if(b64){
+      if (b64){
         try{
           const txt = base64ToUtf8(b64);
           payload = JSON.parse(txt);
         }catch(e){}
       }
+    }else{
+      /* fallback: لو تم حقن base64 كـ data:application/json;base64,... في التيل */
+      const textTail = new TextDecoder().decode(raw.slice(Math.max(0, raw.length - 4000)));
+      const m = textTail.match(/data:application\/json;base64,([A-Za-z0-9+\/=\r\n]+)/);
+      if (m){
+        try{
+          payload = JSON.parse(atob(m[1]));
+        }catch(_){}
+      }
     }
 
-    const dataUrl = await new Promise((resolve,reject)=>{
-      const fr = new FileReader();
-      fr.onload=()=>resolve(fr.result);
-      fr.onerror=reject;
-      fr.readAsDataURL(file);
-    });
+    const blobUrl = URL.createObjectURL(new Blob([raw], { type: file.type || 'image/png' }));
 
-    if(payload){
+    if (payload){
       const n = normalize(payload);
-      n.image = payload.image || dataUrl;
+      n.imageDataUrl =
+        (payload.image && String(payload.image).startsWith('data:')) ? payload.image :
+        (payload.imageDataUrl && String(payload.imageDataUrl).startsWith('data:')) ? payload.imageDataUrl :
+        (payload.thumb && String(payload.thumb).startsWith('data:')) ? payload.thumb :
+        (payload.imageDataUrl || payload.image || payload.thumb || blobUrl);
+
+      n.location = payload.location || n.location || '';
+      n.category = payload.category || payload.cat || n.category || 'عام';
+      n._hasPayload = true;
       n._fileName = file.name;
       ads.unshift(n);
-    } else {
+    }else{
       const n = normalize({
         id: uid(),
-        name: file.name,
+        title: file.name,
         description: '',
-        image: dataUrl,
+        imageDataUrl: blobUrl,
+        created_at: new Date().toISOString(),
+        _blobUrl: blobUrl,
+        fileName: file.name
       });
       n._hasPayload = false;
-      n._fileName = file.name;
       ads.unshift(n);
     }
   }catch(e){
     console.error(e);
-    showToast('خطأ أثناء قراءة الملف');
+    showToast('خطأ أثناء قراءة البطاقة');
   }
 }
 
+/* فحص قائمة ملفات */
 async function scanList(files){
   const arr = Array.from(files || []);
-  if(!arr.length) return showToast('لم يتم اختيار ملفات');
-  showToast('جارٍ فحص البطاقات...');
-  for(const f of arr){
-    await handleFile(f);
+  if (!arr.length){
+    showToast('لم يتم اختيار ملفات');
+    return;
   }
+  showToast('جارٍ فحص البطاقات...');
+  for (let i=0;i<arr.length;i++){
+    await handleCardFile(arr[i]);
+  }
+  saveToLocal();
   renderGrid();
   setCount();
-  showToast('تم استيراد البطاقات');
+  showToast('انتهى الفحص');
 }
 
+/* RENDER شبكة البطاقات */
 function renderGrid(){
   grid.innerHTML = '';
   const filterText = (searchEl.value || '').trim().toLowerCase();
-  const list = ads.filter(a=>{
-    if(currentFilter==='with' && !a._hasPayload) return false;
-    if(currentFilter==='without' && a._hasPayload) return false;
-    if(!filterText) return true;
-    return (a.ref+' '+a.title+' '+a.price+' '+a.description+' '+a.location).toLowerCase().includes(filterText);
+
+  const items = ads.filter(a => {
+    if (currentFilter === 'with' && !a._hasPayload) return false;
+    if (currentFilter === 'without' && a._hasPayload) return false;
+    if (filterText){
+      const hay = (a.ref + ' ' + a.title + ' ' + a.location + ' ' + a.description).toLowerCase();
+      if (hay.indexOf(filterText) === -1) return false;
+    }
+    return true;
   });
-  if(!list.length){
-    grid.innerHTML = '<div class="small" style="padding:12px;color:#6b7280">لا توجد نتائج</div>';
-    return;
-  }
-  list.forEach((a, idx)=>{
-    const el = document.createElement('div'); el.className='card';
-    el.dataset.adId = a.id;
-    el.innerHTML = `
-      <div class="posBadge">#${idx+1}</div>
-      ${a.image
-        ? `<img loading="lazy" class="thumb" src="${a.image}" alt="${esc(a.title)}">`
-        : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#9aa4b2">لا توجد صورة</div>`
-      }
-      <div class="meta">
-        <div class="name">${esc(a.title||'(بدون عنوان)')}</div>
-        <div class="desc">${esc(a.description||'')}</div>
-        <div class="row" style="margin-top:8px">
-          <div class="badge">${esc(a.price||'-')}</div>
-          <div style="margin-inline-start:auto" class="small">${esc(a.location||'-')}</div>
-        </div>
-        <div class="card-actions">
-          <button class="icon-btn" data-action="open" title="فتح">🔎</button>
-          <button class="icon-btn" data-action="download" title="JSON">📄</button>
-          <button class="icon-btn" data-action="remove" title="حذف">🗑️</button>
-        </div>
+
+  items.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = a.id;
+
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.src = a.imageDataUrl || '';
+    img.alt = a.title || 'صورة';
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = `
+      <div class="name">${esc(a.title || 'بدون عنوان')}</div>
+      <div class="desc">${esc(a.description || '')}</div>
+      <div class="row" style="margin-top:4px">
+        <span class="badge">${esc(a.category || 'عام')}</span>
+        <span style="margin-inline-start:auto;font-size:12px;color:${a.price ? '#16a34a' : '#9ca3af'};font-weight:700">${esc(a.price || '')}</span>
+      </div>
+      <div class="row" style="font-size:11px;margin-top:4px;color:var(--muted)">
+        <span>${esc(a.location || '')}</span>
+        <span style="margin-inline-start:auto">${esc(a.ref || '')}</span>
       </div>
     `;
-    el.querySelector('[data-action="open"]').addEventListener('click',(e)=>{ e.stopPropagation(); openModalById(a.id); });
-    el.querySelector('[data-action="download"]').addEventListener('click',(e)=>{ e.stopPropagation(); downloadJsonForId(a.id); });
-    el.querySelector('[data-action="remove"]').addEventListener('click',(e)=>{ e.stopPropagation(); removeById(a.id); });
-    el.addEventListener('click', ()=> openModalById(a.id));
-    grid.appendChild(el);
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+    actions.innerHTML = `
+      <button class="icon-btn" data-act="open" title="فتح وتعديل"><span>✏️</span></button>
+      <button class="icon-btn" data-act="img" title="تنزيل الصورة"><span>🖼</span></button>
+      <button class="icon-btn" data-act="json" title="تنزيل JSON"><span>📄</span></button>
+    `;
+
+    card.appendChild(img);
+    card.appendChild(meta);
+    card.appendChild(actions);
+
+    card.addEventListener('click', e => {
+      const act = e.target.closest('[data-act]');
+      if (act){
+        const actType = act.dataset.act;
+        if (actType === 'open') openModalById(a.id);
+        if (actType === 'img') downloadImage(a.id);
+        if (actType === 'json'){
+          selectedAdId = a.id;
+          downloadJsonBtn.click();
+        }
+        e.stopPropagation();
+        return;
+      }
+      openModalById(a.id);
+    });
+
+    /* سحب/إفلات لإعادة ترتيب البطاقات */
+    card.draggable = true;
+    card.addEventListener('dragstart', ev => {
+      ev.dataTransfer.effectAllowed = 'move';
+      ev.dataTransfer.setData('text/plain', a.id);
+      card.classList.add('dragging');
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      saveToLocal();
+      renderGrid();
+      setCount();
+    });
+
+    grid.appendChild(card);
   });
+
+  grid.ondragover = e => {
+    e.preventDefault();
+    const dragging = grid.querySelector('.card.dragging');
+    if (!dragging) return;
+    const afterElement = getDragAfterElement(grid, e.clientY);
+    if (afterElement == null){
+      grid.appendChild(dragging);
+    }else{
+      grid.insertBefore(dragging, afterElement);
+    }
+    const newOrder = [...grid.children].map(el => el.dataset.id);
+    ads.sort((a,b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+  };
 }
 
+/* حساب مكان إدراج البطاقة المسحوبة */
+function getDragAfterElement(container, y){
+  const elements = [...container.querySelectorAll('.card:not(.dragging)')];
+  let closest = { offset: Number.NEGATIVE_INFINITY, element: null };
+  elements.forEach(child => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset){
+      closest = { offset, element: child };
+    }
+  });
+  return closest.element;
+}
+
+/* المودال: فتح/إغلاق + ملء البيانات */
 function openModalById(adId){
   selectedAdId = adId;
-  const a = ads.find(x=>x.id===adId);
-  if(!a) return;
-  modalRef.textContent = a.ref || a.id;
-  modalRefInput.value = a.ref || '';
-  modalImg.src = a.image || '';
+  const a = ads.find(x => x.id === adId);
+  if (!a) return;
+  modalImg.src = a.imageDataUrl || '';
+  modalRef.textContent = a.ref || a.id || '—';
+  modalRefInput.value = a.ref || a.id || '';
   modalTitle.value = a.title || '';
   modalPrice.value = a.price || '';
   modalPhone.value = a.phone || '';
   modalLoc.value = a.location || '';
   modalCategory.value = a.category || 'عام';
   modalDesc.value = a.description || '';
-  modalImageFile.value = '';
   modal.classList.add('open');
-  modal.setAttribute('aria-hidden','false');
+  modal.setAttribute('aria-hidden', 'false');
 }
 function closeModal(){
   modal.classList.remove('open');
-  modal.setAttribute('aria-hidden','true');
-  selectedAdId=null;
+  modal.setAttribute('aria-hidden', 'true');
+  selectedAdId = null;
 }
-closeModalBtn.addEventListener('click', closeModal);
 
-/* حفظ التعديلات */
-saveBtn.addEventListener('click', ()=>{
-  if(!selectedAdId) return;
-  const idx = ads.findIndex(x=>x.id===selectedAdId);
-  if(idx<0) return;
+closeModalBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', e => {
+  if (e.target === modal) closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+/* حفظ إعلان بعد التعديل من المودال */
+saveBtn.addEventListener('click', () => {
+  if (!selectedAdId) return;
+  const idx = ads.findIndex(x => x.id === selectedAdId);
+  if (idx < 0) return;
   ads[idx].ref = modalRefInput.value.trim() || ads[idx].ref || ads[idx].id;
   ads[idx].title = modalTitle.value.trim();
   ads[idx].price = modalPrice.value.trim();
   ads[idx].phone = modalPhone.value.trim();
   ads[idx].location = modalLoc.value.trim();
-  ads[idx].category = modalCategory.value.trim() || 'عام';
+  ads[idx].category = (modalCategory && modalCategory.value ? modalCategory.value.trim() : (ads[idx].category || 'عام'));
   ads[idx].description = modalDesc.value.trim();
   ads[idx]._hasPayload = true;
+  saveToLocal();
   renderGrid();
-  showToast('تم الحفظ داخل الأداة. لا تنس تنزيل JSON ورفعه إلى GitHub.');
+  setCount();
+  showToast('تم الحفظ');
   closeModal();
 });
 
-/* حذف إعلان */
-function removeById(id){
-  const idx = ads.findIndex(x=>x.id===id);
-  if(idx<0) return;
-  if(!confirm('تأكيد حذف العنصر؟')) return;
-  ads.splice(idx,1);
+/* حذف إعلان من القائمة */
+removeBtn.addEventListener('click', () => {
+  if (!selectedAdId) return;
+  const idx = ads.findIndex(x => x.id === selectedAdId);
+  if (idx < 0) return;
+  ads.splice(idx, 1);
+  saveToLocal();
   renderGrid();
   setCount();
-  showToast('حُذف العنصر من الأداة (لن يُحدَّث GitHub إلا عندما ترفع JSON جديد).');
-}
-removeBtn.addEventListener('click', ()=>{
-  if(!selectedAdId) return;
-  removeById(selectedAdId);
+  showToast('حُذف العنصر');
   closeModal();
+});
+
+/* تغيير صورة الإعلان من المودال → WEBP في JSON */
+modalImgInput.addEventListener('change', async (e) => {
+  if (!selectedAdId) return;
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  try{
+    const webp = await imageFileToWebpDataUrl(file, 900, 900, 0.8);
+    const idx = ads.findIndex(x => x.id === selectedAdId);
+    if (idx < 0) return;
+    ads[idx].imageDataUrl = webp;
+    modalImg.src = webp;
+    saveToLocal();
+    renderGrid();
+    showToast('تم تحديث صورة الإعلان (WEBP داخل JSON)');
+  }catch(err){
+    console.error(err);
+    showToast('تعذر تحويل الصورة إلى WEBP', 2500);
+  }finally{
+    modalImgInput.value = '';
+  }
+});
+
+/* تنزيل صورة إعلان واحد */
+function downloadImage(id){
+  const a = ads.find(x => x.id === id);
+  if (!a || !a.imageDataUrl){
+    showToast('لا توجد صورة مرفوعة لهذا الإعلان');
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = a.imageDataUrl;
+  link.download = (a.ref || a.id || 'ad') + '.png';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+}
+downloadImgBtn.addEventListener('click', () => {
+  if (!selectedAdId) return;
+  downloadImage(selectedAdId);
 });
 
 /* تنزيل JSON لإعلان واحد */
-function downloadJsonForId(id){
-  const a = ads.find(x=>x.id===id);
-  if(!a) return;
-  const full = toFullItem(a);
-  const blob = new Blob([JSON.stringify(full,null,2)],{type:'application/json'});
+downloadJsonBtn.addEventListener('click', () => {
+  if (!selectedAdId) return;
+  const idx = ads.findIndex(x => x.id === selectedAdId);
+  if (idx < 0) return;
+  const a = ads[idx];
+
+  /* مزامنة آخر بيانات من المودال قبل التنزيل */
+  a.ref       = (modalRefInput.value || '').trim() || a.ref || a.id;
+  a.title     = (modalTitle.value || '').trim();
+  a.price     = (modalPrice.value || '').trim();
+  a.phone     = (modalPhone.value || '').trim();
+  a.location  = (modalLoc.value || '').trim();
+  a.category  = (modalCategory && modalCategory.value ? modalCategory.value.trim() : (a.category || 'عام'));
+  a.description = (modalDesc.value || '').trim();
+  a._hasPayload = true;
+
+  const out = {
+    ref_code: a.ref || a.id,
+    name: a.title || '',
+    description: a.description || '',
+    location: a.location || '',
+    price: a.price || '',
+    contact: a.phone || '',
+    category: a.category || 'عام',
+    image: a.imageDataUrl || a.image || '',
+    created_at: a.created_at || a.createdAt || new Date().toISOString()
+  };
+
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
   const url = URL.createObjectURL(blob);
-  const fname = (full.ref_code || a.ref || a.id || 'ad') + '.json';
   const ael = document.createElement('a');
   ael.href = url;
-  ael.download = fname;
+  ael.download = (out.ref_code || 'ad') + '.json';
   document.body.appendChild(ael);
   ael.click();
   ael.remove();
   URL.revokeObjectURL(url);
-}
-downloadJsonBtn.addEventListener('click', ()=>{
-  if(!selectedAdId) return;
-  downloadJsonForId(selectedAdId);
+
+  showToast('تم تنزيل ملف JSON — ارفعه إلى مجلد /ads في GitHub.');
 });
 
-/* استيراد JSON موجود */
-importJsonBtn.addEventListener('click', ()=> jsonInput.click());
-jsonInput.addEventListener('change', async ()=>{
-  const files = Array.from(jsonInput.files || []);
-  if(!files.length) return;
-  for(const f of files){
-    const txt = await f.text();
+/* استيراد JSONات جاهزة */
+importJsonBtn.addEventListener('click', () => jsonInput.click());
+jsonInput.addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  for (const f of files){
     try{
+      const txt = await f.text();
       const data = JSON.parse(txt);
-      ads.push(normalize(data));
-    }catch(e){
-      console.error(e);
-      showToast('خطأ في قراءة ملف JSON: ' + f.name);
+      if (Array.isArray(data)){
+        data.forEach(d => ads.push(normalize(d)));
+      }else{
+        ads.push(normalize(data));
+      }
+    }catch(err){
+      console.error(err);
+      showToast('فشل في قراءة بعض ملفات JSON');
     }
   }
+  saveToLocal();
   renderGrid();
   setCount();
-  showToast('تم استيراد ملفات JSON الموجودة.');
 });
 
-/* فحص البطاقات */
-scanBtn.addEventListener('click', ()=>{
-  if(fileInput.files.length) scanList(fileInput.files);
-  else showToast('اختر بطاقات أولاً');
-});
-dropzone.addEventListener('click', ()=> fileInput.click());
-fileInput.addEventListener('change', ()=> scanList(fileInput.files));
-dropzone.addEventListener('dragover',(e)=>{
-  e.preventDefault();
-  dropzone.classList.add('drag');
-});
-dropzone.addEventListener('dragleave',()=> dropzone.classList.remove('drag'));
-dropzone.addEventListener('drop',(e)=>{
-  e.preventDefault();
-  dropzone.classList.remove('drag');
-  const dt = e.dataTransfer;
-  if(dt && dt.files) scanList(dt.files);
+/* تصدير كل الإعلانات في ملف واحد */
+exportAllBtn.addEventListener('click', () => {
+  if (!ads.length){
+    showToast('لا توجد إعلانات للتصدير');
+    return;
+  }
+  const out = ads.map(a => ({
+    ref_code: a.ref || a.id,
+    name: a.title || '',
+    description: a.description || '',
+    location: a.location || '',
+    price: a.price || '',
+    contact: a.phone || '',
+    category: a.category || 'عام',
+    image: a.imageDataUrl || a.image || '',
+    created_at: a.created_at || a.createdAt || new Date().toISOString()
+  }));
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const ael = document.createElement('a');
+  ael.href = url;
+  ael.download = 'all_ads.json';
+  document.body.appendChild(ael);
+  ael.click();
+  ael.remove();
+  URL.revokeObjectURL(url);
+  showToast('تم تنزيل ملف all_ads.json');
 });
 
-/* بحث + فلاتر */
-searchEl.addEventListener('input', ()=> renderGrid());
-filters.forEach(f=> f.addEventListener('click', ()=>{
-  filters.forEach(x=>x.classList.remove('active'));
-  f.classList.add('active');
-  currentFilter = f.dataset.filter;
-  renderGrid();
-}));
+/* حفظ الحالة يدويًا */
+saveLocalBtn.addEventListener('click', () => {
+  saveToLocal();
+  showToast('تم حفظ الحالة في المتصفح');
+});
 
-/* إعلان جديد يدوي */
-newAdBtn.addEventListener('click', ()=>{
-  const empty = normalize({
-    id: uid(),
-    ref_code: '',
-    name: '',
-    price: '',
-    contact: '',
-    location: '',
-    category: 'عام',
-    description: '',
-    image: ''
-  });
-  empty._hasPayload = true;
-  ads.unshift(empty);
+/* مسح التخزين المحلي */
+fab.addEventListener('click', () => {
+  if (!confirm('سيتم مسح القائمة المحفوظة محلياً فقط (لن يؤثر ذلك على GitHub). هل أنت متأكد؟')) return;
+  ads = [];
+  localStorage.removeItem(STORAGE_KEY);
   renderGrid();
   setCount();
-  openModalById(empty.id);
+  showToast('تم مسح التخزين المؤقت');
 });
 
-/* تحديث صورة الإعلان داخل المودال و تحويلها WEBP */
-modalImageFile.addEventListener('change', async ()=>{
-  try{
-    const file = modalImageFile.files && modalImageFile.files[0];
-    if(!file || !selectedAdId) return;
-    const idx = ads.findIndex(x=>x.id===selectedAdId);
-    if(idx<0) return;
-    const webpDataUrl = await imageFileToWebpDataUrl(file, 900, 900, 0.8);
-    ads[idx].image = webpDataUrl;
-    modalImg.src = webpDataUrl;
-    showToast('تم تحويل الصورة إلى WEBP وتضمينها داخل JSON.');
+/* بحث وفلاتر */
+searchEl.addEventListener('input', () => renderGrid());
+filters.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filters.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter || 'all';
     renderGrid();
-  }catch(e){
-    console.error(e);
-    showToast('حدث خطأ أثناء تحويل الصورة إلى WEBP.');
+  });
+});
+
+/* سحب/إفلات ملفات من dropzone */
+dropzone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => scanList(e.target.files));
+
+dropzone.addEventListener('dragover', e => {
+  e.preventDefault();
+  dropzone.classList.add('dropzone--active');
+});
+dropzone.addEventListener('dragleave', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dropzone--active');
+});
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dropzone--active');
+  scanList(e.dataTransfer.files);
+});
+
+/* زر مسح ملفات (نفس وظيفة input) */
+scanBtn.addEventListener('click', () => fileInput.click());
+
+/* إنشاء إعلان جديد يدويًا + صورة WEBP */
+newDownloadJsonBtn.addEventListener('click', async () => {
+  try{
+    const ref = (newRef.value || '').trim() || ('R' + Date.now().toString(36).slice(-6).toUpperCase());
+    let imageDataUrl = '';
+    const file = newImage.files && newImage.files[0];
+
+    if (file){
+      try{
+        imageDataUrl = await imageFileToWebpDataUrl(file, 900, 900, 0.8);
+      }catch(e){
+        console.warn('failed to convert new ad image to webp', e);
+      }
+    }
+
+    const out = {
+      ref_code: ref,
+      name: (newTitle.value || '').trim(),
+      description: (newDesc.value || '').trim(),
+      location: (newLoc.value || '').trim(),
+      price: (newPrice.value || '').trim(),
+      contact: (newPhone.value || '').trim(),
+      category: (newCategory.value || '').trim() || 'عام',
+      image: imageDataUrl,
+      created_at: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const ael = document.createElement('a');
+    ael.href = url;
+    ael.download = ref + '.json';
+    document.body.appendChild(ael);
+    ael.click();
+    ael.remove();
+    URL.revokeObjectURL(url);
+    showToast('تم تنزيل ملف JSON جديد — ارفعه إلى /ads');
+  }catch(err){
+    console.error(err);
+    showToast('حدث خطأ أثناء إنشاء JSON', 2500);
   }
 });
 
-window.addEventListener('load', ()=>{
-  setCount();
-  renderGrid();
-});
+/* تحميل الحالة من التخزين المحلي عند البداية */
+loadFromLocal();
+renderGrid();
+setCount();
 </script>
 </body>
 </html>
