@@ -649,7 +649,7 @@ async function canvasToPngBlob(canvas){
           const base = window.location.href.split('#')[0];
           const adLink = base + '#ad-' + ref;
           openWa.textContent = 'فتح WhatsApp لإرسال البطاقة';
-          openWa.href = 'https://wa.me/?text=' + encodeURIComponent(
+          openWa.href = 'https://wa.me/+249998615193?text=' + encodeURIComponent(
             `مرحباً، أود نشر إعلان برمز: ${ref}\n${payload.name}\n${payload.price}\n${adLink}\nسأرفق البطاقة (${ref}_eldelala.png).`
           );
         }
