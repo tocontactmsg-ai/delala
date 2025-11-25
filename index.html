@@ -421,124 +421,83 @@ async function openDetails(item){
   modal.setAttribute('aria-hidden','false');
 }
 
-/* تحميل الإعلانات من GitHub */
-async function loadAdsFromGithub(){
+async function loadAdsFromGithub() {
   const noItemsEl = document.getElementById('noitems');
-  try{
-    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}&v=${CACHE_BUSTER}`;
+  try {
+    const contentsUrl =
+      `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}&v=${CACHE_BUSTER}`;
+
     const res = await fetch(contentsUrl);
-    if(!res.ok){
-      const txt = await res.text();
-      console.error('GitHub API error:', res.status, txt);
-      if(noItemsEl){
+
+    if (!res.ok) {
+      if (noItemsEl) {
         noItemsEl.style.display = 'block';
-        noItemsEl.innerHTML =async function loadAdsJson(){
-  const noItemsEl = document.getElementById('noitems');
-  try{
-    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
-    console.log('Fetching ads list from:', contentsUrl);
-    const res = await fetch(contentsUrl);
-    if(!res.ok){
-      const txt = await res.text();
-      console.error('GitHub API error:', res.status, txt);
-      if(noItemsEl){
-        noItemsEl.style.display = 'block';
-        noItemsEl.innerHTML = 'تعذر تحميل الإعلانات   <br>status: ' + res.status;
+        noItemsEl.innerHTML = 'تعذر تحميل الإعلانات<br>status: ' + res.status;
       }
-      if(countEl) countEl.textContent = '0 إعلان';
+      if (countEl) countEl.textContent = '0 إعلان';
       return;
     }
 
     const files = await res.json();
-    const jsonFiles = files.filter(f =>
-      f.type === 'file' &&
-      f.name.toLowerCase().endsWith('.json')
+    const jsonFiles = files.filter((f) =>
+      f.type === 'file' && f.name.toLowerCase().endsWith('.json')
     );
 
-    // 🟢 حد أقصى لعدد الإعلانات في التحميل الأول
-    const MAX_ADS = 60; // غيّر الرقم لو حاب
+    const MAX_ADS = 60;
     const limitedFiles = jsonFiles.slice(0, MAX_ADS);
 
-    // 🟢 تحميل كل ملفات JSON بشكل متوازي بدل واحد واحد
     const promises = limitedFiles.map(async (f) => {
-      try{
-        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
+      try {
+        const rawUrl =
+          `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
         const r2 = await fetch(rawUrl);
-        if(!r2.ok){
-          console.warn('raw fetch failed for', f.name, r2.status);
-          return null;
-        }
+        if (!r2.ok) return null;
+
         const data = await r2.json();
+
         return {
-          ref_code: data.ref_code || data.ref || f.name.replace(/\.json$/i,''),
+          ref_code:
+            data.ref_code || data.ref || f.name.replace(/\.json$/i, ''),
           name: data.name || data.title || '',
           price: data.price || data.amount || '',
           description: data.description || data.desc || data.body || '',
           location: data.location || data.city || data.loc || '',
           contact: data.contact || data.phone || data.tel || '',
-          category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
-          image: data.image || data.thumb || data.imageDataUrl || ''
+          category:
+            (data.category ||
+              data.cat ||
+              data.type ||
+              data.Category ||
+              '').toString().trim() || 'عام',
+          image: data.image || data.thumb || data.imageDataUrl || '',
         };
-      }catch(e){
-        console.warn('failed to load ad', f.name, e);
+      } catch {
         return null;
       }
     });
 
-    const loaded = (await Promise.all(promises)).filter(Boolean);
+    ads = (await Promise.all(promises)).filter(Boolean);
 
-    ads = loaded;
-
-    // تحديث الفلتر حسب التصنيف (مثل ما كان)
-    try{
-      const cats = [...new Set(ads.map(a=>a.category||'عام'))];
-      cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
-      if(catFilter){
-        catFilter.innerHTML = '<option value="">كل الاقسام</option>' +
-          cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-      }
-    }catch(e){ console.warn('category populate', e); }
+    // تحديث الفلاتر
+    try {
+      const cats = [...new Set(ads.map((a) => a.category || 'عام'))];
+      cats.sort((a, b) => a.localeCompare(b, 'ar'));
+      catFilter.innerHTML =
+        '<option value="">كل الاقسام</option>' +
+        cats.map((c) => `<option value="${c}">${c}</option>`).join('');
+    } catch {}
 
     applyFiltersAndRender();
-
-    // لو في إعلانات أكثر من MAX_ADS ممكن نعرض ملاحظة صغيرة
-    if(jsonFiles.length > MAX_ADS && noItemsEl){
+  } catch {
+    if (noItemsEl) {
       noItemsEl.style.display = 'block';
-      noItemsEl.innerHTML = `تم عرض أول ${MAX_ADS} إعلان فقط لتسريع التحميل.`;
+      noItemsEl.textContent =
+        'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات GitHub).';
     }
-
-  }catch(err){
-    console.error('loadAdsJson failed', err);
-    if(noItemsEl){
-      noItemsEl.style.display='block';
-      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات GitHub).';
-    }
-    if(countEl) countEl.textContent='0 إعلان';
+    if (countEl) countEl.textContent = '0 إعلان';
   }
 }
 
-
-/* ===== كود صناعة كرت PNG: صورة + ref + "نشكرك علي استخدامك موقع الدلالة" ===== */
-
-const MARKER = 'ELDELALA_PAYLOAD:';
-
-function dataUrlToBlob(dataUrl){
-  const parts = dataUrl.split(',');
-  const meta = parts[0];
-  const data = parts[1] || '';
-  const mimeMatch = meta.match(/:(.*?);/);
-  const mime = mimeMatch ? mimeMatch[1] : 'image/png';
-  const bin = atob(data);
-  const len = bin.length;
-  const u8 = new Uint8Array(len);
-  for(let i=0;i<len;i++) u8[i] = bin.charCodeAt(i);
-  return new Blob([u8], { type: mime });
-}
-
-async function blobToUint8(blob){
-  const ab = await blob.arrayBuffer();
-  return new Uint8Array(ab);
-}
 
 function jsonToBase64String(obj){
   const json = JSON.stringify(obj);
