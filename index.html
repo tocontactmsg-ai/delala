@@ -238,11 +238,8 @@ tocontactmsg@gmail.com
 const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'delala';
 const GITHUB_BRANCH = 'main';
-const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.1.0'; // Updated version for faster loading implementation
-// --- NEW: Single-file data URL ---
-const ADS_DATA_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/ads-data.json?${CACHE_BUSTER}`;
-const CACHE_KEY = 'eldelala_ads_cache_v2'; // Bump cache version
+const ADS_DIR       = 'ads'; // مجلد الإعلانات
+const CACHE_BUSTER  = 'v1.1.1'; // تحديث الإصدار
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
@@ -317,7 +314,7 @@ function applyFiltersAndRender(){
   const cat = (catFilter && catFilter.value || '').trim();
   let out = ads.slice();
 
-  // 1. Filtering
+  // 1. Filtering (البحث)
   if(cat){
     out = out.filter(a => (a.category||'').toString() === cat);
   }
@@ -329,22 +326,22 @@ function applyFiltersAndRender(){
     });
   }
   
-  // 2. Sorting: Newest ads first (based on a created_at property, descending)
+  // 2. Sorting (الفرز: الأحدث أولاً)
   out.sort((A,B) => {
-    // Attempt to parse date/timestamp, fall back to comparing ref_code as a number if not available
+    // محاولة تحليل التاريخ/الختم الزمني، أو استخدام رمز الإعلان كرقم احتياطي
     const dateA = new Date(A.created_at || '0').getTime() || (A.ref_code && parseInt(A.ref_code.slice(1), 36)) || 0;
     const dateB = new Date(B.created_at || '0').getTime() || (B.ref_code && parseInt(B.ref_code.slice(1), 36)) || 0;
     
-    // Sort descending (newest first)
+    // الفرز التنازلي (الأحدث أولاً)
     if (dateA !== dateB) {
         return dateB - dateA;
     }
     
-    // Secondary sort by category for consistency if dates are the same
+    // فرز ثانوي حسب التصنيف
     const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
     if(aCat !== 0) return aCat;
     
-    // Tertiary sort by name
+    // فرز ثالث حسب الاسم
     return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
   });
   
@@ -445,37 +442,41 @@ async function openDetails(item){
   modal.setAttribute('aria-hidden','false');
 }
 
-/* تحميل الإعلانات من GitHub - REVISED */
+/* تحميل الإعلانات من GitHub - وظيفة استرجاع الملفات المتعددة المصححة */
 async function loadAdsFromGithub(forceRefresh = false){
   const noItemsEl = document.getElementById('noitems');
-  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+  const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}&${CACHE_BUSTER}`;
   
   if(countEl) countEl.textContent = 'جارِ التحميل...';
 
-  // Try cache
-  let cached = false;
-  if(!forceRefresh){
-    try{
-      const raw = localStorage.getItem(CACHE_KEY);
-      if(raw){
-        const parsed = JSON.parse(raw);
-        if(parsed && Date.now() - (parsed.ts||0) < CACHE_TTL_MS && Array.isArray(parsed.ads)){
-          ads = parsed.ads;
-          cached = true;
+  try{
+    // 1. جلب قائمة الملفات من GitHub API
+    const res = await fetch(GITHUB_API_URL, {
+        headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'Cache-Control': forceRefresh ? 'no-cache' : 'max-age=300'
         }
-      }
-    }catch(e){ console.warn('cache read failed', e); }
-  }
-  
-  // Try fetch single file if not cached or force refreshing
-  if(!cached || forceRefresh){
-    try{
-      const res = await fetch(ADS_DATA_URL);
-      if(res.ok){
-        const fetchedAds = await res.json();
-        if(Array.isArray(fetchedAds)){
-            ads = fetchedAds.map(data => ({
-              ref_code: data.ref_code || data.ref || data.fileName.replace(/\.json$/i,''),
+    });
+    
+    if(!res.ok){
+      throw new Error(`GitHub API failed: Status ${res.status}`);
+    }
+    
+    const fileList = await res.json();
+    const jsonFiles = fileList.filter(f => f.type === 'file' && f.name.toLowerCase().endsWith('.json'));
+    
+    // 2. جلب محتوى كل ملف JSON على حدة
+    const newAds = [];
+    const promises = jsonFiles.map(file => {
+        const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${file.name}`;
+        
+        // استخدام cache-control لضمان تحديث المحتوى
+        return fetch(rawUrl, {
+            headers: { 'Cache-Control': forceRefresh ? 'no-cache' : 'max-age=300' }
+        }).then(r => r.json()).then(data => {
+            // توحيد تنسيق كائن الإعلان
+            newAds.push({
+              ref_code: data.ref_code || data.ref || file.name.replace(/\.json$/i,''),
               name: data.name || data.title || '',
               price: data.price || data.amount || '',
               description: data.description || data.desc || data.body || '',
@@ -483,47 +484,45 @@ async function loadAdsFromGithub(forceRefresh = false){
               contact: data.contact || data.phone || data.tel || '',
               category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
               image: data.image || data.thumb || data.imageDataUrl || '',
-              created_at: data.created_at || data.timestamp || '' // Crucial for sorting!
-            }));
-            // Update cache
-            try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), ads })); }catch(e){}
-        } else {
-             throw new Error('Fetched data is not an array.');
-        }
-      } else {
-        throw new Error(`Failed to fetch main data file. Status: ${res.status}`);
-      }
-    }catch(err){
-      console.error('loadAdsFromGithub failed during fetch', err);
-      // Only show error if no previous ads are available
-      if(!ads.length && noItemsEl){
-        noItemsEl.style.display='block';
-        noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ في جلب البيانات).';
-        if(countEl) countEl.textContent='0 إعلان';
-      }
-      return;
-    }
-  }
+              created_at: data.created_at || data.timestamp || '' // مهم للفرز
+            });
+        }).catch(e => {
+            console.warn(`Failed to fetch/parse ad file ${file.name}:`, e);
+            // تجاهل الملفات التالفة
+        });
+    });
+    
+    // انتظار انتهاء جلب جميع الملفات
+    await Promise.all(promises);
+    ads = newAds; // تحديث قائمة الإعلانات العالمية
 
-  // Update categories filter
+  }catch(err){
+    console.error('loadAdsFromGithub failed during fetch', err);
+    if(noItemsEl){
+      noItemsEl.style.display='block';
+      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ في جلب البيانات).';
+      if(countEl) countEl.textContent='0 إعلان';
+    }
+    return;
+  }
+  
+  // 3. تحديث فلتر التصنيفات
   try{
     const cats = [...new Set(ads.map(a=>a.category||'عام'))];
     cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
     if(catFilter){
-      // Save current selection before update
       const currentCat = catFilter.value;
       catFilter.innerHTML = '<option value="">كل الاقسام</option>' +
         cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-      // Restore current selection
       catFilter.value = currentCat;
     }
   }catch(e){}
 
-  // Apply filters and render grid, which handles the sorting (newest first)
+  // 4. تطبيق الفلاتر والفرز والعرض (بما في ذلك الفرز "الأحدث أولاً")
   applyFiltersAndRender();
   if(countEl) countEl.textContent = ads.length + ' إعلان';
   
-  // Open ad from hash if needed, now that data is loaded
+  // 5. فتح الإعلان من الـ hash إذا لزم الأمر
   openAdFromHash();
 }
 
