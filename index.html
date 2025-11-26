@@ -130,7 +130,7 @@
   <main>
     <section id="home" class="active" aria-live="polite">
       <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
-      <div id="noitems" style="display:none;text-align:center;margin-top:12px" class="small">لا توجد إعلانات</div>
+      <div id="noitems" style="display:none;text-align:center;margin-top:15px" class="small">يتم تحميل الاعلانات ...</div>
     </section>
 
     <section id="send">
@@ -417,7 +417,7 @@ async function openDetails(item){
   modalWhats.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
   modalWhats.target = '_blank';
 
-  // تأكد من أن الـ hash في الرابط يعكس الإعلان المفتوح
+  //  وح
   try{
     if(item.ref_code){
       const newHash = '#ad-' + encodeURIComponent(item.ref_code);
@@ -481,7 +481,7 @@ async function loadAdsFromGithub(){
              // لا حاجة لانتظار تحميل الكل إذا كان الكاش جاهزاً
         } else {
              // كل الإعلانات في الكاش، لا حاجة للتحميل الإضافي
-             return;
+             return; // مهم: الخروج هنا إذا كان كل شيء في الكاش
         }
       }
     }
@@ -523,7 +523,7 @@ async function loadAdsFromGithub(){
         let attempt = 0;
         while(attempt <= tries){
           try{
-            // لا حاجة لرأس Accept لجلب المحتوى الخام (raw.githubusercontent.com)
+            // لا )
             const r = await timeoutFetch(url, {}, FETCH_TIMEOUT_MS); 
             if(!r.ok) throw new Error('status ' + r.status);
             const data = await r.json();
@@ -622,10 +622,7 @@ async function loadAdsFromGithub(){
       }
       if(countEl) countEl.textContent = ads.length + ' إعلان';
       
-      // 🔥 FIX: Check and open ad from hash after *this* page has finished loading
-      if(pageIndex === 1 && (isInitialLoad || ads.length >= PAGE_SIZE)){
-         openAdFromHash();
-      }
+      // تم إزالة اس ub)
     }
 
     // infinite scroll: load when user is near page bottom
@@ -668,10 +665,8 @@ async function loadAdsFromGithub(){
     // إذا كان هناك المزيد لتحميله، قم بربط أداة التمرير
     if (allFiles.length > ads.length) {
         attachScrollHandler();
-    } else {
-      // إذا كان كل شيء محملًا من الكاش، تأكد من فتح الرابط العميق
-      openAdFromHash();
-    }
+    } 
+    // تم إزالة استدعاء openAdFromHash() من هنا (لأنها ستستدعى بعد اكتمال loadAdsFromGithub)
 
 
     if(allFiles.length > 0 && noItemsEl){
@@ -682,7 +677,7 @@ async function loadAdsFromGithub(){
     console.error('loadAdsFromGithub failed', err);
     if(noItemsEl){
       noItemsEl.style.display='block';
-      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات GitHub).';
+      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات  ).';
     }
     if(countEl) countEl.textContent='0 إعلان';
   }
@@ -761,7 +756,7 @@ async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.
   return c.toDataURL('image/webp', quality);
 }
 
-/*   */
+/* */
 async function createPlaceholderImageBlob(){
   const c = document.createElement('canvas');
   c.width = 900;
@@ -839,7 +834,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   ctx.closePath();
   ctx.fill();
 
-  // صورة الإعلان في أعلى الكرت
+  //  
   const imgMargin = 40;
   const imgAreaX = cardX + imgMargin;
   const imgAreaY = cardY + imgMargin;
@@ -877,7 +872,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   ctx.font = 'bold 52px Tajawal, sans-serif';
   ctx.fillText(refText, W/2, imgAreaY + imgAreaH + 120);
 
-  // عبارة الشكر تحتها
+  //  
   ctx.fillStyle = '#4b5563';
   ctx.font = '24px Tajawal, sans-serif';
   ctx.fillText('نشكرك علي استخدامك موقع الدلالة', W/2, imgAreaY + imgAreaH + 170);
@@ -887,7 +882,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   return { blob: pngBlob, dataURL: pngDataUrl };
 }
 
-/* جزء "أرسل إعلانك" */
+/*  " */
 (function(){
   const submitBtn = document.getElementById('submitBtn');
   const submitStatus = document.getElementById('submitStatus');
@@ -987,7 +982,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
         document.getElementById('previewCard').style.display='none';
       }
 
-      // تضمين JSON داخل PNG
+      // ت م 
       if(card && card.blob){
         try{
           const embedded = await embedJsonInImageBlob(card.blob, payload);
@@ -1009,7 +1004,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
                 
                 // ✅ استخدام الرقم المحدد في رابط واتساب
-                openWa.href = `https://wa.me/${+249998615193}?text=` + encodeURIComponent(msg);
+                openWa.href = `https://wa.me/$+249998615193?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
@@ -1034,29 +1029,30 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   });
 })();
 
-/* ===== تفعيل البحث والتصنيف ===== */
+/* ===== ت = */
 
-// رب حسين الأداء
+//  الأداء
 if(qEl){
   qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
 }
 
-// ر ر
+//  ر
 if(catFilter){
   catFilter.addEventListener('change', applyFiltersAndRender);
 }
 
-// ر )
+//  
 const refreshBtn = document.getElementById('refresh');
 if(refreshBtn){
   refreshBtn.addEventListener('click', loadAdsFromGithub);
 }
 
 
-/* ===== ت */
-window.addEventListener('load', ()=>{
+/*  == */
+window.addEventListener('load', async ()=>{ // تم إضافة async
   document.getElementById('home').classList.add('active');
-  loadAdsFromGithub();
+  await loadAdsFromGithub(); // تم إضافة await لضمان تحميل البيانات الأولية
+  openAdFromHash(); // التحقق من الـ hash وفتح الإعلان إذا وجد
 });
 
 /*   */
