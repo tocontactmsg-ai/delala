@@ -130,7 +130,7 @@
   <main>
     <section id="home" class="active" aria-live="polite">
       <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
-      <div id="noitems" style="display:none;text-align:center;margin-top:12px" class="small">لا توجد إعلانات</div>
+      <div id="noitems" style="display:none;text-align:center;margin-top:12px" class="small">يتم تحميل الاعلانات ...</div>
     </section>
 
     <section id="send">
@@ -1000,7 +1000,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
                 
                 // ✅ استخدام الرقم المحدد في رابط واتساب
-                openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
+                openWa.href = `https://wa.me/$+249998615193?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
