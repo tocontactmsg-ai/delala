@@ -318,11 +318,19 @@ function applyFiltersAndRender(){
       return hay.indexOf(q) !== -1;
     });
   }
+  
+  // ----------------------------------------------------
+  // التعديل: الترتيب حسب الوقت (رمز الإعلان) تنازلياً (الأحدث أولاً)
   out.sort((A,B) => {
-    const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
-    if(aCat !== 0) return aCat;
+    // 1. الترتيب حسب ref_code تنازلياً (B قبل A يعني الأحدث أولاً)
+    const timeSort = (B.ref_code || '').localeCompare((A.ref_code || ''));
+    if(timeSort !== 0) return timeSort;
+    
+    // 2. الترتيب الثانوي: الاسم (أبجدياً)
     return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
   });
+  // ----------------------------------------------------
+  
   renderGrid(out);
 }
 
@@ -493,8 +501,6 @@ async function loadAdsFromGithub(){
 
     // reset paging
     pageIndex = 0;
-    // لا يجب حذف الإعلانات من هنا، بل يجب تصفير قائمة الإعلانات المفتوحة قبل البدء في التحميل
-    // ads = []; // تم الإبقاء على ما تم تحميله من الكاش إذا كان موجوداً
     
     applyFiltersAndRender();
 
