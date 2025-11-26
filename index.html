@@ -1004,7 +1004,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
                 
                 // ✅ استخدام الرقم المحدد في رابط واتساب
-                openWa.href = `https://wa.me/$+249998615193?text=` + encodeURIComponent(msg);
+                openWa.href = `https://wa.me/${+249998615193}?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
