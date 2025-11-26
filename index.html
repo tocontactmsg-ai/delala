@@ -471,7 +471,7 @@ async function loadAdsFromGithub(){
   try{
     const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
     
-    // 🛑 التعديل هنا: إضافة رأس 'Accept' وإزالة أي رؤوس مخصصة كانت تسبب خطأ CORS 🛑
+    // 🛑 تم التأكد من بقاء هذا التعديل 🛑
     const res = await timeoutFetch(contentsUrl, {
         headers: {
             'Accept': 'application/vnd.github.v3+json'
@@ -493,7 +493,9 @@ async function loadAdsFromGithub(){
 
     // reset paging
     pageIndex = 0;
-    ads = [];
+    // لا يجب حذف الإعلانات من هنا، بل يجب تصفير قائمة الإعلانات المفتوحة قبل البدء في التحميل
+    // ads = []; // تم الإبقاء على ما تم تحميله من الكاش إذا كان موجوداً
+    
     applyFiltersAndRender();
 
     async function fetchPage(pageIdx){
@@ -555,14 +557,26 @@ async function loadAdsFromGithub(){
       if(loadingPage) return;
       loadingPage = true;
       // show small inline indicator (using loadMoreBtn as status element)
+      const isInitialLoad = ads.length === 0;
       if(loadMoreBtn){
         loadMoreBtn.style.display = 'inline-block';
         loadMoreBtn.disabled = true;
         loadMoreBtn.textContent = 'جارِ التحميل...';
       }
+      
       const pageData = await fetchPage(pageIndex);
+      
       if(pageData && pageData.length){
-        ads = ads.concat(pageData);
+        // إذا كان التحميل الأولي (بدون كاش)
+        if (isInitialLoad && pageIndex === 0) {
+            ads = pageData;
+        } else {
+            // وإلا، ندمج البيانات الجديدة
+            ads = ads.concat(pageData.filter(newAd => 
+              !ads.some(existingAd => existingAd.ref_code === newAd.ref_code)
+            ));
+        }
+        
         try{
           const cats = [...new Set(ads.map(a=>a.category||'عام'))];
           cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
@@ -577,7 +591,7 @@ async function loadAdsFromGithub(){
       pageIndex++;
       loadingPage = false;
 
-      const remaining = Math.max(0, allFiles.length - pageIndex * PAGE_SIZE);
+      const remaining = Math.max(0, allFiles.length - ads.length);
       if(remaining <= 0){
         // remove scroll listener if no more
         detachScrollHandler();
@@ -624,10 +638,18 @@ async function loadAdsFromGithub(){
     }
 
     // auto-load first page, then attach scroll handler
-    await loadNext();
-    attachScrollHandler();
+    // إذا لم يكن هناك كاش، يجب تحميل أول صفحة على الأقل
+    if (ads.length === 0 || ads.length < PAGE_SIZE) {
+        await loadNext();
+    }
+    
+    // إذا كان هناك المزيد لتحميله، قم بربط أداة التمرير
+    if (allFiles.length > ads.length) {
+        attachScrollHandler();
+    }
 
-    if(allFiles.length > PAGE_SIZE && noItemsEl){
+
+    if(allFiles.length > 0 && noItemsEl){
       noItemsEl.style.display = 'none';
     }
 
@@ -985,7 +1007,26 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   });
 })();
 
-/* تحميل الإعلانات عند فتح الصفحة */
+/* ===== تفعيل البحث والتصنيف ===== */
+
+// ربط البحث بحدث الإدخال (مع تأخير Debounce) لتحسين الأداء
+if(qEl){
+  qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
+}
+
+// ربط التصنيف بحدث التغيير
+if(catFilter){
+  catFilter.addEventListener('change', applyFiltersAndRender);
+}
+
+// ربط زر التحديث بتحديث الإعلانات (لأننا أزلناه من عنصر controls)
+const refreshBtn = document.getElementById('refresh');
+if(refreshBtn){
+  refreshBtn.addEventListener('click', loadAdsFromGithub);
+}
+
+
+/* ===== تحميل الإعلانات عند فتح الصفحة ===== */
 window.addEventListener('load', ()=>{
   document.getElementById('home').classList.add('active');
   loadAdsFromGithub();
