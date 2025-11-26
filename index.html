@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>الدلالة — إعلانات</title>
 
-<link rel="icon" type="image/png" href="favicon.png" />
-<link rel="apple-touch-icon" href="apple-touch-icon.png" />
-
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
@@ -242,7 +239,10 @@ const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'delala';
 const GITHUB_BRANCH = 'main';
 const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.0.0';
+const CACHE_BUSTER  = 'v1.0.1'; // تم التحديث
+
+/* رقم الواتساب لاستقبال طلبات النشر */
+const WHATSAPP_NUMBER = '249998615193'; // بدون علامة + أو مسافات
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
@@ -321,11 +321,19 @@ function applyFiltersAndRender(){
       return hay.indexOf(q) !== -1;
     });
   }
+  
+  // ----------------------------------------------------
+  // التعديل: الترتيب حسب الوقت (رمز الإعلان) تنازلياً (الأحدث أولاً)
   out.sort((A,B) => {
-    const aCat = (A.category || '').toString().localeCompare((B.category || '').toString(), 'ar');
-    if(aCat !== 0) return aCat;
+    // 1. الترتيب حسب ref_code تنازلياً (B قبل A يعني الأحدث أولاً)
+    const timeSort = (B.ref_code || '').localeCompare((A.ref_code || ''));
+    if(timeSort !== 0) return timeSort;
+    
+    // 2. الترتيب الثانوي: الاسم (أبجدياً)
     return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
   });
+  // ----------------------------------------------------
+  
   renderGrid(out);
 }
 
@@ -429,11 +437,11 @@ async function openDetails(item){
 async function loadAdsFromGithub(){
   const noItemsEl = document.getElementById('noitems');
   const loadMoreBtn = document.getElementById('loadMoreBtn'); // kept as fallback/status
-  const CACHE_KEY = 'eldelala_ads_cache_v1';
-  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+  const CACHE_KEY = 'eldelala_ads_cache_v2'; // تم التحديث: لإجبار المتصفح على تحميل الإعدادات الجديدة
+  const CACHE_TTL_MS = 60 * 60 * 1000; // تم التحديث: 60 دقيقة كاش
   const MAX_ADS = 1000; // absolute cap
-  const PAGE_SIZE = 20; // items per "page"
-  const CONCURRENCY = 6;
+  const PAGE_SIZE = 50; // تم التحديث: تحميل 50 إعلان في البداية
+  const CONCURRENCY = 8; // تم التحديث: زيادة عدد الطلبات المتزامنة
   const FETCH_TIMEOUT_MS = 9000;
   const RETRIES = 2;
 
@@ -466,14 +474,28 @@ async function loadAdsFromGithub(){
           }
         }catch(e){}
         applyFiltersAndRender();
-        if(countEl) countEl.textContent = ads.length + ' إعلان';
+        if(countEl) countEl.textContent = ads.length + ' إعلان (من ذاكرة التخزين المؤقت)';
+        // إذا كان التحميل من الكاش، لا ننتظر، بل نذهب إلى GitHub في الخلفية إذا لم نكن قد حملنا كل شيء
+        if(ads.length < allFiles.length){
+             // لا حاجة لانتظار تحميل الكل إذا كان الكاش جاهزاً
+        } else {
+             // كل الإعلانات في الكاش، لا حاجة للتحميل الإضافي
+             return;
+        }
       }
     }
   }catch(e){ console.warn('cache read failed', e); }
 
   try{
     const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
-    const res = await timeoutFetch(contentsUrl, {}, 7000);
+    
+    // 🛑 تم التأكد من بقاء هذا التعديل 🛑
+    const res = await timeoutFetch(contentsUrl, {
+        headers: {
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    }, 7000); 
+
     if(!res.ok){
       console.warn('GitHub API status', res.status);
       if(noItemsEl){
@@ -489,7 +511,7 @@ async function loadAdsFromGithub(){
 
     // reset paging
     pageIndex = 0;
-    ads = [];
+    
     applyFiltersAndRender();
 
     async function fetchPage(pageIdx){
@@ -500,7 +522,8 @@ async function loadAdsFromGithub(){
         let attempt = 0;
         while(attempt <= tries){
           try{
-            const r = await timeoutFetch(url, {}, FETCH_TIMEOUT_MS);
+            // لا حاجة لرأس Accept لجلب المحتوى الخام (raw.githubusercontent.com)
+            const r = await timeoutFetch(url, {}, FETCH_TIMEOUT_MS); 
             if(!r.ok) throw new Error('status ' + r.status);
             const data = await r.json();
             return data;
@@ -550,14 +573,26 @@ async function loadAdsFromGithub(){
       if(loadingPage) return;
       loadingPage = true;
       // show small inline indicator (using loadMoreBtn as status element)
+      const isInitialLoad = ads.length === 0;
       if(loadMoreBtn){
         loadMoreBtn.style.display = 'inline-block';
         loadMoreBtn.disabled = true;
         loadMoreBtn.textContent = 'جارِ التحميل...';
       }
+      
       const pageData = await fetchPage(pageIndex);
+      
       if(pageData && pageData.length){
-        ads = ads.concat(pageData);
+        // إذا كان التحميل الأولي (بدون كاش)
+        if (isInitialLoad && pageIndex === 0) {
+            ads = pageData;
+        } else {
+            // وإلا، ندمج البيانات الجديدة
+            ads = ads.concat(pageData.filter(newAd => 
+              !ads.some(existingAd => existingAd.ref_code === newAd.ref_code)
+            ));
+        }
+        
         try{
           const cats = [...new Set(ads.map(a=>a.category||'عام'))];
           cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
@@ -572,7 +607,7 @@ async function loadAdsFromGithub(){
       pageIndex++;
       loadingPage = false;
 
-      const remaining = Math.max(0, allFiles.length - pageIndex * PAGE_SIZE);
+      const remaining = Math.max(0, allFiles.length - ads.length);
       if(remaining <= 0){
         // remove scroll listener if no more
         detachScrollHandler();
@@ -619,10 +654,18 @@ async function loadAdsFromGithub(){
     }
 
     // auto-load first page, then attach scroll handler
-    await loadNext();
-    attachScrollHandler();
+    // إذا لم يكن هناك كاش، يجب تحميل أول صفحة على الأقل
+    if (ads.length === 0 || ads.length < PAGE_SIZE) {
+        await loadNext();
+    }
+    
+    // إذا كان هناك المزيد لتحميله، قم بربط أداة التمرير
+    if (allFiles.length > ads.length) {
+        attachScrollHandler();
+    }
 
-    if(allFiles.length > PAGE_SIZE && noItemsEl){
+
+    if(allFiles.length > 0 && noItemsEl){
       noItemsEl.style.display = 'none';
     }
 
@@ -955,7 +998,9 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const base = window.location.href.split('#')[0];
                 const adLink = base + '#ad-' + payload.ref_code;
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
-                openWa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+                
+                // ✅ استخدام الرقم المحدد في رابط واتساب
+                openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
@@ -980,7 +1025,26 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   });
 })();
 
-/* تحميل الإعلانات عند فتح الصفحة */
+/* ===== تفعيل البحث والتصنيف ===== */
+
+// ربط البحث بحدث الإدخال (مع تأخير Debounce) لتحسين الأداء
+if(qEl){
+  qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
+}
+
+// ربط التصنيف بحدث التغيير
+if(catFilter){
+  catFilter.addEventListener('change', applyFiltersAndRender);
+}
+
+// ربط زر التحديث بتحديث الإعلانات (لأننا أزلناه من عنصر controls)
+const refreshBtn = document.getElementById('refresh');
+if(refreshBtn){
+  refreshBtn.addEventListener('click', loadAdsFromGithub);
+}
+
+
+/* ===== تحميل الإعلانات عند فتح الصفحة ===== */
 window.addEventListener('load', ()=>{
   document.getElementById('home').classList.add('active');
   loadAdsFromGithub();
