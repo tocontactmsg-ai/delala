@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>الدلالة — إعلانات</title>
+<title>الدلالة</title>
 
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
@@ -136,7 +136,8 @@
     <section id="send">
       <div class="panel">
         <h2>لتقديم طلب موافقة على إعلان:</h2>
-        <div style="display:grid;gap:8px">
+ <h1>املا البيانات - حمل البطاقة - ارسلها لنا عبر الواتساب</h1>
+       <div style="display:grid;gap:8px">
           <input id="f_name" placeholder="اسم الإعلان">
           <input id="f_price" placeholder="السعر">
           <textarea id="f_desc" placeholder="وصف الإعلان" rows="4"></textarea>
@@ -156,14 +157,14 @@
             <div>رمز الإعلان الخاص بك:</div>
             <div class="refBox" style="margin-top:6px">
               <div id="refCode" class="refCode"></div>
-              <a id="openWa" class="btn alt" target="_blank" style="display:none">فتح واتساب</a>
+              <a id="openWa" class="btn alt" target="_blank" style="display:none">ارسل البطاقة ستجدها ضمن المستندات</a>
               <button id="downloadEmbeddedBtn" class="btn" style="display:none" type="button">⬇ تنزيل البطاقة</button>
             </div>
             <div id="fallbackJson" style="display:none;margin-top:8px">
-              <div class="small">لم يتم إنشاء بطاقة PNG، لكن يمكنك استخدام رمز الإعلان وبياناته.</div>
+              <div class="small">اعد المحاولة.</div>
             </div>
             <div id="previewCard" class="subCard" style="display:none">
-              <div class="small" style="margin-bottom:6px">معاينة البطاقة (الصورة + الرمز + العبارة):</div>
+              <div class="small" style="margin-bottom:6px">مالم ترسل البطاقة عبر الواتساب لن ينشر الاعلان:</div>
               <div id="previewCanvasWrap"></div>
             </div>
           </div>
@@ -474,7 +475,7 @@ async function loadAdsFromGithub(){
           }
         }catch(e){}
         applyFiltersAndRender();
-        if(countEl) countEl.textContent = ads.length + ' إعلان (من ذاكرة التخزين المؤقت)';
+        if(countEl) countEl.textContent = ads.length + ' إعلان  ';
         // إذا كان التحميل من الكاش، لا ننتظر، بل نذهب إلى GitHub في الخلفية إذا لم نكن قد حملنا كل شيء
         if(ads.length < allFiles.length){
              // لا حاجة لانتظار تحميل الكل إذا كان الكاش جاهزاً
@@ -620,6 +621,11 @@ async function loadAdsFromGithub(){
         }
       }
       if(countEl) countEl.textContent = ads.length + ' إعلان';
+      
+      // 🔥 FIX: Check and open ad from hash after *this* page has finished loading
+      if(pageIndex === 1 && (isInitialLoad || ads.length >= PAGE_SIZE)){
+         openAdFromHash();
+      }
     }
 
     // infinite scroll: load when user is near page bottom
@@ -662,6 +668,9 @@ async function loadAdsFromGithub(){
     // إذا كان هناك المزيد لتحميله، قم بربط أداة التمرير
     if (allFiles.length > ads.length) {
         attachScrollHandler();
+    } else {
+      // إذا كان كل شيء محملًا من الكاش، تأكد من فتح الرابط العميق
+      openAdFromHash();
     }
 
 
@@ -682,7 +691,7 @@ async function loadAdsFromGithub(){
 
 
 
-/* ===== كود صناعة كرت PNG: صورة + ref + "نشكرك علي استخدامك موقع الدلالة" ===== */
+/* = = */
 
 const MARKER = 'ELDELALA_PAYLOAD:';
 
@@ -752,7 +761,7 @@ async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.
   return c.toDataURL('image/webp', quality);
 }
 
-/* صورة افتراضية لو ما في صورة */
+/*   */
 async function createPlaceholderImageBlob(){
   const c = document.createElement('canvas');
   c.width = 900;
@@ -770,7 +779,7 @@ async function createPlaceholderImageBlob(){
   return dataUrlToBlob(dataURL);
 }
 
-/* تحويل canvas إلى PNG Blob */
+/* ت  */
 function canvasToPngBlob(canvas){
   return new Promise((resolve,reject)=>{
     if(canvas.toBlob){
@@ -786,7 +795,7 @@ function canvasToPngBlob(canvas){
   });
 }
 
-/* كرت PNG بسيط: صورة + ref + عبارة شكر */
+/* ك   */
 async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   const baseDataUrl = await fileOrBlobToDataUrl(fileOrBlob);
   const img = await new Promise((resolve,reject)=>{
@@ -803,14 +812,14 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // خلفية بسيطة
+  //  ة
   const grad = ctx.createLinearGradient(0,0,0,H);
   grad.addColorStop(0,'#f5f8ff');
   grad.addColorStop(1,'#e8f5ff');
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,W,H);
 
-  // إطار أبيض وسط الصفحة
+  // إط حة
   const cardX = 60;
   const cardY = 60;
   const cardW = W - 120;
@@ -860,7 +869,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
   ctx.drawImage(img, dx, dy, drawW, drawH);
   ctx.restore();
 
-  // ref code كبير تحت الصورة
+  // ref co ورة
   const refText = payload.ref_code || '';
   ctx.textAlign = 'center';
 
@@ -1000,7 +1009,7 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
                 
                 // ✅ استخدام الرقم المحدد في رابط واتساب
-                openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
+                openWa.href = `https://wa.me/${+249998615193}?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
@@ -1027,30 +1036,30 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
 
 /* ===== تفعيل البحث والتصنيف ===== */
 
-// ربط البحث بحدث الإدخال (مع تأخير Debounce) لتحسين الأداء
+// رب حسين الأداء
 if(qEl){
   qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
 }
 
-// ربط التصنيف بحدث التغيير
+// ر ر
 if(catFilter){
   catFilter.addEventListener('change', applyFiltersAndRender);
 }
 
-// ربط زر التحديث بتحديث الإعلانات (لأننا أزلناه من عنصر controls)
+// ر )
 const refreshBtn = document.getElementById('refresh');
 if(refreshBtn){
   refreshBtn.addEventListener('click', loadAdsFromGithub);
 }
 
 
-/* ===== تحميل الإعلانات عند فتح الصفحة ===== */
+/* ===== ت */
 window.addEventListener('load', ()=>{
   document.getElementById('home').classList.add('active');
   loadAdsFromGithub();
 });
 
-/* عند تغيير الـ hash (مثلاً لصق رابط إعلان جديد) */
+/*   */
 window.addEventListener('hashchange', openAdFromHash);
 </script>
 </body>
