@@ -235,11 +235,13 @@ tocontactmsg@gmail.com
 
 <script>
 /*** GitHub + cache buster ***/
-const GITHUB_OWNER  = 'tocontactmsg-ai';
-const GITHUB_REPO   = 'delala';
+// 🛑🛑🛑 يجب تعديل السطرين التاليين ليطابقا اسم المستخدم والمستودع الخاص بك على GitHub 🛑🛑🛑
+const GITHUB_OWNER  = 'tocontactmsg-ai'; // اسم المستخدم أو المنظمة (مثال: my-username)
+const GITHUB_REPO   = 'delala';          // اسم المستودع (مثال: ads-repo)
+// 🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑🛑
 const GITHUB_BRANCH = 'main';
-const ADS_DIR       = 'ads'; // مجلد الإعلانات
-const CACHE_BUSTER  = 'v1.1.2'; // تحديث الإصدار
+const ADS_DIR       = 'ads'; // مجلد الإعلانات (لا تعدل هذا إذا كان مجلدك اسمه ads)
+const CACHE_BUSTER  = 'v1.1.3'; // تحديث الإصدار
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
@@ -482,7 +484,14 @@ async function loadAdsFromGithub(forceRefresh = false){
     if(res.status === 304 && cachedData){
         console.log('GitHub API: No change (304). Using existing data.');
     } else if(!res.ok){
-      throw new Error(`GitHub API failed: Status ${res.status}`);
+      // التحقق من الخطأ 404 أو 403 (حدود الاستخدام)
+      const errorMsg = res.status === 404 ? 
+          'تعذر الوصول إلى المستودع أو المجلد (تأكد من GITHUB_OWNER و GITHUB_REPO).' :
+          res.status === 403 ?
+          'تم تجاوز حدود استخدام GitHub API مؤقتاً.' :
+          `خطأ غير معروف (Status: ${res.status}).`;
+      
+      throw new Error(errorMsg);
     } else {
         // البيانات جديدة أو تغيرت. نتابع جلب الملفات الفردية.
         const fileList = await res.json();
@@ -502,6 +511,7 @@ async function loadAdsFromGithub(forceRefresh = false){
                     location: data.location || data.city || data.loc || '',
                     contact: data.contact || data.phone || data.tel || '',
                     category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
+                    // استخدام محتوى الصورة المضمن (Base64/DataURL) من الملف
                     image: data.image || data.thumb || data.imageDataUrl || '',
                     created_at: data.created_at || data.timestamp || ''
                 });
@@ -525,16 +535,16 @@ async function loadAdsFromGithub(forceRefresh = false){
     }
     
   }catch(err){
-    console.error('loadAdsFromGithub failed during network operation. Error:', err);
-    // إذا فشل الجلب الشبكي ولم يكن هناك بيانات مخبأة، نعرض رسالة خطأ
+    console.error('loadAdsFromGithub failed during network operation. Error:', err.message);
+    
+    // إذا فشل الجلب الشبكي ولم يكن هناك بيانات مخبأة، نعرض رسالة خطأ واضحة
     if(!ads.length && noItemsEl){
       noItemsEl.style.display='block';
-      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ في جلب البيانات). قد تكون مشكلة شبكة أو حدود استخدام API).';
+      noItemsEl.textContent = `تعذر تحميل الإعلانات (خطأ في جلب البيانات): ${err.message}`;
       if(countEl) countEl.textContent='0 إعلان';
-    }
-    // إذا كان هناك بيانات مخبأة، سنعتمد عليها وقد تم عرضها في الخطوة الأولى
-    if (ads.length) {
-        if(countEl) countEl.textContent = ads.length + ' إعلان';
+    } else if(ads.length && countEl){
+        // إذا كان هناك بيانات مخبأة وتم عرضها، نضمن تحديث العداد
+        if(countEl) countEl.textContent = ads.length + ' إعلان (بيانات مخبأة)';
         return; 
     }
     return;
@@ -552,7 +562,7 @@ async function loadAdsFromGithub(forceRefresh = false){
     }
   }catch(e){}
 
-  // 6. إذا لم يكن هناك تحديث جديد من الشبكة، نضمن تحديث العداد
+  // 6. تحديث العداد النهائي
   if(countEl) countEl.textContent = ads.length + ' إعلان';
   
   // 7. فتح الإعلان من الـ hash إذا لزم الأمر
