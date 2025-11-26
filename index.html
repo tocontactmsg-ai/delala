@@ -239,7 +239,10 @@ const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'delala';
 const GITHUB_BRANCH = 'main';
 const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.0.0';
+const CACHE_BUSTER  = 'v1.0.1'; // تم التحديث
+
+/* رقم الواتساب لاستقبال طلبات النشر */
+const WHATSAPP_NUMBER = '249998615193'; // بدون علامة + أو مسافات
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
@@ -434,11 +437,11 @@ async function openDetails(item){
 async function loadAdsFromGithub(){
   const noItemsEl = document.getElementById('noitems');
   const loadMoreBtn = document.getElementById('loadMoreBtn'); // kept as fallback/status
-  const CACHE_KEY = 'eldelala_ads_cache_v1';
-  const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+  const CACHE_KEY = 'eldelala_ads_cache_v2'; // تم التحديث: لإجبار المتصفح على تحميل الإعدادات الجديدة
+  const CACHE_TTL_MS = 60 * 60 * 1000; // تم التحديث: 60 دقيقة كاش
   const MAX_ADS = 1000; // absolute cap
-  const PAGE_SIZE = 20; // items per "page"
-  const CONCURRENCY = 6;
+  const PAGE_SIZE = 50; // تم التحديث: تحميل 50 إعلان في البداية
+  const CONCURRENCY = 8; // تم التحديث: زيادة عدد الطلبات المتزامنة
   const FETCH_TIMEOUT_MS = 9000;
   const RETRIES = 2;
 
@@ -471,7 +474,14 @@ async function loadAdsFromGithub(){
           }
         }catch(e){}
         applyFiltersAndRender();
-        if(countEl) countEl.textContent = ads.length + ' إعلان';
+        if(countEl) countEl.textContent = ads.length + ' إعلان (من ذاكرة التخزين المؤقت)';
+        // إذا كان التحميل من الكاش، لا ننتظر، بل نذهب إلى GitHub في الخلفية إذا لم نكن قد حملنا كل شيء
+        if(ads.length < allFiles.length){
+             // لا حاجة لانتظار تحميل الكل إذا كان الكاش جاهزاً
+        } else {
+             // كل الإعلانات في الكاش، لا حاجة للتحميل الإضافي
+             return;
+        }
       }
     }
   }catch(e){ console.warn('cache read failed', e); }
@@ -988,7 +998,9 @@ async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
                 const base = window.location.href.split('#')[0];
                 const adLink = base + '#ad-' + payload.ref_code;
                 const msg = `مرحباً، أود نشر إعلان برمز: ${payload.ref_code}\n${payload.name}\n${payload.price}\n${adLink}`;
-                openWa.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+                
+                // ✅ استخدام الرقم المحدد في رابط واتساب
+                openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
                 openWa.target = '_blank';
               }
             }, 800);
