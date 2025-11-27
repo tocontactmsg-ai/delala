@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>الدلالة — مشرف الإعلانات (Reorder — Friendly)</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{ --bg: #f4f7fb; --surface: rgba(255,255,255,0.95); --muted: #6b7280; --accent-start:#0b84ff; --accent-end:#00c2a8; --glass: rgba(255,255,255,0.6); --shadow: 0 12px 30px rgba(12,40,80,0.08); --radius: 14px; }
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:'Tajawal',sans-serif;background:radial-gradient(1200px 600px at 10% 10%,#eef8ff 0%, transparent 15%), linear-gradient(180deg,#f7fbff,#eef6fb);color:#052035}
+.app{max-width:1200px;margin:24px auto;padding:18px}
+.header{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.brand{display:flex;gap:10px;align-items:center}
+.logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent-start),var(--accent-end));display:grid;place-items:center;color:#fff;font-weight:800;box-shadow:0 6px 20px rgba(11,132,255,0.14)}
+.title{font-size:18px;font-weight:800}
+.subtitle{color:var(--muted);font-size:13px}
+.top-controls{display:flex;gap:10px;align-items:center}
+.btn{background:transparent;border:0;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:700;display:inline-flex;gap:8px;align-items:center}
+.btn.primary{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;box-shadow:var(--shadow);border:0}
+.btn.ghost{background:transparent;border:1px solid rgba(6,20,40,0.06);color:var(--muted)}
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--surface);padding:8px;border-radius:12px;box-shadow:0 6px 18px rgba(10,20,40,0.03)}
+.searchbar input{border:0;background:transparent;padding:8px;outline:none;min-width:220px}
+.panel{margin-top:18px;background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.controls-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filters{display:flex;gap:8px;align-items:center}
+.filter{padding:8px 12px;border-radius:999px;background:#f7fbff;border:1px solid rgba(11,132,255,0.06);cursor:pointer;font-weight:700}
+.filter.active{background:linear-gradient(90deg,#e8f6ff,#f0fffb);border:1px solid rgba(0,194,168,0.12)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px}
+.card{background:linear-gradient(180deg,#ffffff,#fbfeff);border-radius:12px;padding:10px;box-shadow:0 6px 20px rgba(8,20,40,0.05);transition:transform .18s, box-shadow .18s,border .12s;position:relative;user-select:none}
+.card.dragging{opacity:0.6;transform:scale(.98);border:2px dashed rgba(11,132,255,0.35)}
+.card.placeholder{outline:2px dashed rgba(0,0,0,0.06);transform:translateY(6px)}
+.card .drag-handle{position:absolute;inset-inline-start:10px;top:10px;cursor:grab;font-size:18px;padding:6px;border-radius:8px}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(8,20,40,0.08)}
+.thumb{width:100%;height:160px;object-fit:cover;border-radius:10px;border:1px solid rgba(11,132,255,0.04)}
+.meta{margin-top:10px}
+.name{font-weight:800;font-size:14px}
+.desc{color:var(--muted);font-size:13px;height:3.6em;overflow:hidden}
+.row{display:flex;gap:8px;align-items:center}
+.badge{display:inline-block;padding:6px 10px;border-radius:10px;background:#eef6ff;color:var(--accent-start);font-weight:800}
+.card-actions{display:flex;gap:8px;align-items:center;margin-top:10px}
+.icon-btn{padding:8px;border-radius:10px;border:0;background:transparent;cursor:pointer}
+.fab{position:fixed;left:24px;bottom:28px;padding:14px 18px;border-radius:999px;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;box-shadow:0 14px 40px rgba(11,132,255,0.18);border:0;font-weight:800}
+.dropzone{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:2px dashed rgba(11,132,255,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.6),transparent);cursor:pointer}
+.dropzone.drag{background:linear-gradient(180deg,#eef8ff,#fbfeff)}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(rgba(6,20,40,0.36),rgba(6,20,40,0.36));z-index:120}
+.modal.open{display:flex}
+.modalCard{background:#fff;border-radius:12px;padding:14px;width:min(920px,96%);max-height:92vh;overflow:auto}
+.form-field{width:100%;padding:10px;border-radius:10px;border:1px solid #eef6ff;margin-top:8px}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.small{font-size:13px;color:var(--muted)}
+.count{padding:6px 10px;border-radius:8px;background:#fff;border:1px solid rgba(6,20,40,0.03);font-weight:700}
+.help{font-size:13px;color:var(--muted);margin-top:8px}
+.posBadge{position:absolute;inset-inline-end:10px;top:10px;background:rgba(0,0,0,0.06);padding:6px 8px;border-radius:8px;font-weight:800}
+.moveButtons{display:flex;gap:6px}
+@media(max-width:720px){ .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))} .thumb{height:140px} .searchbar input{min-width:100px} .header{flex-direction:column;align-items:stretch} .fab{left:50%;transform:translateX(-50%);} }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">دل</div>
+      <div>
+        <div class="title">الدلالة — مشرف الإعلانات</div>
+        <div class="subtitle">واجهة مبسطة لإدارة، ترتيب وحفظ الإعلانات — الآن بواجهة أسهل</div>
+      </div>
+    </div>
+
+    <div class="top-controls">
+      <label class="btn ghost" id="chooseBtn">📁 اختر
+        <input id="fileInput" type="file" multiple webkitdirectory directory accept="image/*" style="display:none" />
+      </label>
+
+      <div class="searchbar" title="بحث سريع">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" stroke="#0b84ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="search" placeholder="ابحث بالمرجع أو العنوان أو السعر" />
+      </div>
+
+      <button class="btn primary" id="scanBtn">🔍 فحص</button>
+      <button class="btn ghost" id="importJsonBtn">📥 استيراد JSON</button>
+      <input id="jsonInput" type="file" accept="application/json" style="display:none" />
+      <button id="reorderToggle" class="btn ghost">🔀 وضع إعادة الترتيب</button>
+      <button id="saveOrderBtn" class="btn primary">💾 تنزيل الترتيب</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="controls-row">
+      <div class="dropzone" id="dropzone">اسحب وأفلت الصور هنا أو اضغط للاختيار</div>
+      <div style="margin-inline-start:auto;display:flex;gap:12px;align-items:center">
+        <div class="filters">
+          <div class="filter active" data-filter="all">الكل</div>
+          <div class="filter" data-filter="with">مع بيانات</div>
+          <div class="filter" data-filter="without">بدون بيانات</div>
+        </div>
+        <div class="small">العناصر: <span id="count" class="count">0</span></div>
+      </div>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+      <div class="small">البيانات محفوظة محليًا في متصفحك — لا تُرسل للسيرفر.</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="exportAllBtn" class="btn ghost" disabled>📤 تنزيل ads.json</button>
+        <button id="saveLocalBtn" class="btn primary">💾 حفظ محلي</button>
+      </div>
+    </div>
+
+    <div class="help">ملاحظة: اضغط "🔀 وضع إعادة الترتيب" لتفعيل السحب. على الهاتف: اضغط مطولًا على بطاقة لمدة ثانية لتفعيل السحب ثم اسحبها.</div>
+  </div>
+</div>
+
+<div id="modal" class="modal" aria-hidden="true">
+  <div class="modalCard">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong id="modalRef">تفاصيل</strong>
+      <div style="display:flex;gap:8px">
+        <button id="closeModal" class="btn ghost">✖ إغلاق</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:320px 1fr;gap:12px;margin-top:12px">
+      <div>
+        <img id="modalImg" src="" style="width:320px;height:240px;object-fit:cover;border-radius:10px;border:1px solid #eef6ff" />
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <input id="replaceFile" type="file" accept="image/*" class="form-field" />
+          <button id="downloadImgBtn" class="btn ghost">⬇ تنزيل</button>
+        </div>
+      </div>
+      <div>
+        <label>العنوان</label>
+        <input id="modalTitle" class="form-field" />
+        <label>السعر</label>
+        <input id="modalPrice" class="form-field" />
+        <label>الهاتف</label>
+        <input id="modalPhone" class="form-field" />
+        <label>الموقع</label>
+        <input id="modalLoc" class="form-field" />
+        <label>التصنيف</label>
+        <input id="modalCategory" class="form-field" />
+        <label>الوصف</label>
+        <textarea id="modalDesc" rows="6" class="form-field"></textarea>
+
+        <div class="actions">
+          <button id="saveBtn" class="btn primary">💾 حفظ</button>
+          <button id="downloadJsonBtn" class="btn ghost">📄 تحميل JSON</button>
+          <button id="removeBtn" class="btn ghost">🗑️ حذف</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button id="fab" class="fab">⚡ مسح</button>
+
+<div id="toast" style="position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#052035;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 6px 18px rgba(5,32,53,0.18);z-index:200;display:none">Toast</div>
+
+<script>
+const MARKER = 'ELDELALA_PAYLOAD:';
+const markerBytes = new TextEncoder().encode(MARKER);
+const STORAGE_KEY = 'eldelala_admin_modern_v2';
+
+const fileInput = document.getElementById('fileInput');
+const dropzone = document.getElementById('dropzone');
+const scanBtn = document.getElementById('scanBtn');
+const grid = document.getElementById('grid');
+const countEl = document.getElementById('count');
+const searchEl = document.getElementById('search');
+const exportAllBtn = document.getElementById('exportAllBtn');
+const importJsonBtn = document.getElementById('importJsonBtn');
+const jsonInput = document.getElementById('jsonInput');
+const saveLocalBtn = document.getElementById('saveLocalBtn');
+const filters = document.querySelectorAll('.filter');
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modalImg');
+const modalRef = document.getElementById('modalRef');
+const modalTitle = document.getElementById('modalTitle');
+const modalPrice = document.getElementById('modalPrice');
+const modalPhone = document.getElementById('modalPhone');
+const modalLoc = document.getElementById('modalLoc');
+const modalDesc = document.getElementById('modalDesc');
+const modalCategory = document.getElementById('modalCategory');
+const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+const saveBtn = document.getElementById('saveBtn');
+const removeBtn = document.getElementById('removeBtn');
+const closeModalBtn = document.getElementById('closeModal');
+const replaceFile = document.getElementById('replaceFile');
+const downloadImgBtn = document.getElementById('downloadImgBtn');
+const toast = document.getElementById('toast');
+const fab = document.getElementById('fab');
+const reorderToggle = document.getElementById('reorderToggle');
+const saveOrderBtn = document.getElementById('saveOrderBtn');
+const exportAll = document.getElementById('exportAllBtn');
+
+let ads = [];
+let selectedAdId = null;
+let currentFilter = 'all';
+let reorderMode = false;
+let touchHoldTimer = null;
+
+function showToast(msg, ms=2000){ toast.textContent = msg; toast.style.display='block'; clearTimeout(toast._t); toast._t = setTimeout(()=>toast.style.display='none', ms); }
+function uid(){ return 'a'+Math.random().toString(36).slice(2,9); }
+function esc(s){ return String(s||'').replace(/[&<>\\\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]||c)); }
+function sanitizeRefCode(code){ return (code || '').trim().replace(/[^a-zA-Z0-9_\-]/g, '').slice(0, 50); } // FIX: Added sanitize function
+
+function fileOrBlobToDataUrl(fileOrBlob){
+  return new Promise((resolve,reject)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>resolve(fr.result);
+    fr.onerror = reject;
+    fr.readAsDataURL(fileOrBlob);
+  });
+}
+async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.8){
+  const dataURL = await fileOrBlobToDataUrl(file);
+  const img = await new Promise((resolve,reject)=>{
+    const i = new Image();
+    i.onload = ()=>resolve(i);
+    i.onerror = reject;
+    i.src = dataURL;
+  });
+  let w = img.width, h = img.height;
+  const scale = Math.min(1, maxW / w, maxH / h);
+  const cw = Math.max(1, Math.round(w * scale));
+  const ch = Math.max(1, Math.round(h * scale));
+  const c = document.createElement('canvas');
+  c.width = cw;
+  c.height = ch;
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, cw, ch);
+  return c.toDataURL('image/webp', quality);
+}
+
+function normalize(raw){
+  return {
+    id: raw.id || uid(),
+    ref: raw.ref_code || raw.ref || raw.code || raw.id || '',
+    title: raw.name || raw.title || raw.headline || raw.fileName || '',
+    price: raw.price || raw.p || '',
+    phone: raw.contact || raw.phone || raw.tel || '',
+    location: raw.location || raw.loc || raw.city || '',
+    description: raw.description || raw.desc || raw.body || '',
+    created_at: raw.created_at || new Date().toISOString(),
+    imageDataUrl: raw.image || raw.thumb || raw.imageDataUrl || raw._blobUrl || '',
+    category: raw.category || raw.cat || raw.type || raw.Category || 'عام',
+    _hasPayload: !!(raw && (raw.ref || raw.title || raw.price || raw.description))
+  };
+}
+
+function setCount(){ countEl.textContent = ads.length; exportAllBtn.disabled = ads.length === 0; }
+
+function findLastMarkerIndex(bytes, marker){
+  if(marker.length === 0 || bytes.length < marker.length) return -1;
+  for(let i = bytes.length - marker.length; i >= 0; i--){
+    let ok=true; for(let j=0;j<marker.length;j++){ if(bytes[i+j] !== marker[j]){ ok=false; break; } }
+    if(ok) return i;
+  }
+  return -1;
+}
+function extractBase64FromBytes(bytes, start){ let s=''; for(let i=start;i<bytes.length;i++) s+=String.fromCharCode(bytes[i]); const m = s.match(/^[A-Za-z0-9+\/=\r\n]+/); return m ? m[0].replace(/\s+/g,'') : ''; }
+function base64ToUtf8(b64){ try{ const bin = atob(b64); const u8 = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i); return new TextDecoder('utf-8').decode(u8); }catch(e){ try{ return atob(b64); }catch(_){ return null; } } } // FIX: Added base64ToUtf8
+
+async function handleFile(file){
+  try{
+    const buf = await file.arrayBuffer();
+    const raw = new Uint8Array(buf);
+    const pos = findLastMarkerIndex(raw, markerBytes);
+    let payload = null;
+    if(pos >= 0){
+      const start = pos + markerBytes.length;
+      const b64 = extractBase64FromBytes(raw, start);
+      if(b64){ try{ const txt = base64ToUtf8(b64); payload = JSON.parse(txt); }catch(e){} }
+    } else {
+      const textTail = new TextDecoder().decode(raw.slice(Math.max(0, raw.length - 4000)));
+      const m = textTail.match(/data:application\/json;base64,([A-Za-z0-9+\/=\r\n]+)/);
+      if(m){ try{ payload = JSON.parse(atob(m[1])); }catch(_){} }
+    }
+
+    const blobUrl = URL.createObjectURL(new Blob([raw], {type: file.type || 'image/jpeg'}));
+    if(payload){
+      const n = normalize(payload);
+      // prefer embedded data URLs in payload (image, imageDataUrl, thumb)
+      n.imageDataUrl = (payload.image && String(payload.image).startsWith('data:')) ? payload.image :
+                       (payload.imageDataUrl && String(payload.imageDataUrl).startsWith('data:')) ? payload.imageDataUrl :
+                       (payload.thumb && String(payload.thumb).startsWith('data:')) ? payload.thumb :
+                       (payload.imageDataUrl || payload.image || payload.thumb || blobUrl);
+      n.location = payload.location || n.location || '';
+      n.category = payload.category || payload.cat || n.category || 'عام';
+      n._hasPayload = true; n._fileName = file.name;
+      ads.unshift(n);
+    } else {
+      const n = normalize({ id: uid(), title: file.name, description: '', created_at: new Date().toISOString(), _blobUrl: blobUrl, fileName: file.name });
+      n._hasPayload = false; ads.unshift(n);
+    }
+  }catch(e){ console.error(e); showToast('خطأ أثناء قراءة الملف'); }
+}
+
+async function scanList(files){
+  const arr = Array.from(files || []);
+  if(!arr.length) return showToast('لم يتم اختيار ملفات');
+  showToast('جارٍ الفحص...');
+  for(let i=0;i<arr.length;i++){ await handleFile(arr[i]); }
+  saveToLocal(); renderGrid(); setCount(); showToast('انتهى الفحص');
+}
+
+function renderGrid(){
+  grid.innerHTML = '';
+  const filterText = (searchEl.value || '').trim().toLowerCase();
+  const list = ads.filter(a=>{
+    if(currentFilter==='with' && !a._hasPayload) return false;
+    if(currentFilter==='without' && a._hasPayload) return false;
+    if(!filterText) return true;
+    return (a.ref+' '+a.title+' '+a.price+' '+a.description+' '+a.location).toLowerCase().includes(filterText);
+  });
+  if(!list.length){ grid.innerHTML = '<div class="empty" style="text-align:center;padding:20px;color:var(--muted)">لا توجد نتائج</div>'; return; }
+  list.forEach((a, idx)=>{
+    const el = document.createElement('div'); el.className='card';
+    el.dataset.adId = a.id;
+    el.innerHTML = `
+      <div class="posBadge">#${idx+1}</div>
+      <div class="drag-handle" title="اسحب لإعادة الترتيب">≡</div>
+      ${a.imageDataUrl ? `<img loading="lazy" class="thumb" src="${a.imageDataUrl}" alt="${esc(a.title)}">` : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:#9aa4b2">لا توجد صورة</div>`}
+      <div class="meta">
+        <div class="name">${esc(a.title||'(بدون عنوان)')}</div>
+        <div class="desc">${esc(a.description||'')}</div>
+        <div class="row" style="margin-top:8px">
+          <div class="badge">${esc(a.price||'-')}</div>
+          <div style="margin-inline-start:auto" class="small">${esc(a.location||'-')}</div>
+        </div>
+        <div class="card-actions">
+          <div class="moveButtons">
+            <button class="icon-btn" data-action="up" title="أعلى">⬆</button>
+            <button class="icon-btn" data-action="down" title="أسفل">⬇</button>
+          </div>
+          <button class="icon-btn" data-action="open" title="فتح">🔎</button>
+          <button class="icon-btn" data-action="download" title="تنزيل">⬇</button>
+          <button class="icon-btn" data-action="remove" title="حذف">🗑️</button>
+        </div>
+      </div>
+    `;
+
+    if(reorderMode){
+      makeDraggable(el);
+    } else {
+      removeDraggable(el);
+    }
+
+    el.querySelector('[data-action="open"]').addEventListener('click',(e)=>{ e.stopPropagation(); openModalById(a.id); });
+    el.querySelector('[data-action="download"]').addEventListener('click',(e)=>{ e.stopPropagation(); downloadImage(a.id); });
+    el.querySelector('[data-action="remove"]').addEventListener('click',(e)=>{ e.stopPropagation(); removeById(a.id); });
+    el.querySelector('[data-action="up"]').addEventListener('click',(e)=>{ e.stopPropagation(); moveBy(a.id, -1); });
+    el.querySelector('[data-action="down"]').addEventListener('click',(e)=>{ e.stopPropagation(); moveBy(a.id, 1); });
+    el.addEventListener('click', ()=> openModalById(a.id));
+
+    grid.appendChild(el);
+  });
+}
+
+function openModalById(adId){ 
+  selectedAdId = adId; 
+  const a = ads.find(x=>x.id===adId); 
+  if(!a) return; 
+  modalRef.textContent = a.ref || a.id; 
+  modalImg.src = a.imageDataUrl || ''; 
+  modalTitle.value = a.title; 
+  modalPrice.value = a.price; 
+  modalPhone.value = a.phone; 
+  modalLoc.value = a.location || ''; 
+  modalCategory.value = a.category || 'عام';
+  modalDesc.value = a.description; 
+  modal.classList.add('open'); 
+  modal.setAttribute('aria-hidden','false'); 
+  replaceFile.value = null; // FIX: clear file input
+}
+function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); selectedAdId=null; }
+
+saveBtn.addEventListener('click', ()=>{ 
+  if(!selectedAdId) return; 
+  const idx = ads.findIndex(x=>x.id===selectedAdId); 
+  if(idx<0) return; 
+  // FIX: Ensure ref is sanitized and saved
+  ads[idx].ref = sanitizeRefCode(ads[idx].ref || ads[idx].id); 
+  ads[idx].title = modalTitle.value.trim(); 
+  ads[idx].price = modalPrice.value.trim(); 
+  ads[idx].phone = modalPhone.value.trim(); 
+  ads[idx].location = modalLoc.value.trim(); 
+  ads[idx].category = (modalCategory && modalCategory.value ? modalCategory.value.trim() : (ads[idx].category || 'عام')); 
+  ads[idx].description = modalDesc.value.trim(); 
+  
+  saveToLocal(); 
+  renderGrid(); 
+  showToast('تم الحفظ'); 
+  closeModal(); 
+});
+
+function removeById(id){ const idx = ads.findIndex(x=>x.id===id); if(idx<0) return; if(!confirm('تأكيد حذف العنصر؟')) return; ads.splice(idx,1); saveToLocal(); renderGrid(); setCount(); showToast('حُذف العنصر'); }
+removeBtn.addEventListener('click', ()=>{ if(!selectedAdId) return; removeById(selectedAdId); closeModal(); });
+closeModalBtn.addEventListener('click', closeModal);
+
+function downloadImage(id){ const a = ads.find(x=>x.id===id); if(!a || !a.imageDataUrl){ showToast('لا توجد صورة'); return; } const ael = document.createElement('a'); ael.href = a.imageDataUrl; ael.download = sanitizeRefCode(a.ref||a.id)+'.png'; document.body.appendChild(ael); ael.click(); ael.remove(); }
+
+downloadJsonBtn.addEventListener('click', ()=>{ 
+  if(!selectedAdId) return; 
+  const a = ads.find(x=>x.id===selectedAdId); 
+  if(!a) return; 
+  
+  // FIX: Map to final output format for JSON download
+  const out = {
+    ref_code: sanitizeRefCode(a.ref || a.id),
+    name: a.title || '',
+    description: a.description || '',
+    location: a.location || '',
+    price: a.price || '',
+    contact: a.phone || '',
+    category: a.category || 'عام',
+    image: a.imageDataUrl || a.image || '',
+    created_at: a.created_at || new Date().toISOString()
+  };
+
+  const blob = new Blob([JSON.stringify(out,null,2)],{type:'application/json'}); 
+  const url = URL.createObjectURL(blob); 
+  const ael = document.createElement('a'); 
+  ael.href = url; 
+  ael.download = sanitizeRefCode(a.ref||a.id)+'.json'; 
+  document.body.appendChild(ael); 
+  ael.click(); 
+  ael.remove(); 
+  URL.revokeObjectURL(url); 
+  showToast('تم تنزيل JSON');
+});
+
+downloadImgBtn.addEventListener('click', ()=>{ if(!selectedAdId) return; downloadImage(selectedAdId); });
+
+// FIX: Implement persistent image replacement using WEBP conversion
+replaceFile.addEventListener('change', async (e)=>{ 
+  const f = e.target.files[0]; 
+  if(!f) return; 
+  const idx = ads.findIndex(x=>x.id===selectedAdId); 
+  if(idx<0) return; 
+  try {
+      showToast('جاري تحويل الصورة إلى WEBP...');
+      const webpUrl = await imageFileToWebpDataUrl(f, 900, 900, 0.8);
+      ads[idx].imageDataUrl = webpUrl;
+      modalImg.src = webpUrl;
+      saveToLocal();
+      renderGrid();
+      showToast('تم استبدال الصورة (تم التحويل إلى WEBP)');
+  } catch(error) {
+      console.error(error);
+      showToast('فشل تحويل الصورة.');
+  } finally {
+      e.target.value = null; // Clear file input
+  }
+});
+
+function moveBy(id, offset){ const idx = ads.findIndex(x=>x.id===id); if(idx<0) return; const newIdx = Math.max(0, Math.min(ads.length-1, idx + offset)); if(newIdx===idx) return; const [item] = ads.splice(idx,1); ads.splice(newIdx,0,item); saveToLocal(); renderGrid(); showToast('تم تحريك العنصر'); }
+
+let dragEl = null; let placeholder = null; let isTouch = false;
+
+function makeDraggable(el){
+  el.setAttribute('draggable','true');
+  el.addEventListener('dragstart', onDragStart);
+  el.addEventListener('dragend', onDragEnd);
+  el.addEventListener('dragover', onDragOver);
+  el.addEventListener('drop', onDrop);
+  el.addEventListener('pointerdown', onPointerDown);
+  el.addEventListener('pointerup', onPointerUp);
+  el.addEventListener('pointercancel', onPointerUp);
+}
+function removeDraggable(el){
+  el.removeAttribute('draggable');
+  el.removeEventListener('dragstart', onDragStart);
+  el.removeEventListener('dragend', onDragEnd);
+  el.removeEventListener('dragover', onDragOver);
+  el.removeEventListener('drop', onDrop);
+  el.removeEventListener('pointerdown', onPointerDown);
+  el.removeEventListener('pointerup', onPointerUp);
+  el.removeEventListener('pointercancel', onPointerUp);
+}
+
+function onPointerDown(e){
+  if(e.pointerType === 'touch'){
+    isTouch = true;
+    const target = e.currentTarget;
+    touchHoldTimer = setTimeout(()=>{
+      target.dispatchEvent(new DragEvent('dragstart', {bubbles:true,cancelable:true}));
+    }, 700);
+  }
+}
+function onPointerUp(e){ if(touchHoldTimer){ clearTimeout(touchHoldTimer); touchHoldTimer=null; } }
+
+function createPlaceholder(height){ const p = document.createElement('div'); p.className = 'card placeholder'; p.style.height = height+'px'; return p; }
+
+function onDragStart(e){ 
+  dragEl = this; 
+  dragEl.classList.add('dragging'); 
+  e.dataTransfer.effectAllowed = 'move'; 
+  e.dataTransfer.setData('text/plain', this.dataset.adId);
+  placeholder = createPlaceholder(this.offsetHeight);
+}
+
+function onDragEnd(e){ 
+  if(dragEl) dragEl.classList.remove('dragging'); 
+  if(placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder); 
+  placeholder=null; 
+  dragEl=null; 
+
+  // FIX: Read the new order from the DOM and update the ads array
+  const newOrder = [...grid.children].map(el => el.dataset.adId).filter(id => id);
+  ads.sort((a,b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+
+  saveToLocal(); 
+  renderGrid(); 
+}
+
+function onDragOver(e){ 
+  e.preventDefault(); 
+  e.dataTransfer.dropEffect = 'move'; 
+  if(!placeholder || this.classList.contains('dragging')) return;
+  
+  const rect = this.getBoundingClientRect(); 
+  const y = e.clientY - rect.top; 
+  const after = y > rect.height/2; 
+  const parent = grid; 
+  
+  if(after){ 
+    if(this.nextSibling !== placeholder) parent.insertBefore(placeholder, this.nextSibling); 
+  } else { 
+    if(this !== placeholder && this.previousSibling !== placeholder) parent.insertBefore(placeholder, this); 
+  } 
+}
+
+function onDrop(e){ 
+  e.preventDefault(); 
+  // FIX: Remove reordering logic from onDrop, it's handled by onDragEnd reading the DOM
+  if(placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+}
+
+scanBtn.addEventListener('click', ()=>{ 
+  if(fileInput.files.length) scanList(fileInput.files); 
+  else showToast('اختر صورًا أو اسحبها'); 
+});
+
+dropzone.addEventListener('click', ()=> fileInput.click());
+fileInput.addEventListener('change', (e)=> {
+  scanList(e.target.files);
+  e.target.value = null; // Clear file input after use
+});
+
+dropzone.addEventListener('dragover',(e)=>{ e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave',()=> dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop',(e)=>{ 
+  e.preventDefault(); 
+  dropzone.classList.remove('drag'); 
+  const dt = e.dataTransfer; 
+  if(dt && dt.files) scanList(dt.files); 
+});
+
+searchEl.addEventListener('input', ()=> renderGrid());
+filters.forEach(f=> f.addEventListener('click', ()=>{ 
+  filters.forEach(x=>x.classList.remove('active')); 
+  f.classList.add('active'); 
+  currentFilter = f.dataset.filter; 
+  renderGrid(); 
+}));
+
+
+exportAll.addEventListener('click', async ()=>{
+  try{
+    showToast('جاري تجهيز ads.json للتنزيل...');
+    async function blobToDataUrl(url){
+      try{
+        if(!url || !String(url).startsWith('blob:')) return url;
+        const resp = await fetch(url);
+        const b = await resp.blob();
+        return await new Promise(res=>{ const fr = new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=()=>res(url); fr.readAsDataURL(b); });
+      }catch(e){ return url; }
+    }
+    const copy = [];
+    for(const a of ads){
+      // FIX: Use normalize/final output structure
+      const finalAd = {
+        ref_code: sanitizeRefCode(a.ref || a.id),
+        name: a.title || '',
+        description: a.description || '',
+        location: a.location || '',
+        price: a.price || '',
+        contact: a.phone || '',
+        category: a.category || 'عام',
+        image: a.imageDataUrl || a.image || '',
+        created_at: a.created_at || a.createdAt || new Date().toISOString()
+      };
+      
+      if(finalAd.image && String(finalAd.image).startsWith('blob:')){
+        finalAd.image = await blobToDataUrl(finalAd.image);
+      }
+      copy.push(finalAd);
+    }
+    const blob = new Blob([JSON.stringify(copy,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'ads.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    showToast('تم تنزيل ads.json');
+  }catch(e){
+    console.error(e); showToast('فشل في تجهيز ads.json');
+  }
+});
+
+importJsonBtn.addEventListener('click', ()=> jsonInput.click());
+jsonInput.addEventListener('change', async (e)=>{ 
+  const f = e.target.files[0]; 
+  if(!f) return; 
+  const txt = await f.text(); 
+  try{ 
+    const data = JSON.parse(txt); 
+    const arr = Array.isArray(data)?data:(data&&data.ads?data.ads:[data]); 
+    for(const r of arr) ads.unshift(normalize(r)); 
+    saveToLocal(); 
+    renderGrid(); 
+    setCount(); 
+    showToast('تم استيراد JSON'); 
+  }catch(e){ 
+    showToast('خطأ بقراءة JSON'); 
+  }
+  e.target.value = null; // Clear file input after use
+});
+
+saveLocalBtn.addEventListener('click', ()=>{ saveToLocal(); showToast('تم الحفظ محليًا'); });
+function saveToLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(ads)); }
+function loadFromLocal(){ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ try{ ads = JSON.parse(raw).map(normalize); }catch(_){} } setCount(); renderGrid(); }
+
+reorderToggle.addEventListener('click', ()=>{
+  reorderMode = !reorderMode;
+  reorderToggle.classList.toggle('primary', reorderMode);
+  reorderToggle.textContent = reorderMode ? '✅ إعادة الترتيب مفعل — اسحب أو استخدم الأسهم' : '🔀 وضع إعادة الترتيب';
+  renderGrid();
+  if(reorderMode) showToast('الآن يمكنك سحب البطاقات أو استخدام أزرار ⬆⬇');
+});
+
+saveOrderBtn.addEventListener('click', ()=>{
+  saveToLocal();
+  const blob = new Blob([JSON.stringify(ads,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'ads-ordered.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  showToast('تم تنزيل JSON بالترتيب الحالي');
+});
+
+fab.addEventListener('click', ()=>{ if(confirm('مسح كل العناصر من الواجهة (البيانات المحلية ستبقى)؟')){ ads = []; saveToLocal(); renderGrid(); setCount(); showToast('تم المسح'); }});
+
+let focusedCardIndex = -1;
+document.addEventListener('keydown',(e)=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='f'){ e.preventDefault(); searchEl.focus(); searchEl.select(); }
+});
+
+grid.addEventListener('click', (e)=>{
+  const card = e.target.closest('.card');
+  if(card){ const id = card.dataset.adId; focusedCardIndex = ads.findIndex(a=>a.id===id); }
+});
+
+document.addEventListener('keydown', (e)=>{
+  if(!reorderMode) return;
+  if(focusedCardIndex<0) return;
+  const id = ads[focusedCardIndex].id;
+  if(e.key === 'ArrowUp'){ e.preventDefault(); moveBy(id, -1); focusedCardIndex = Math.max(0, focusedCardIndex-1); }
+  if(e.key === 'ArrowDown'){ e.preventDefault(); moveBy(id, 1); focusedCardIndex = Math.min(ads.length-1, focusedCardIndex+1); }
+});
+
+window.addEventListener('load', ()=>{ loadFromLocal(); setCount(); });
+</script>
+</body>
+</html>
