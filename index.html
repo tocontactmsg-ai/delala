@@ -336,8 +336,6 @@ button.btn.alt#modalCall {
         <h1>الطريقة الأسهل الجديدة: لا حاجة لإنشاء بطاقة!</h1>
 
         <form id="adSubmissionForm" style="display:grid;gap:8px">
-          <label for="refNum">الرقم المرجعي (مطلوب)</label>
-          <input type="text" id="refNum" name="reference" placeholder="اكتب رقم مرجعي فريد لإعلانك، مثال: ELD-12345" required>
           
           <label for="adName">عنوان الإعلان (مطلوب)</label>
           <input type="text" id="adName" placeholder="مثال: سيارة تويوتا كامري للبيع" required>
@@ -516,20 +514,20 @@ const GITHUB_OWNER  = 'tocontactmsg-ai';
 const GITHUB_REPO   = 'De';
 const GITHUB_BRANCH = 'main';
 const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.0.1'; 
+const CACHE_BUSTER  = 'v1.0.2'; // زيادة رقم النسخة
 
 /* ========================================================== */
-/* 🛑 تحذير: يجب تحديث هذه الروابط والأرقام 🛑 */
+/* 🛑 التكوين (Configuration) 🛑 */
 /* ========================================================== */
 
 // 🛑 قم بتغيير هذا إلى رقم الواتساب الإداري الخاص بك (بدون علامة + أو مسافات)
 const WHATSAPP_NUMBER = '249998615193'; 
 
-// 🛑 قم بتغيير هذا إلى رابط النشر (Deployment URL) الخاص بسكريبت Google Apps Script
+// ✅ تم تحديث هذا بناءً على طلبك (يرجى التأكد من صحته)
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW/exec'; 
 
 /* ========================================================== */
-/* نهاية التحذير */
+/* نهاية التكوين */
 /* ========================================================== */
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
@@ -576,7 +574,7 @@ function displayMessage(type, text) {
 }
 /* 🛑 END NEW MESSAGE SYSTEM FUNCTIONS */
 
-/* --- ADS LOADING AND FILTERING LOGIC --- */
+/* --- ADS LOADING AND FILTERING LOGIC (Modified Sorting) --- */
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
@@ -587,6 +585,16 @@ function renderGrid(list){
     const noItems = document.getElementById('noitems');
     grid.innerHTML='';
     list = list || [];
+    
+    // 💡 التحديث: فرز القائمة حسب التاريخ (الأحدث أولاً)
+    list.sort((a, b) => {
+        // Assume 'date' field exists and is sortable (e.g., ISO string or timestamp)
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        // Sort in descending order (newest first)
+        return dateB - dateA;
+    });
+    
     if(!list.length){
         noItems.style.display='block';
         countEl.textContent='0 إعلان';
@@ -598,6 +606,10 @@ function renderGrid(list){
         el.className='card';
         if(a.ref_code) el.id = 'ad-' + a.ref_code;
         const mediaHtml = a.image ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">` : '<div class="small muted">لا توجد صورة</div>';
+        
+        // تحويل التاريخ لعرضه بشكل أوضح (للعرض فقط)
+        const displayDate = a.date ? new Date(a.date).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : '---';
+        
         el.innerHTML = `
             <div class="media">${mediaHtml}</div>
             <div class="body">
@@ -609,7 +621,7 @@ function renderGrid(list){
                 </div>
                 <div class="meta">
                     <div class="small">${escapeHtml(a.location||'')}</div>
-                    <div class="small">${escapeHtml(a.ref_code||'')}</div>
+                    <div class="small">${escapeHtml(a.ref_code||'')} (${displayDate})</div>
                 </div>
             </div>
         `;
@@ -635,21 +647,23 @@ function applyFiltersAndRender(){
         });
     }
 
-    renderGrid(out);
+    renderGrid(out); // سيتم الفرز داخل renderGrid
 }
 
 function loadAdsFromGithub() {
     console.log("Fetching ads data from GitHub... (Placeholder)");
+    // بيانات تجريبية مع حقل 'date'
     ads = [
-        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10'},
-        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-09'}
+        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T12:00:00Z'},
+        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10T15:30:00Z'},
+        {ref_code: 'C300', name: 'هاتف ذكي جديد', description: 'أحدث موديل بمواصفات عالية.', price: '1,500,000 SDG', location: 'ام درمان', category: 'إلكترونيات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T13:45:00Z'} // الأحدث
     ];
     populateCategories(ads);
     applyFiltersAndRender();
     countEl.textContent = ads.length + ' إعلان (تجريبي)';
 }
 
-function populateCategories(data){
+function populateCategories(data){ /* ... unchanged ... */
     const categories = new Set();
     data.forEach(a => {
         if(a.category) categories.add(a.category);
@@ -677,7 +691,7 @@ const modalMainImg = document.getElementById('modalMainImg');
 const modalCall = document.getElementById('modalCall');
 const modalWhats = document.getElementById('modalWhats');
 
-function closeModal(){
+function closeModal(){ /* ... unchanged ... */
     modal.setAttribute('aria-hidden','true');
     modal.classList.remove('open');
 }
@@ -686,9 +700,12 @@ modalClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
-function openDetails(item){
+function openDetails(item){ /* ... unchanged ... */
+    // تحويل التاريخ لعرضه بشكل أوضح داخل المودال
+    const displayDate = item.date ? new Date(item.date).toLocaleString('ar-EG', { dateStyle: 'full', timeStyle: 'short' }) : '---';
+
     modalTitle.textContent = item.name || 'تفاصيل الإعلان';
-    modalMeta.textContent = `نشر في: ${item.date || 'غير محدد'} | رمز: ${item.ref_code || '---'}`;
+    modalMeta.textContent = `نشر في: ${displayDate} | رمز: ${item.ref_code || '---'}`;
     modalDescription.textContent = item.description || 'لا يوجد وصف متاح.';
     modalLoc.textContent = item.location || 'غير محدد';
     modalCat.textContent = item.category || 'عام';
@@ -721,7 +738,7 @@ function openDetails(item){
 
 
 /* -------------------------------------------------------------------------- */
-/* 🛑 NAVIGATION LOGIC (FIXED) 🛑 */
+/* NAVIGATION LOGIC (FIXED) */
 /* -------------------------------------------------------------------------- */
 
 function setupNavigation() {
@@ -733,11 +750,9 @@ function setupNavigation() {
         btn.addEventListener('click', () => {
             const targetId = btn.getAttribute('data-target');
             
-            // 1. Reset all buttons and set current button
             navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
             btn.setAttribute('aria-current', 'true');
             
-            // 2. Switch sections
             sections.forEach(sec => {
                 sec.classList.remove('active');
                 if (sec.id === targetId) {
@@ -745,7 +760,6 @@ function setupNavigation() {
                 }
             });
             
-            // 3. Scroll to top of the content area for better UX
             if (mainContent) {
                  mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
@@ -753,12 +767,10 @@ function setupNavigation() {
     });
 }
 /* -------------------------------------------------------------------------- */
-/* 🛑 END NAVIGATION LOGIC 🛑 */
-/* -------------------------------------------------------------------------- */
 
 
 /* -------------------------------------------------------------------------- */
-/* ADS SUBMISSION LOGIC (KEPT IN IIFE) */
+/* ADS SUBMISSION LOGIC (Modified Ref Code & Timestamp) */
 /* -------------------------------------------------------------------------- */
 (function(){
     
@@ -766,7 +778,7 @@ function setupNavigation() {
     
     // Form element references 
     const form = document.getElementById('adSubmissionForm');
-    const refNum = document.getElementById('refNum');
+    // const refNum = document.getElementById('refNum'); // تم حذفه
     const adName = document.getElementById('adName');
     const adPrice = document.getElementById('adPrice');
     const adDescription = document.getElementById('adDescription');
@@ -796,27 +808,28 @@ function setupNavigation() {
         statusElement.textContent = 'جاري رفع الملفات إلى Google Drive... يرجى الانتظار.';
         submitBtn.disabled = true;
 
-        const referenceNumber = refNum.value;
+        // 💡 التحديث: توليد الرقم المرجعي والتاريخ تلقائياً
+        const timestamp = Date.now();
+        const referenceNumber = `ELD-${timestamp}`;
+        const adDate = new Date(timestamp).toISOString(); // ISO format for easy sorting and reading
+
         const formData = new FormData(); 
 
         try {
-            // Check if URL is placeholder (Safety check)
-            if (WEB_APP_URL.includes('AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW')) {
-                 throw new Error("❌ يجب تغيير رابط سكريبت Google Apps Script الافتراضي (WEB_APP_URL) إلى رابط النشر الخاص بك.");
-            }
-            
             // 1. Manually construct the JSON object from the organized fields
             const adData = {
                 name: adName.value,
                 price: adPrice.value,
                 desc: adDescription.value,
                 loc: adLocation.value,
-                contact: adContact.value
+                contact: adContact.value,
+                // 💡 التحديث: إضافة حقل التاريخ
+                date: adDate 
             };
 
             // 2. Append the required data fields to FormData
-            formData.append('reference', referenceNumber);
-            formData.append('jsonData', JSON.stringify(adData));
+            formData.append('reference', referenceNumber); // يتم تمريره كحقل منفصل إلى سكريبت جوجل
+            formData.append('jsonData', JSON.stringify(adData)); // يحتوي على كافة بيانات الإعلان بما في ذلك التاريخ
 
             // 3. Append the image file
             const imageFile = picUpload.files[0];
@@ -827,7 +840,11 @@ function setupNavigation() {
                  throw new Error("نوع الملف غير مدعوم. يرجى تحميل صورة بصيغة PNG أو JPEG فقط."); 
             }
             
-            formData.append('imageFile', imageFile, imageFile.name);
+            // يجب أن يحتوي اسم الملف المرفوع أيضاً على الرقم المرجعي لسهولة التعرف عليه في Google Drive
+            const fileExtension = imageFile.name.split('.').pop();
+            const newFileName = `${referenceNumber}.${fileExtension}`;
+            
+            formData.append('imageFile', imageFile, newFileName); 
 
         } catch (e) {
             console.error('Error in form data preparation or config:', e);
@@ -840,7 +857,7 @@ function setupNavigation() {
 
 
         // 4. Send Data to Google Apps Script
-        fetch(WEB_APP_URL, { https://script.google.com/macros/s/AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW/exec
+        fetch(WEB_APP_URL, {
             method: 'POST',
             body: formData, 
             mode: 'no-cors' 
@@ -848,17 +865,18 @@ function setupNavigation() {
         .then(() => {
             // Success handler
             statusElement.className = 'small success';
-            statusElement.textContent = '✅ تم رفع الملفات بنجاح إلى Google Drive. سيتم فتح الواتساب للمتابعة...';
+            statusElement.textContent = `✅ تم رفع الملفات بنجاح. الرقم المرجعي: ${referenceNumber}. سيتم فتح الواتساب للمتابعة...`;
             displayMessage('success', 'تم الإرسال بنجاح. يرجى إكمال عملية المراجعة عبر واتساب.');
             
             // 5. Construct the WhatsApp Message
             const localWhatsAppMessage = 
                 `👋 طلب إعلان جديد للمراجعة!%0A%0A` + 
-                `الرقم المرجعي: *${referenceNumber}*%0A%0A` + 
-                `✅ تم رفع بيانات الإعلان والصورة إلى مجلد Google Drive الخاص بالإدارة. يرجى المراجعة والرد على المعلن عبر المنصة أو الرقم الموضح في بيانات JSON.`;
+                `الرقم المرجعي المُنشأ: *${referenceNumber}*%0A` +
+                `عنوان الإعلان: *${adName.value}*%0A%0A` + 
+                `✅ تم رفع بيانات الإعلان والصورة إلى مجلد Google Drive الخاص بالإدارة. يرجى المراجعة.`;
 
             // 6. Redirect to WhatsApp 
-            const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${localWhatsAppMessage}`;
+            const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(localWhatsAppMessage)}`;
             
             setTimeout(() => {
                 window.location.href = whatsappUrl; 
@@ -909,8 +927,9 @@ if(refreshBtn){
 
 // Initial load handler - Setup all event listeners when the DOM is ready
 window.addEventListener('load', async ()=>{ 
-  // 1. Ensure 'home' is the starting active section and setup section switching
+  // 1. Setup section switching (this fixes the previous issue)
   setupNavigation(); 
+  document.getElementById('home').classList.add('active'); // Set 'home' as active
   
   // 2. Load and render initial data
   loadAdsFromGithub(); 
