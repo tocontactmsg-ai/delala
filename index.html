@@ -74,7 +74,7 @@
     border-radius:999px;
     cursor:pointer;
     font-size:13px;
-    transition: background 0.2s; /* إضافة تأثير للانتقال */
+    transition: background 0.2s;
   }
   nav[aria-label="واجهة"] button:hover{
      background:rgba(255,255,255,0.25);
@@ -90,15 +90,16 @@
     padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff
   }
   textarea{min-height:80px;resize:vertical}
-  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
+  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px;text-decoration:none;display:inline-block;text-align:center;}
 button.btn.alt#modalClose {
-  background: red; /* or background-color: #FF0000; */
+  background: #dc2626; /* Red for close */
 }
-    .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
-button.btn.alt#modalCall {
-  background: blue; /* or background-color: #FF0000; */
-}
-  .btn.alt{background:green }
+    .btn.alt{background:green }
+    /* NEW: Custom Share Button Color */
+    button.btn#modalShare {
+      background: #5271ff; /* A distinctive color for sharing */
+    }
+
   .btn[disabled]{opacity:.5;cursor:not-allowed}
 
   .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:14px}
@@ -106,7 +107,7 @@ button.btn.alt#modalCall {
   @media (min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
   .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.09);display:flex;flex-direction:column;transition:transform .12s;cursor:pointer}
   .card:hover{transform:translateY(-4px)}
-  .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;position:relative}
+  .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
   .media img{width:100%;height:100%;object-fit:cover;display:block}
   .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
   .title{font-weight:700;font-size:16px}
@@ -125,7 +126,7 @@ button.btn.alt#modalCall {
   .detailsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
   .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
   .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
-/* يمنع الصورة من تغطية أزرار المشاركة */
+
 .modalMain{
   max-height: calc(90vh - 80px);
   overflow-y: auto;
@@ -136,10 +137,12 @@ button.btn.alt#modalCall {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* 🛑 Fix for image background contrast */
+  background: #020617; 
 }
 
 .modalImage img{
-  max-height: 55vh; /* يمنع التمدد الزائد */
+  max-height: 55vh; 
   width: auto;
   height: auto;
   object-fit: contain;
@@ -155,12 +158,13 @@ button.btn.alt#modalCall {
   .modalImage{background:#020617;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .modalImage img{max-width:100%;max-height:360px;display:block}
   .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
-  .modalActions{display:flex;gap:8px;flex-wrap:wrap}
+  .modalActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start;} /* Aligned to start for RTL */
 
   @media(max-width:720px){
     .modalMain{grid-template-columns:1fr}
     .modalImage{order:-1}
     .detailsList{grid-template-columns:1fr}
+    .modalActions{justify-content:center;} /* Center buttons on small screens */
   }
 
 /* --- Ticker Tape / Marquee Bar Styles --- */
@@ -172,53 +176,46 @@ button.btn.alt#modalCall {
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   overflow: hidden;
   margin-bottom: 16px;
-  display: none; /* 🛑 Hidden by default */
+  display: none; 
 }
 #tickerTape.has-messages {
-    display: flex; /* 🛑 Only shown if JS adds the class */
+    display: flex; 
 }
 .ticker-content{
   display: flex;
-  white-space: nowrap; /* Keep content on a single line */
-  animation: marquee-rtl 25s linear infinite; /* Animation definition */
+  white-space: nowrap; 
+  animation: marquee-rtl 25s linear infinite; 
 }
 .ticker-content:hover{
-  animation-play-state: paused; /* Pause on hover */
+  animation-play-state: paused; 
 }
 .ticker-item{
   font-size: 14px;
   color: #333;
-  padding-left: 50px; /* Space between messages */
+  padding-left: 50px; 
   font-weight: 500;
   display: inline-flex;
   align-items: center;
 }
-/* RTL Marquee Animation */
+
 @keyframes marquee-rtl {
-  100% { transform: translateX(100%); } /* Start off-screen right */
-   0% { transform: translateX(-100%); } /* End off-screen left */
+  100% { transform: translateX(100%); } 
+   0% { transform: translateX(-100%); } 
 }
-/* Ensure the items don't stretch */
+
 .ticker-item:first-child {
   padding-left: 0;
 }
 /* --- End Ticker Tape Styles --- */
 
-/* ========================================================== */
-/* 💡 NEW: MESSAGE CONTAINER STYLING (MSEGS) */
-/* ========================================================== */
+
 :root {
-    /* Eldelala Primary Colors for Messages */
-    --msg-primary-color: #0078d7; /* Header Blue */
+    --msg-primary-color: #0078d7; 
     --msg-text-color: #0b1320;
     --msg-bg-color: #f7fbff;
-    
-    /* Success Message Colors (Calm Green) */
-    --success-bg: #e6ffed; /* Very light green */
-    --success-border: #047857; /* Price Green */
+    --success-bg: #e6ffed; 
+    --success-border: #047857; 
     --success-text: #059669; 
-    
-    /* Error/Warning Message Colors (Orange/Red - Using Alt Button color as a base for error) */
     --error-bg: #fee2e2;
     --error-border: #dc2626;
     --error-text: #dc2626;
@@ -226,10 +223,10 @@ button.btn.alt#modalCall {
 
 #msges-container {
     width: 100%;
-    max-width: 1100px; /* Matching the container width */
-    margin: 0 auto 16px auto; /* Margin above controls, below header */
+    max-width: 1100px; 
+    margin: 0 auto 16px auto; 
     padding: 0 12px;
-    display: none; /* Controlled by JS: disappears when empty */
+    display: none; 
 }
 
 .msges-box {
@@ -245,22 +242,18 @@ button.btn.alt#modalCall {
     text-align: right; 
 }
 
-/* Success Message Style */
 .msges-box.success {
     background-color: var(--success-bg);
     color: var(--success-text);
-    /* RTL Border on the right */
     border-right: 5px solid var(--success-border); 
 }
 
-/* Error Message Style */
 .msges-box.error {
     background-color: var(--error-bg);
     color: var(--error-text);
     border-right: 5px solid var(--error-border); 
 }
 
-/* Close Button Styling */
 .close-btn {
     background: none;
     border: none;
@@ -268,7 +261,6 @@ button.btn.alt#modalCall {
     font-size: 1.3rem;
     font-weight: bold;
     color: inherit; 
-    /* Push button to the far left in RTL layout */
     margin-inline-start: auto; 
     padding: 0 10px;
     opacity: 0.7;
@@ -278,16 +270,13 @@ button.btn.alt#modalCall {
 .close-btn:hover {
     opacity: 1;
 }
-/* ========================================================== */
-/* 🛑 END OF NEW MESSAGE STYLES */
-/* ========================================================== */
 </style>
 </head>
 <body>
 <div class="container" id="app">
   <header>
     <div class="brand">
-      <div class="title">الدلالة</div>
+      <a href="/" style="text-decoration:none;color:inherit;"><div class="title">الدلالة</div></a>
       <nav aria-label="واجهة">
         <button type="button" class="nav-btn" data-target="home" aria-current="true">الرئيسية</button>
         <button type="button" class="nav-btn" data-target="send">أنشر إعلانك</button>
@@ -309,20 +298,13 @@ button.btn.alt#modalCall {
   <div id="tickerTape" role="marquee" aria-live="off">
     <div class="ticker-content">
         <span class="ticker-item">   سيتم التواصل مع المرشحين المختارين فقط </span>
-            <span class="ticker-item">   </span>
-
-      <span class="ticker-item">  اغلاق باب التقديم لوظيفة : مسؤول دعم العملاء – الخرطوم </span>
-
-      <span class="ticker-item">   </span>
-   
-                 <span class="ticker-item">  تأكد دائماً من صحة المعلومات بنفسك قبل التعامل  </span>
-       
-  
-                 <span class="ticker-item">   </span>
-                   
-     <span class="ticker-item"> الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات  </span>
- 
-        </div>
+        <span class="ticker-item">   </span>
+        <span class="ticker-item">  اغلاق باب التقديم لوظيفة : مسؤول دعم العملاء – الخرطوم </span>
+        <span class="ticker-item">   </span>
+        <span class="ticker-item">  تأكد دائماً من صحة المعلومات بنفسك قبل التعامل  </span>
+        <span class="ticker-item">   </span>
+        <span class="ticker-item"> الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات  </span>
+    </div>
   </div>
   <main>
     <section id="home" class="active" aria-live="polite">
@@ -332,11 +314,10 @@ button.btn.alt#modalCall {
 
     <section id="send">
       <div class="panel">
-        <h2>لتقديم طلب إعلان: املأ الحقول، سيتم رفع الملفات مباشرة إلى Google Drive وإرسال إشعار عبر واتساب.</h2>
-        <h1>الطريقة الأسهل الجديدة: لا حاجة لإنشاء بطاقة!</h1>
+        
+        <h1>لتقديم طلب إعلان: املأ الحقول, واتبع الخطوات</h1>
 
         <form id="adSubmissionForm" style="display:grid;gap:8px">
-          
           <label for="adName">عنوان الإعلان (مطلوب)</label>
           <input type="text" id="adName" placeholder="مثال: سيارة تويوتا كامري للبيع" required>
           
@@ -360,12 +341,13 @@ button.btn.alt#modalCall {
             <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
           </label>
           
-          <button id="submitBtn" class="btn" type="submit" disabled>إرسال الإعلان وبدء عملية المراجعة</button>
+          <button id="submitBtn" class="btn" type="submit" disabled>إرسال الإعلان </button>
           
           <div id="statusMessage" class="small" style="text-align:center;margin-top:10px"></div>
         </form>
       </div>
     </section>
+
     <section id="privacy">
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
@@ -464,7 +446,7 @@ info@eldelala.com
         </div>
       </div>
     </section>
-    </main>
+  </main>
 
   <footer>
     <div>الدلالة — تأكد دائماً من صحة المعلومات بنفسك قبل التعامل.</div>
@@ -484,7 +466,7 @@ info@eldelala.com
     </div>
     <div class="modalMain">
       <div class="modalImage">
-        <img id="modalMainImg" src="" alt="" style="max-width:100%;max-height:100%;display:none" />
+        <img id="modalMainImg" src="" alt="" loading="lazy" style="max-width:100%;max-height:100%;display:none" />
       </div>
 
       <div class="modalBody">
@@ -500,8 +482,9 @@ info@eldelala.com
 
     <div class="modalFooter">
       <div class="modalActions">
-        <a id="modalWhats" class="btn" target="_blank" rel="noopener">مشاركة عبر WhatsApp</a>
-        <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال</a>
+        <button id="modalShare" class="btn" type="button" style="background:#5271ff;">مشاركة مع صديق</button> 
+        <a id="modalWhats" class="btn" target="_blank" rel="noopener">تواصل  (WhatsApp)</a> 
+        <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال هاتفي</a>
       </div>
       <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
     </div>
@@ -509,33 +492,25 @@ info@eldelala.com
 </div>
 
 <script defer>
-/*** GitHub + cache buster ***/
-const GITHUB_OWNER  = 'tocontactmsg-ai';
-const GITHUB_REPO   = 'De';
-const GITHUB_BRANCH = 'main';
-const ADS_DIR       = 'ads';
-const CACHE_BUSTER  = 'v1.0.2'; // زيادة رقم النسخة
-
 /* ========================================================== */
 /* 🛑 التكوين (Configuration) 🛑 */
 /* ========================================================== */
 
-// 🛑 قم بتغيير هذا إلى رقم الواتساب الإداري الخاص بك (بدون علامة + أو مسافات)
 const WHATSAPP_NUMBER = '249998615193'; 
-
-// ✅ تم تحديث هذا بناءً على طلبك (يرجى التأكد من صحته)
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW/exec'; 
 
 /* ========================================================== */
 /* نهاية التكوين */
 /* ========================================================== */
 
+const modal = document.getElementById('modal'); 
+const modalShare = document.getElementById('modalShare'); // NEW Element Ref
+let currentAd = null; // To hold the ad object for sharing
+
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
 
-/* ========================================================== */
-/* NEW MESSAGE SYSTEM FUNCTIONS (MSGES) */
-/* ========================================================== */
+/* --- MESSAGE SYSTEM FUNCTIONS --- */
 const msgContainer = document.getElementById('msges-container');
 function checkAndToggleVisibility() {
     if (msgContainer) {
@@ -572,9 +547,9 @@ function displayMessage(type, text) {
         console.error("Critical error displaying message:", error);
     }
 }
-/* 🛑 END NEW MESSAGE SYSTEM FUNCTIONS */
+/* 🛑 END MESSAGE SYSTEM FUNCTIONS */
 
-/* --- ADS LOADING AND FILTERING LOGIC (Modified Sorting) --- */
+/* --- ADS LOADING AND FILTERING LOGIC --- */
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
@@ -586,12 +561,10 @@ function renderGrid(list){
     grid.innerHTML='';
     list = list || [];
     
-    // 💡 التحديث: فرز القائمة حسب التاريخ (الأحدث أولاً)
+    // الفرز حسب التاريخ (الأحدث أولاً)
     list.sort((a, b) => {
-        // Assume 'date' field exists and is sortable (e.g., ISO string or timestamp)
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
-        // Sort in descending order (newest first)
         return dateB - dateA;
     });
     
@@ -605,9 +578,9 @@ function renderGrid(list){
         const el = document.createElement('div');
         el.className='card';
         if(a.ref_code) el.id = 'ad-' + a.ref_code;
+        // ملاحظة: تم تعديل عرض الصورة لتفادي مشاكل الـ Base64 في الشريط الأمامي
         const mediaHtml = a.image ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">` : '<div class="small muted">لا توجد صورة</div>';
         
-        // تحويل التاريخ لعرضه بشكل أوضح (للعرض فقط)
         const displayDate = a.date ? new Date(a.date).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : '---';
         
         el.innerHTML = `
@@ -625,7 +598,10 @@ function renderGrid(list){
                 </div>
             </div>
         `;
-        el.addEventListener('click', ()=>openDetails(a));
+        el.addEventListener('click', () => {
+            window.location.hash = a.ref_code || ''; 
+            openDetails(a);
+        });
         grid.appendChild(el);
     });
     countEl.textContent = list.length + ' إعلان';
@@ -642,28 +618,58 @@ function applyFiltersAndRender(){
 
     if(q){
         out = out.filter(a => {
+            // البحث في الاسم، الوصف، الموقع، والرقم المرجعي
             const hay = ((a.name || '') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.ref_code||'')).toLowerCase();
             return hay.indexOf(q) !== -1;
         });
     }
 
-    renderGrid(out); // سيتم الفرز داخل renderGrid
+    renderGrid(out); 
 }
 
 function loadAdsFromGithub() {
-    console.log("Fetching ads data from GitHub... (Placeholder)");
-    // بيانات تجريبية مع حقل 'date'
-    ads = [
-        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T12:00:00Z'},
-        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10T15:30:00Z'},
-        {ref_code: 'C300', name: 'هاتف ذكي جديد', description: 'أحدث موديل بمواصفات عالية.', price: '1,500,000 SDG', location: 'ام درمان', category: 'إلكترونيات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T13:45:00Z'} // الأحدث
+    console.log("Loading ads data from JSON file and placeholders...");
+    
+    // Placeholder ads (للحصول على قائمة غنية)
+    const defaultAds = [
+        // تم تحديث التواريخ لضمان فرز منطقي
+        {ref_code: 'ELD-1702488600000', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T12:00:00Z'},
+        {ref_code: 'ELD-1702402200000', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10T15:30:00Z'},
     ];
+    
+    // 💡 التعديل: قراءة وتحليل محتوى ملف JSON الذي تم تحميله
+    const uploadedAdJson = `{
+      "ref_code": "RDGPT2S",
+      "name": "غرفة نوم",
+      "description": "سرير دبل+مرتبه\\nتسريحة بي مرايه\\nدولاب 3 ضلف\\n2 كمودينا\\nالحالة: جيده",
+      "location": "بورتسودان",
+      "price": "مليار و 950 الف جنيه",
+      "contact": "0922741186",
+      "category": "اثاث",
+      "image": "data:image/webp;base64,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..."
+    }`;
+    
+    let uploadedAd = null;
+    try {
+        uploadedAd = JSON.parse(uploadedAdJson);
+        uploadedAd.date = new Date(Date.now()).toISOString();
+        uploadedAd.ref_code = uploadedAd.ref_code || `UPLOADED-${Date.now()}`;
+        // ملاحظة: تم معالجة الصورة في ملف الـ JSON لكي تظهر.
+        console.log('Successfully parsed uploaded JSON ad.');
+    } catch (e) {
+        console.error('Error parsing uploaded JSON:', e);
+        displayMessage('error', '❌ فشل في قراءة ملف الإعلان JSON الذي تم تحميله. لن يتم عرض هذا الإعلان.');
+    }
+    
+    // دمج الإعلان الذي تم تحميله مع الإعلانات الافتراضية
+    ads = uploadedAd ? [uploadedAd, ...defaultAds] : defaultAds; 
+
     populateCategories(ads);
     applyFiltersAndRender();
-    countEl.textContent = ads.length + ' إعلان (تجريبي)';
+    countEl.textContent = ads.length + ' إعلان';
 }
 
-function populateCategories(data){ /* ... unchanged ... */
+function populateCategories(data){ 
     const categories = new Set();
     data.forEach(a => {
         if(a.category) categories.add(a.category);
@@ -678,7 +684,7 @@ function populateCategories(data){ /* ... unchanged ... */
 }
 
 
-/* --- MODAL LOGIC (KEPT) --- */
+/* --- MODAL LOGIC (Modified close to clear hash) --- */
 const modalClose = document.getElementById('modalClose');
 const modalTitle = document.getElementById('modalTitle');
 const modalMeta = document.getElementById('modalMeta');
@@ -691,22 +697,26 @@ const modalMainImg = document.getElementById('modalMainImg');
 const modalCall = document.getElementById('modalCall');
 const modalWhats = document.getElementById('modalWhats');
 
-function closeModal(){ /* ... unchanged ... */
+function closeModal(){
+    window.history.replaceState(null, null, window.location.pathname + window.location.search);
     modal.setAttribute('aria-hidden','true');
     modal.classList.remove('open');
+    currentAd = null; // Clear current ad
 }
 
 modalClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 
-function openDetails(item){ /* ... unchanged ... */
-    // تحويل التاريخ لعرضه بشكل أوضح داخل المودال
+
+function openDetails(item){ 
+    currentAd = item; // Store ad object for sharing
+
     const displayDate = item.date ? new Date(item.date).toLocaleString('ar-EG', { dateStyle: 'full', timeStyle: 'short' }) : '---';
 
     modalTitle.textContent = item.name || 'تفاصيل الإعلان';
     modalMeta.textContent = `نشر في: ${displayDate} | رمز: ${item.ref_code || '---'}`;
-    modalDescription.textContent = item.description || 'لا يوجد وصف متاح.';
+    modalDescription.textContent = item.description ? item.description.replace(/\\n/g, '\n') : 'لا يوجد وصف متاح.';
     modalLoc.textContent = item.location || 'غير محدد';
     modalCat.textContent = item.category || 'عام';
     modalPrice.textContent = item.price || 'عند الاتصال';
@@ -721,6 +731,7 @@ function openDetails(item){ /* ... unchanged ... */
         modalMainImg.src = '';
     }
 
+    // 1. Contact Button (Call)
     if (item.contact && item.contact.match(/^\d+$/)) { 
         modalCall.href = `tel:${item.contact}`;
         modalCall.style.display = 'inline-block';
@@ -728,57 +739,119 @@ function openDetails(item){ /* ... unchanged ... */
         modalCall.style.display = 'none';
     }
 
-    const whatsappText = `مرحباً، أنا مهتم بالإعلان رقم: ${item.ref_code}. هل لا يزال متاحاً؟ (الرجاء عدم حذف هذه الرسالة)`;
-    const whatsappLink = `https://wa.me/${item.contact || WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`;
-    modalWhats.href = whatsappLink;
+    // 2. Contact Button (WhatsApp)
+// NEW Code:
+const whatsappContactText = `مرحباً، أنا مهتم بإعلان: ${item.name || '---'} (الرمز: ${item.ref_code}). السعر المعروض هو: ${item.price || 'عند الاتصال'}. هل لا يزال الإعلان متاحاً؟`;
+    const whatsappContactLink = `https://wa.me/${item.contact || WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappContactText)}`;
+    modalWhats.href = whatsappContactLink;
 
+    window.location.hash = item.ref_code || '';
+    
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('open');
 }
 
+// 💡 NEW: Share Ad Logic (Web Share API fallback to WhatsApp)
+modalShare.addEventListener('click', () => {
+    if (!currentAd) return;
+    
+    // Construct the ad link for sharing (Deep Link)
+    const adLink = window.location.href.split('#')[0] + '#' + currentAd.ref_code;
+    
+    const shareMessage = 
+        `✨ إعلان مميز على الدلالة! ✨\n\n` +
+        `📢 *${currentAd.name || 'إعلان بدون عنوان'}*\n` +
+        `💰 السعر: *${currentAd.price || 'عند الاتصال'}*\n` +
+        `📍 الموقع: ${currentAd.location || 'غير محدد'}\n\n` +
+        `🔗 شاهد التفاصيل : ${adLink}\n\n` +
+        `#الدلالة #سوق_السودان`;
+
+    // Try Web Share API first
+    if (navigator.share) {
+        navigator.share({
+            title: currentAd.name || 'إعلان على الدلالة',
+            text: `إعلان: ${currentAd.name} بسعر ${currentAd.price} - شاهده هنا:`,
+            url: adLink,
+        })
+        .then(() => console.log('Successful share'))
+        .catch((error) => {
+             console.error('Error sharing, falling back to WhatsApp:', error);
+             // Fallback to WhatsApp link (URL encoded)
+             window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank');
+        });
+    } else {
+        // Fallback directly to WhatsApp
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank');
+    }
+});
+
 
 /* -------------------------------------------------------------------------- */
-/* NAVIGATION LOGIC (FIXED) */
+/* NAVIGATION & DEEP LINKING LOGIC */
 /* -------------------------------------------------------------------------- */
 
-function setupNavigation() {
+function setupNavigation(targetId = 'home') {
     const navButtons = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('main > section');
     const mainContent = document.querySelector('main');
+    const targetButton = document.querySelector(`.nav-btn[data-target="${targetId}"]`);
+    const targetSection = document.getElementById(targetId);
 
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            
-            navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
-            btn.setAttribute('aria-current', 'true');
-            
-            sections.forEach(sec => {
-                sec.classList.remove('active');
-                if (sec.id === targetId) {
-                    sec.classList.add('active');
+    navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
+    sections.forEach(sec => sec.classList.remove('active'));
+
+    if (targetButton) {
+        targetButton.setAttribute('aria-current', 'true');
+    }
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+
+    if (!setupNavigation.listenersAttached) {
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const clickTargetId = btn.getAttribute('data-target');
+                setupNavigation(clickTargetId); 
+                if (mainContent) {
+                     mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
-            
-            if (mainContent) {
-                 mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
         });
-    });
+        setupNavigation.listenersAttached = true;
+    }
 }
-/* -------------------------------------------------------------------------- */
+setupNavigation.listenersAttached = false; 
+
+function openAdFromHash() {
+    const hash = window.location.hash.substring(1); 
+    if (!hash) return;
+    
+    // تأكد من تحميل الإعلانات أولاً قبل البحث
+    if(ads.length === 0) {
+        // إذا لم تكن الإعلانات محملة بعد، قم بالتأجيل قليلاً.
+        setTimeout(openAdFromHash, 500); 
+        return;
+    }
+
+    const ad = ads.find(a => a.ref_code === hash);
+    
+    if (ad) {
+        setupNavigation('home'); 
+        openDetails(ad);
+    } else {
+        window.history.replaceState(null, null, window.location.pathname + window.location.search);
+    }
+}
 
 
 /* -------------------------------------------------------------------------- */
-/* ADS SUBMISSION LOGIC (Modified Ref Code & Timestamp) */
+/* ADS SUBMISSION LOGIC (Retained from previous version) */
 /* -------------------------------------------------------------------------- */
 (function(){
     
     const ADMIN_WHATSAPP_NUMBER = WHATSAPP_NUMBER; 
     
-    // Form element references 
     const form = document.getElementById('adSubmissionForm');
-    // const refNum = document.getElementById('refNum'); // تم حذفه
     const adName = document.getElementById('adName');
     const adPrice = document.getElementById('adPrice');
     const adDescription = document.getElementById('adDescription');
@@ -790,48 +863,41 @@ function setupNavigation() {
     const submitBtn = document.getElementById('submitBtn');
     const statusElement = document.getElementById('statusMessage');
     
-    // --- Submission Button Enable/Disable ---
     if(agree && submitBtn) {
         agree.addEventListener('change', () => {
             submitBtn.disabled = !agree.checked;
         });
     }
 
-    // --- Form Submission Handler (Optimized) ---
     form && form.addEventListener('submit', function(event) {
         event.preventDefault();
 
         if (submitBtn.disabled) return;
         
-        // Reset status
         statusElement.className = '';
         statusElement.textContent = 'جاري رفع الملفات إلى Google Drive... يرجى الانتظار.';
         submitBtn.disabled = true;
 
-        // 💡 التحديث: توليد الرقم المرجعي والتاريخ تلقائياً
         const timestamp = Date.now();
         const referenceNumber = `ELD-${timestamp}`;
-        const adDate = new Date(timestamp).toISOString(); // ISO format for easy sorting and reading
+        const adDate = new Date(timestamp).toISOString(); 
 
         const formData = new FormData(); 
 
         try {
-            // 1. Manually construct the JSON object from the organized fields
+            
             const adData = {
                 name: adName.value,
                 price: adPrice.value,
                 desc: adDescription.value,
                 loc: adLocation.value,
                 contact: adContact.value,
-                // 💡 التحديث: إضافة حقل التاريخ
                 date: adDate 
             };
 
-            // 2. Append the required data fields to FormData
-            formData.append('reference', referenceNumber); // يتم تمريره كحقل منفصل إلى سكريبت جوجل
-            formData.append('jsonData', JSON.stringify(adData)); // يحتوي على كافة بيانات الإعلان بما في ذلك التاريخ
+            formData.append('reference', referenceNumber); 
+            formData.append('jsonData', JSON.stringify(adData)); 
 
-            // 3. Append the image file
             const imageFile = picUpload.files[0];
             if (!imageFile) {
                  throw new Error("يرجى اختيار صورة للإعلان."); 
@@ -840,7 +906,6 @@ function setupNavigation() {
                  throw new Error("نوع الملف غير مدعوم. يرجى تحميل صورة بصيغة PNG أو JPEG فقط."); 
             }
             
-            // يجب أن يحتوي اسم الملف المرفوع أيضاً على الرقم المرجعي لسهولة التعرف عليه في Google Drive
             const fileExtension = imageFile.name.split('.').pop();
             const newFileName = `${referenceNumber}.${fileExtension}`;
             
@@ -855,27 +920,27 @@ function setupNavigation() {
             return;
         }
 
-
-        // 4. Send Data to Google Apps Script
         fetch(WEB_APP_URL, {
             method: 'POST',
             body: formData, 
             mode: 'no-cors' 
         })
         .then(() => {
-            // Success handler
             statusElement.className = 'small success';
             statusElement.textContent = `✅ تم رفع الملفات بنجاح. الرقم المرجعي: ${referenceNumber}. سيتم فتح الواتساب للمتابعة...`;
             displayMessage('success', 'تم الإرسال بنجاح. يرجى إكمال عملية المراجعة عبر واتساب.');
             
-            // 5. Construct the WhatsApp Message
-            const localWhatsAppMessage = 
-                `👋 طلب إعلان جديد للمراجعة!%0A%0A` + 
-                `الرقم المرجعي المُنشأ: *${referenceNumber}*%0A` +
-                `عنوان الإعلان: *${adName.value}*%0A%0A` + 
-                `✅ تم رفع بيانات الإعلان والصورة إلى مجلد Google Drive الخاص بالإدارة. يرجى المراجعة.`;
+            // NEW Code for Concise and Informative WhatsApp Message (for Reviewer)
+const localWhatsAppMessage = 
+    `⭐ *طلب مراجعة إعلان جديد*%0A` + 
+    `*الرمز:* ${referenceNumber}%0A%0A` +
+    `*العنوان:* ${adName.value}%0A` + 
+    `*السعر:* ${adPrice.value}%0A` +
+    `*الموقع:* ${adLocation.value}%0A` + 
+    `*التواصل:* ${adContact.value}%0A%0A` +
+    `*الوصف:* ${adDescription.value}%0A%0A` + 
+    `---%0A`  ;
 
-            // 6. Redirect to WhatsApp 
             const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(localWhatsAppMessage)}`;
             
             setTimeout(() => {
@@ -888,8 +953,8 @@ function setupNavigation() {
         .catch(error => {
             console.error('Network Submission Error:', error);
             statusElement.className = 'small error';
-            statusElement.textContent = '❌ فشل في الاتصال بالشبكة أو سيرفر جوجل. يرجى التحقق من اتصالك بالإنترنت.';
-            displayMessage('error', 'فشل في الإرسال. تحقق من اتصالك بالإنترنت أو تأكد من نشر رابط سكريبت جوجل بصلاحية "Anyone".');
+            statusElement.textContent = 'فشل في الاتصال بالشبكة  .';
+            displayMessage('error', 'فشل في الإرسال  .');
             submitBtn.disabled = false;
         });
     });
@@ -908,13 +973,6 @@ if(catFilter){
   catFilter.addEventListener('change', applyFiltersAndRender);
 }
 
-function openAdFromHash(){} 
-
-const refreshBtn = document.getElementById('refresh');
-if(refreshBtn){
-  refreshBtn.addEventListener('click', loadAdsFromGithub);
-}
-
 // Ticker Tape Logic
 (function(){
   const tickerTape = document.getElementById('tickerTape');
@@ -925,15 +983,10 @@ if(refreshBtn){
   }
 })();
 
-// Initial load handler - Setup all event listeners when the DOM is ready
+// Initial load handler
 window.addEventListener('load', async ()=>{ 
-  // 1. Setup section switching (this fixes the previous issue)
   setupNavigation(); 
-  document.getElementById('home').classList.add('active'); // Set 'home' as active
-  
-  // 2. Load and render initial data
   loadAdsFromGithub(); 
-  
   openAdFromHash(); 
   checkAndToggleVisibility();
 });
