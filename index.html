@@ -233,8 +233,8 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="image_url">رابط الصورة (مطلوب)</label>
-                    <input type="url" id="image_url" name="image_url" required placeholder="يرجى استخدام رابط مباشر للصورة (مثل Imgur أو Drive Public Link)">
+                    <label for="image_file">ملف الصورة (مطلوب - سيتم معالجته وتحويله عند الرفع)</label>
+                    <input type="file" id="image_file" name="image_file" accept="image/*" required>
                 </div>
 
                 <div class="form-group">
@@ -269,8 +269,7 @@
         <div class="modalBody">
             <div class="modalContent">
                 <div id="modalImage" class="modalImage">
-                    <img id="modalMainImg" src="" alt="صورة الإعلان الرئيسية" loading="lazy">
-                </div>
+                    </div>
                 <div class="modalDetails">
                     <p id="modalMeta" class="small muted" style="text-align: left;"></p>
                     <p id="modalDescription" class="modalDescription"></p>
@@ -324,7 +323,6 @@
     // عناصر الواجهة
     const grid = document.getElementById('grid');
     const countEl = document.getElementById('countEl');
-    const cardsContainer = document.getElementById('grid'); // اسم جديد لنفس العنصر
     const qEl = document.getElementById('qEl');
     const catFilter = document.getElementById('catFilter');
 
@@ -338,8 +336,7 @@
     const modalCat = document.getElementById('modalCat');
     const modalPrice = document.getElementById('modalPrice');
     const modalContact = document.getElementById('modalContact');
-    const modalMainImg = document.getElementById('modalMainImg');
-    const modalCall = document.getElementById('modalWhats'); // تم تغيير الاسم
+    const modalImageContainer = document.getElementById('modalImage'); // تم تغيير اسم العنصر
     const modalWhats = document.getElementById('modalWhats');
     const modalShare = document.getElementById('modalShare');
 
@@ -392,6 +389,31 @@
             statusElement.className = `small ${type}`;
             statusElement.textContent = message;
         }
+    }
+    
+    // 💡 وظيفة جديدة: الحصول على رابط صورة مُحسَّن
+    function getOptimizedImageUrl(originalUrl, size = 'w400') {
+        if (!originalUrl || !originalUrl.startsWith('http')) {
+            return 'https://via.placeholder.com/400x300?text=صورة+غير+متوفرة';
+        }
+        
+        // ** معالجة خاصة لروابط Google Drive لتحسين العرض والتحميل **
+        if (originalUrl.includes('drive.google.com') || originalUrl.includes('googleusercontent.com')) {
+            // استخلاص معرف الملف (File ID) من الرابط
+            const fileIdMatch = originalUrl.match(/id=([a-zA-Z0-9_-]+)|d\/([a-zA-Z0-9_-]+)/);
+            let fileId = null;
+            if (fileIdMatch) {
+                fileId = fileIdMatch[1] || fileIdMatch[2];
+            }
+            
+            if (fileId) {
+                // استخدام رابط الـ Thumbnail لـ Google Drive لتقليل حجم الصورة
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=${size}`;
+            }
+        }
+
+        // استخدام الرابط الأصلي إذا لم يكن رابط Google Drive
+        return originalUrl;
     }
 
 
@@ -498,13 +520,17 @@
             const el = document.createElement('div');
             el.className = 'card';
             
-            // معالجة رابط الصورة
-            const imageSrc = a.Image_URL && a.Image_URL.startsWith('http') ? a.Image_URL : 'https://via.placeholder.com/400x300?text=صورة+غير+متوفرة';
+            // 💡 استخدام الدالة الجديدة للحصول على رابط صورة محسّن للبطاقة
+            const imageSrc = getOptimizedImageUrl(a.Image_URL, 'w400');
             
             // تحديد محتوى الصورة (إذا كانت الصورة عبارة عن كود Base64)
+            // 💡 استخدام وسم <picture> لطلب WebP كأولوية للمتصفحات الداعمة
             const mediaHtml = a.Image_URL && a.Image_URL.startsWith('data:image/') ? 
                                 `<img src="${a.Image_URL}" alt="${escapeHtml(a.Name || '')}" loading="lazy">` :
-                                `<img src="${imageSrc}" alt="${escapeHtml(a.Name || '')}" loading="lazy">`;
+                                `<picture>
+                                    <source srcset="${imageSrc}" type="image/webp">
+                                    <img src="${imageSrc}" alt="${escapeHtml(a.Name || '')}" loading="lazy">
+                                </picture>`;
 
             el.innerHTML = `
                 <div class="media">${mediaHtml}</div>
@@ -552,10 +578,16 @@
         const adDate = displayDate(ad.Date || '');
         modalMeta.textContent = `الكود المرجعي: ${refCode} | تاريخ النشر: ${adDate}`;
         
-        // معالجة الصورة
-        const imageSrc = ad.Image_URL && ad.Image_URL.startsWith('http') ? ad.Image_URL : 'https://via.placeholder.com/800x600?text=صورة+غير+متوفرة';
-        modalMainImg.src = imageSrc;
-        modalMainImg.alt = escapeHtml(ad.Name || '');
+        // 💡 استخدام الدالة الجديدة للحصول على رابط صورة محسّن للتفاصيل (حجم أكبر)
+        const imageSrc = getOptimizedImageUrl(ad.Image_URL, 'w800');
+        
+        // 💡 استخدام وسم <picture> لطلب WebP كأولوية للمتصفحات الداعمة
+        modalImageContainer.innerHTML = `
+            <picture>
+                <source srcset="${imageSrc}" type="image/webp">
+                <img id="modalMainImg" src="${imageSrc}" alt="${escapeHtml(ad.Name || '')}" loading="lazy">
+            </picture>
+        `;
 
         // روابط التواصل
         const whatsMessage = `مرحباً، أنا مهتم بالإعلان رقم ${refCode} ( بعنوان: ${ad.Name} ). هل الإعلان متاح بعد؟`;
@@ -644,19 +676,19 @@
 
 
     /* -------------------------------------------------------------------------- */
-    /* 6. منطق إرسال الإعلانات (Form Submission Logic) */
+    /* 6. منطق إرسال الإعلانات (Form Submission Logic) - 💡 التحديث لرفع الصور */
     /* -------------------------------------------------------------------------- */
     (function() {
         const adForm = document.getElementById('adForm');
         const submitBtn = document.getElementById('submitBtn');
         const statusElement = document.getElementById('status');
 
-        if (!adForm || !submitBtn) return; // الخروج إذا لم يكن النموذج موجوداً
+        if (!adForm || !submitBtn) return; 
 
         adForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             submitBtn.disabled = true;
-            statusElement.textContent = 'جاري إرسال الإعلان...';
+            statusElement.textContent = 'جاري تحضير ورفع الصورة...';
             statusElement.className = 'small muted';
 
             const formData = new FormData(adForm);
@@ -664,47 +696,82 @@
             for (let [key, value] of formData.entries()) {
                 adData[key] = value.trim();
             }
-
-            // إضافة الحقول المرجعية قبل الإرسال
-            adData.ref_code = 'AD' + Date.now().toString().slice(-6);
-            adData.Date = new Date().toISOString();
-            adData.Status = 'Pending'; // الحالة الأولية
-
-            try {
-                // إرسال البيانات إلى نهاية Apps Script لـ (Pending Ads)
-                // ⚠️ يجب التأكد من وجود نهاية خاصة للنموذج في Apps Script (لم يتم إدراجها هنا، الكود الحالي فقط لـ doGet)
-                // في سياق هذا الدمج، سنقوم بتوليد رسالة واتساب كخطوة مؤقتة وضرورية:
-                
-                const formFields = [
-                    `**الاسم**: ${adData.name}`,
-                    `**الوصف**: ${adData.description}`,
-                    `**الفئة**: ${adData.category}`,
-                    `**الموقع**: ${adData.location}`,
-                    `**السعر**: ${adData.price}`,
-                    `**التواصل**: ${adData.contact}`,
-                    `**رابط الصورة**: ${adData.image_url}`,
-                    `**كود المرجع**: ${adData.ref_code}`
-                ].join('\n');
-
-                const localWhatsAppMessage = `*طلب إعلان جديد (مراجعة)*:\n\n${formFields}\n\nيرجى مراجعة هذا الإعلان والموافقة عليه أو رفضه.`;
-
-                displayMessage('success', 'تم استلام طلبك! سيتم نقلك إلى محادثة واتساب لإرسال بيانات الإعلان للمراجعة...');
-
-                const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(localWhatsAppMessage)}`;
-                
-                setTimeout(() => {
-                    window.open(whatsappUrl, '_blank'); // فتح في نافذة جديدة
-                    // إعادة تعيين النموذج بعد الإرسال
-                    adForm.reset();
-                    displayMessage('success', 'تم إرسال البيانات بنجاح، شكراً لك!');
-                    submitBtn.disabled = false;
-                }, 1500);
-
-            } catch (error) {
-                console.error('Network Submission Error:', error);
-                displayMessage('error', '❌ فشل في الإرسال. يرجى التأكد من أن جميع الحقول صحيحة.');
+            
+            // 1. الحصول على ملف الصورة
+            const fileInput = document.getElementById('image_file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                displayMessage('error', '❌ يرجى اختيار ملف صورة.');
                 submitBtn.disabled = false;
+                return;
             }
+
+            // 2. قراءة الملف كـ Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = async function() {
+                // إزالة رأس البيانات (data:image/jpeg;base64,) للحصول على Base64 النقي
+                const base64Data = reader.result.split(',')[1]; 
+                const mimeType = file.type;
+                
+                // 3. تحضير Payload للإرسال عبر POST إلى Apps Script
+                const finalPayload = {
+                    action: 'submitAd', // يجب أن تكون هذه القيمة مدعومة في دالة doPost في Apps Script
+                    data: {
+                        Name: adData.name,
+                        Description: adData.description,
+                        Category: adData.category,
+                        Location: adData.location,
+                        Price: adData.price,
+                        Contact: adData.contact,
+                        ImageBase64: base64Data, // إرسال بيانات الصورة
+                        MimeType: mimeType, // إرسال نوع الصورة
+                        ref_code: 'AD' + Date.now().toString().slice(-6),
+                        Date: new Date().toISOString(),
+                        Status: 'Pending'
+                    }
+                };
+
+                statusElement.textContent = 'جاري إرسال الإعلان وقاعدة البيانات...';
+
+                try {
+                    // 4. إرسال البيانات عبر POST إلى Apps Script
+                    const response = await fetch(WEB_APP_URL, {
+                        method: 'POST', 
+                        mode: 'cors', 
+                        cache: 'no-cache',
+                        // يتم استخدام Content-Type هذا لأنه الأفضل للتعامل مع Apps Script POST
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded', 
+                        },
+                        // يجب إرسال الكائن كـ JSON ليتمكن Apps Script من قراءته عبر e.postData.contents
+                        body: JSON.stringify(finalPayload) 
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        displayMessage('success', '✅ تم استلام إعلانك للمراجعة بنجاح! سيتم رفعه خلال لحظات. شكراً لك.');
+                        adForm.reset();
+                    } else {
+                        // Apps Script returned an error
+                        displayMessage('error', `❌ فشل الإرسال: ${result.message || 'حدث خطأ في جهة الخادم.'}`);
+                    }
+
+                } catch (error) {
+                    console.error('Network Submission Error:', error);
+                    displayMessage('error', '❌ فشل في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وتأكد أن رابط Apps Script يعمل بـ POST.');
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            };
+
+            reader.onerror = function() {
+                displayMessage('error', '❌ فشل في قراءة ملف الصورة.');
+                submitBtn.disabled = false;
+            };
         });
     })();
     /* -------------------------------------------------------------------------- */
