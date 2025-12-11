@@ -1,996 +1,311 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>الدلالة | سوق إلكتروني للبيع والشراء في السودان</title>
-<link rel="icon" type="image/png" href="/favicon.ico">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>سوق الإعلانات الديناميكي</title>
+    <style>
+        /* ======================================================== */
+        /* CSS: التصميم الأساسي (يمكنك استبداله بتصميمك الخاص) */
+        /* ======================================================== */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            text-align: right;
+            direction: rtl;
+        }
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-VFM8VZCQY6');
-</script>
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
 
-  <meta name="description" content="الدلالة — معرض وسوق متميز لنشر ومتابعة الإعلانات المبوبة بسهولة ويسر في السودان . انشر إعلانك بسهولة وتواصل مع المشترين في منطقتك مباشرة , متعة وسهولة في العرض والطلب ,فقط عبر الواتساب يمكنك تقديم طلب اعلان واذا تمت الموافقة سيعرض اعلانك علي الملايين من الزوار." />
-<link rel="canonical" href="https://eldelala.com/" />
-<link rel="icon" type="image/png" href="/favicon.ico">
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
 
-<meta property="og:type" content="website" />
-<meta property="og:title" content="الدلالة — اعلن ببساطة وسهولة" />
-<meta property="og:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta property="og:url" content="https://eldelala.com/" />
-<meta property="og:image" content="https://eldelala.com/logo-1200x630.png" />
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
 
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="الدلالة — سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta name="twitter:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta name="twitter:image" content="https://eldelala.com/logo-800x418.png" />
+        .filters input, .filters select, .filters button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            flex-grow: 1;
+        }
 
+        .filters button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": ["WebSite", "Organization"],
-  "name": "الدلالة",
-  "url": "https://eldelala.com/",
-  "logo": "https://eldelala.com/logo.png",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+249-9986-15193",
-    "contactType": "customer support",
-    "email": "info@eldelala.com"
-  },
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://eldelala.com/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
-  }
-}
-</script>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
+        .filters button:hover {
+            background-color: #0056b3;
+        }
 
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet"></noscript>
+        /* حاوية البطاقات */
+        #cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
 
-<style>
-  /* --- EXISTING STYLES --- */
-  *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
-  body{margin:0;background:#f7fbff;color:#0b1320;line-height:1.4}
-  .container{max-width:1100px;margin:16px auto;padding:12px}
-  header{background:#0078d7;color:#fff;padding:12px;border-radius:14px;box-shadow:0 12px 40px rgba(0,120,215,0.35);margin-bottom:16px}
-  header .brand{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-  .brand .title{font-size:24px;font-weight:900}
-  nav[aria-label="واجهة"]{display:flex;gap:8px;flex-wrap:wrap}
-  nav[aria-label="واجهة"] button{
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-    border:1px solid rgba(255,255,255,0.4);
-    padding:6px 10px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:13px;
-    transition: background 0.2s;
-  }
-  nav[aria-label="واجهة"] button:hover{
-     background:rgba(255,255,255,0.25);
-  }
-  nav[aria-label="واجهة"] button[aria-current="true"]{
-    background:#fff;
-    color:#0078d7;
-    border-color:#fff;
-  }
+        /* تصميم بطاقة الإعلان */
+        .ad-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
 
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
-  input, textarea, select{
-    padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff
-  }
-  textarea{min-height:80px;resize:vertical}
-  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px;text-decoration:none;display:inline-block;text-align:center;}
-button.btn.alt#modalClose {
-  background: #dc2626; /* Red for close */
-}
-    .btn.alt{background:green }
-    /* NEW: Custom Share Button Color */
-    button.btn#modalShare {
-      background: #5271ff; /* A distinctive color for sharing */
-    }
+        .ad-card:hover {
+            transform: translateY(-5px);
+        }
 
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
+        .ad-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
 
-  .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:14px}
-  @media (min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
-  @media (min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
-  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.09);display:flex;flex-direction:column;transition:transform .12s;cursor:pointer}
-  .card:hover{transform:translateY(-4px)}
-  .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
-  .media img{width:100%;height:100%;object-fit:cover;display:block}
-  .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
-  .title{font-weight:700;font-size:16px}
-  .desc{font-size:13px;color:#4b5563;max-height:3.6em;overflow:hidden}
-  .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280}
-  .badge{background:#eff6ff;color:#1d4ed8;padding:4px 8px;border-radius:999px;font-size:11px}
-  .price{font-weight:700;color:#047857}
-  footer{font-size:12px;color:#6b7280;text-align:center;margin-top:18px}
-  .small{font-size:12px}
-  .muted{color:#6b7280}
-  .panel{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(15,23,42,0.08);margin-top:8px}
-  .subCard{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:10px;margin-top:10px}
-  .refBox{background:#eff6ff;border-radius:10px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .refCode{font-family:monospace;font-size:16px;font-weight:800}
-  .fullDesc{white-space:pre-wrap;font-size:14px;color:#111827}
-  .detailsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
-  .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
-  .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
+        .ad-details {
+            padding: 15px;
+        }
 
-.modalMain{
-  max-height: calc(90vh - 80px);
-  overflow-y: auto;
-}
+        .ad-details h3 {
+            margin-top: 0;
+            color: #333;
+        }
 
-.modalImage{
-  max-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* 🛑 Fix for image background contrast */
-  background: #020617; 
-}
+        .ad-details p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
 
-.modalImage img{
-  max-height: 55vh; 
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
+        .ad-details .price {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .loading-message, .error-message, .no-results {
+            grid-column: 1 / -1; /* تجعل الرسالة تأخذ عرض الشبكة بالكامل */
+            text-align: center;
+            padding: 30px;
+            font-size: 1.2em;
+            color: #6c757d;
+        }
 
-  main > section{display:none}
-  main > section.active{display:block}
-
-  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:999;padding:12px}
-  .modal[aria-hidden="false"]{display:flex}
-  .modalCard{background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,0.5);display:flex;flex-direction:column}
-  .modalMain{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr);gap:12px;padding:12px}
-  .modalImage{background:#020617;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .modalImage img{max-width:100%;max-height:360px;display:block}
-  .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
-  .modalActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-start;} /* Aligned to start for RTL */
-
-  @media(max-width:720px){
-    .modalMain{grid-template-columns:1fr}
-    .modalImage{order:-1}
-    .detailsList{grid-template-columns:1fr}
-    .modalActions{justify-content:center;} /* Center buttons on small screens */
-  }
-
-/* --- Ticker Tape / Marquee Bar Styles --- */
-#tickerTape{
-  background: #fffae8; /* Soft yellow background for attention */
-  border: 1px solid #ffcc00;
-  padding: 8px 12px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  overflow: hidden;
-  margin-bottom: 16px;
-  display: none; 
-}
-#tickerTape.has-messages {
-    display: flex; 
-}
-.ticker-content{
-  display: flex;
-  white-space: nowrap; 
-  animation: marquee-rtl 25s linear infinite; 
-}
-.ticker-content:hover{
-  animation-play-state: paused; 
-}
-.ticker-item{
-  font-size: 14px;
-  color: #333;
-  padding-left: 50px; 
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-}
-
-@keyframes marquee-rtl {
-  100% { transform: translateX(100%); } 
-   0% { transform: translateX(-100%); } 
-}
-
-.ticker-item:first-child {
-  padding-left: 0;
-}
-/* --- End Ticker Tape Styles --- */
-
-
-:root {
-    --msg-primary-color: #0078d7; 
-    --msg-text-color: #0b1320;
-    --msg-bg-color: #f7fbff;
-    --success-bg: #e6ffed; 
-    --success-border: #047857; 
-    --success-text: #059669; 
-    --error-bg: #fee2e2;
-    --error-border: #dc2626;
-    --error-text: #dc2626;
-}
-
-#msges-container {
-    width: 100%;
-    max-width: 1100px; 
-    margin: 0 auto 16px auto; 
-    padding: 0 12px;
-    display: none; 
-}
-
-.msges-box {
-    display: flex; 
-    align-items: center;
-    
-    margin-bottom: 8px;
-    padding: 14px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    font-size: 14px;
-    line-height: 1.5;
-    text-align: right; 
-}
-
-.msges-box.success {
-    background-color: var(--success-bg);
-    color: var(--success-text);
-    border-right: 5px solid var(--success-border); 
-}
-
-.msges-box.error {
-    background-color: var(--error-bg);
-    color: var(--error-text);
-    border-right: 5px solid var(--error-border); 
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: inherit; 
-    margin-inline-start: auto; 
-    padding: 0 10px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.close-btn:hover {
-    opacity: 1;
-}
-</style>
+        .error-message {
+             color: #dc3545;
+             font-weight: bold;
+        }
+        
+    </style>
 </head>
 <body>
-<div class="container" id="app">
-  <header>
-    <div class="brand">
-      <a href="/" style="text-decoration:none;color:inherit;"><div class="title">الدلالة</div></a>
-      <nav aria-label="واجهة">
-        <button type="button" class="nav-btn" data-target="home" aria-current="true">الرئيسية</button>
-        <button type="button" class="nav-btn" data-target="send">أنشر إعلانك</button>
-        <button type="button" class="nav-btn" data-target="privacy">سياسة الخصوصية</button>
-      </nav>
-    </div>
-  </header>
-  
-  <div id="msges-container">
-    </div>
-  <div class="controls" id="listControls" role="search" aria-label="بحث وتحكم">
-    <div style="flex:1;min-width:180px"><input id="q" type="search" placeholder="ابحث بالعنوان أو الرمز أو الموقع"></div>
-    <div style="width:200px"><select id="catFilter"><option value="">كل الاقسام</option></select></div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <div id="count" class="small" aria-live="polite">تحميل...</div>
-    </div>
-  </div>
 
-  <div id="tickerTape" role="marquee" aria-live="off">
-    <div class="ticker-content">
-        <span class="ticker-item">   سيتم التواصل مع المرشحين المختارين فقط </span>
-        <span class="ticker-item">   </span>
-        <span class="ticker-item">  اغلاق باب التقديم لوظيفة : مسؤول دعم العملاء – الخرطوم </span>
-        <span class="ticker-item">   </span>
-        <span class="ticker-item">  تأكد دائماً من صحة المعلومات بنفسك قبل التعامل  </span>
-        <span class="ticker-item">   </span>
-        <span class="ticker-item"> الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات  </span>
-    </div>
-  </div>
-  <main>
-    <section id="home" class="active" aria-live="polite">
-      <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
-      <div id="noitems" style="display:none;text-align:center;margin-top:15px" class="small">مرحبا بك , يرجي الانتظار جاري تحميل الاعلانات</div>
-    </section>
+    <div class="container">
+        <header>
+            <h1>سوق الإعلانات الديناميكي</h1>
+            <p>يتم تحديث الإعلانات مباشرة من Google Sheet</p>
+        </header>
 
-    <section id="send">
-      <div class="panel">
-        
-        <h1>لتقديم طلب إعلان: املأ الحقول, واتبع الخطوات</h1>
-
-        <form id="adSubmissionForm" style="display:grid;gap:8px">
-          <label for="adName">عنوان الإعلان (مطلوب)</label>
-          <input type="text" id="adName" placeholder="مثال: سيارة تويوتا كامري للبيع" required>
-          
-          <label for="adPrice">السعر (مطلوب)</label>
-          <input type="text" id="adPrice" placeholder="مثال: 5,000,000 جنيه سوداني" required>
-          
-          <label for="adDescription">وصف الإعلان (مطلوب)</label>
-          <textarea id="adDescription" rows="5" placeholder="أدخل تفاصيل الإعلان هنا..." required></textarea>
-          
-          <label for="adLocation">الموقع / المدينة (مطلوب)</label>
-          <input type="text" id="adLocation" placeholder="مثال: الخرطوم - الرياض" required>
-          
-          <label for="adContact">رقم التواصل (مطلوب)</label>
-          <input type="text" id="adContact" placeholder="مثال: 249912345678" required>
-          
-          <label for="picUpload">صورة الإعلان (PNG/JPG) (مطلوب)</label>
-          <input type="file" id="picUpload" name="imageFile" accept="image/png, image/jpeg" required>
-          
-          <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
-            <input type="checkbox" id="agree" required />
-            <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
-          </label>
-          
-          <button id="submitBtn" class="btn" type="submit" disabled>إرسال الإعلان </button>
-          
-          <div id="statusMessage" class="small" style="text-align:center;margin-top:10px"></div>
-        </form>
-      </div>
-    </section>
-
-    <section id="privacy">
-      <div class="panel">
-        <h3>سياسة الخصوصية</h3>
-        <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
-مرحبًا بك في موقع الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات المبوبة وتمكين المستخدمين من البيع والشراء والتواصل بسهولة داخل مدنهم.
-          يوفّر الموقع وسيلة لعرض الخدمات والمنتجات دون أن يكون طرفًا في أي تعامل تجاري بين المستخدمين.
-
-إن استخدامك للموقع أو لأي من خدماته يشكّل موافقة كاملة وصريحة على شروط الاستخدام التالية  وفي حال عدم موافقتك على أي جزء منها، يجب عليك التوقف فورًا عن استخدام الموقع.
-
-1. نطاق الخدمة وطبيعتها
-
-يوفّر موقع الدلالة منصة إلكترونية لعرض الإعلانات، المحتوى التسويقي، وروابط لمواقع أو خدمات مقدّمة من أطراف ثالثة  ولا يقدم الموقع أي ضمان — صريحًا أو ضمنيًا — يتعلق بـ:
-
-دقة وصحة المعلومات الواردة في الإعلانات.
-
-مصداقية المعلنين.
-
-جودة أو صلاحية المنتجات أو الخدمات المعروضة.
-
-ويدرك المستخدم أن الموقع يعمل كوسيط تقني لعرض الإعلانات فقط، ولا يعد طرفًا في أي معاملة تجارية تتم بين المستخدمين أو بينهم وبين المعلنين.
-
-2. مسؤولية المستخدم والمعاملات
-
-تتم جميع التعاملات بين المستخدم والمعلنين أو الأطراف الثالثة على مسؤولية المستخدم الشخصية بالكامل.
-لا يتحمل الموقع أي مسؤولية قانونية أو مالية أو تعويضية تتعلق بما يلي:
-
-نتائج التعاملات،
-
-الخسائر أو الأضرار،
-
-الاحتيال أو التضليل،
-
-سوء الاستخدام،
-
-أي نزاعات أو مطالبات تنشأ بين المستخدمين أو المعلنين.
-
-3. الالتزامات والاستخدام المشروع
-
-يتعهد المستخدم بالالتزام بما يلي:
-
-استخدام الموقع وفقًا للقوانين والأنظمة السارية.
-
-عدم نشر أي محتوى مسيء أو مخالف أو مضلل أو منتهك لحقوق الملكية الفكرية أو الخصوصية.
-
-عدم محاولة اختراق أو تعطيل الموقع بأي صورة كانت.
-
-عدم استخدام الموقع في أي نشاط غير قانوني أو ضار بالمنصة أو بالمستخدمين الآخرين.
-
-ويحق للموقع حظر أو تعليق وصول أي مستخدم يخالف هذه الشروط، دون إشعار مسبق ودون أي التزام بتقديم الأسباب.
-
-4. الروابط والمحتوى الخارجي
-
-قد يحتوي الموقع على روابط تؤدي إلى مواقع أو خدمات خارجية.
-لا يتحمل موقع الدلالة أي مسؤولية عن:
-
-محتوى تلك المواقع،
-
-سياساتها أو ممارساتها،
-
-أمن المعلومات فيها،
-
-أو أي ضرر قد ينشأ عن زيارتها أو التعامل معها.
-
-ويتولى المستخدم وحده مسؤولية الوصول إلى تلك الروابط واستخدامها.
-
-5. تعديل أو حذف المحتوى
-
-يحتفظ الموقع بالحق الكامل في:
-
-تعديل أو تحديث أي إعلان أو محتوى،
-
-حذف أي مادة يراها مخالفة أو غير مناسبة،
-
-أو إيقاف أي خدمة بشكل جزئي أو كلي.
-
-وذلك دون حاجة لإبداء الأسباب أو تقديم إشعار مسبق.
-
-6. جمع البيانات والخصوصية
-
-قد يقوم الموقع بجمع بيانات بسيطة لتحسين جودة الخدمة وتجربة المستخدم، وتشمل:
-
-ملفات تعريف الارتباط (Cookies)،
-
-وسجلات الاستخدام (Usage Logs).
-
-7. تحديث الشروط
-
-يجوز للموقع تعديل أو تحديث شروط الاستخدام من حين لآخر.
-تصبح التعديلات نافذة فور نشرها، ويُعد استمرار المستخدم في استخدام الموقع قبولًا ضمنيًا بالشروط المحدثة.
-
-8. القبول النهائي
-
-يقر المستخدم بأنه قد قرأ بنود هذه الشروط وفهمها ووافق عليها بالكامل دون قيد أو شرط، ويتعهد بالالتزام بها أثناء استخدامه للموقع.
- 
-info@eldelala.com
+        <div class="filters">
+            <input type="text" id="qEl" placeholder="ابحث بالاسم أو الوصف أو الموقع..." />
+            <select id="catFilter">
+                <option value="">جميع الفئات</option>
+                </select>
+            <button id="refresh">تحديث البيانات</button>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <footer>
-    <div>الدلالة — تأكد دائماً من صحة المعلومات بنفسك قبل التعامل.</div>
-  </footer>
-</div>
-
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modalCard" role="document" aria-labelledby="modalTitle">
-    <div style="padding:10px 12px;border-bottom:1px solid #e5e7eb">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div>
-          <div id="modalTitle" style="font-weight:800;font-size:18px"></div>
-          <div id="modalMeta" class="small" style="margin-top:6px"></div>
+        <div id="cards-container">
+            <div class="loading-message">... جاري تحميل الإعلانات ...</div>
         </div>
-        <button id="modalClose" class="btn alt" type="button">إغلاق</button>
-      </div>
-    </div>
-    <div class="modalMain">
-      <div class="modalImage">
-        <img id="modalMainImg" src="" alt="" loading="lazy" style="max-width:100%;max-height:100%;display:none" />
-      </div>
-
-      <div class="modalBody">
-        <div id="modalDescription" class="fullDesc"></div>
-        <div class="detailsList">
-          <div class="detailsItem"><strong>الموقع</strong><div id="modalLoc" class="muted"></div></div>
-          <div class="detailsItem"><strong>التصنيف</strong><div id="modalCat" class="badge"></div></div>
-          <div class="detailsItem"><strong>السعر</strong><div id="modalPrice" class="price"></div></div>
-          <div class="detailsItem"><strong>التواصل</strong><div id="modalContact" class="muted"></div></div>
-        </div>
-      </div>
     </div>
 
-    <div class="modalFooter">
-      <div class="modalActions">
-        <button id="modalShare" class="btn" type="button" style="background:#5271ff;">مشاركة مع صديق</button> 
-        <a id="modalWhats" class="btn" target="_blank" rel="noopener">تواصل  (WhatsApp)</a> 
-        <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال هاتفي</a>
-      </div>
-      <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
-    </div>
-  </div>
-</div>
+    <script>
+        // 💡 مهم: هذا هو رابط Apps Script الذي قدمته
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx2bZn1CetxnvURF4R1P216TsseHzRKM_pGpXLaDPbS9eJMhneJjmeeBOrpQmJmROas/exec'; 
 
-<script defer>
-/* ========================================================== */
-/* 🛑 التكوين (Configuration) 🛑 */
-/* ========================================================== */
+        // المتغيرات الأساسية
+        let allAds = []; // قائمة بجميع الإعلانات المحملة
+        let window.ads = []; // قائمة الإعلانات بعد الفلترة (نستخدم نفس الاسم الذي استخدمته في كودك القديم)
+        const cardsContainer = document.getElementById('cards-container');
+        const qEl = document.getElementById('qEl');
+        const catFilter = document.getElementById('catFilter');
 
-const WHATSAPP_NUMBER = '249998615193'; 
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW/exec'; 
-
-/* ========================================================== */
-/* نهاية التكوين */
-/* ========================================================== */
-
-const modal = document.getElementById('modal'); 
-const modalShare = document.getElementById('modalShare'); // NEW Element Ref
-let currentAd = null; // To hold the ad object for sharing
-
-function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
-function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
-
-/* --- MESSAGE SYSTEM FUNCTIONS --- */
-const msgContainer = document.getElementById('msges-container');
-function checkAndToggleVisibility() {
-    if (msgContainer) {
-        msgContainer.style.display = msgContainer.children.length > 0 ? 'block' : 'none';
-    }
-}
-function displayMessage(type, text) {
-    if (!msgContainer) return;
-    try {
-        const newMsg = document.createElement('div');
-        newMsg.className = 'msges-box ' + type;
-        const textSpan = document.createElement('span');
-        textSpan.textContent = text;
-        newMsg.appendChild(textSpan);
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '&times;'; 
-        closeBtn.addEventListener('click', function() {
-            newMsg.remove();
-            checkAndToggleVisibility(); 
-        });
-        newMsg.appendChild(closeBtn);
-        msgContainer.appendChild(newMsg);
-        checkAndToggleVisibility();
-        if (type === 'success') {
-            setTimeout(() => {
-                if (newMsg.parentNode) {
-                    newMsg.remove();
-                    checkAndToggleVisibility();
-                }
-            }, 7000);
+        // دالة مساعدة لتأخير تنفيذ الفلترة (لتحسين الأداء عند الكتابة)
+        function debounce(func, delay) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
         }
-    } catch (error) {
-        console.error("Critical error displaying message:", error);
-    }
-}
-/* 🛑 END MESSAGE SYSTEM FUNCTIONS */
 
-/* --- ADS LOADING AND FILTERING LOGIC --- */
-let ads = [];
-const grid = document.getElementById('grid');
-const qEl = document.getElementById('q');
-const catFilter = document.getElementById('catFilter');
-const countEl = document.getElementById('count');
+        /* -------------------------------------------------------- */
+        /* 1. دالة إنشاء بطاقة الإعلان (Create Card)                */
+        /* -------------------------------------------------------- */
+        function createAdCard(ad) {
+            // نستخدم رؤوس الأعمدة التي تم تحديدها في Sheet (Name, Description, Price, Image_URL, Location, Contact, Category)
+            const card = document.createElement('div');
+            card.className = 'ad-card';
 
-function renderGrid(list){ 
-    const noItems = document.getElementById('noitems');
-    grid.innerHTML='';
-    list = list || [];
-    
-    // الفرز حسب التاريخ (الأحدث أولاً)
-    list.sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-    });
-    
-    if(!list.length){
-        noItems.style.display='block';
-        countEl.textContent='0 إعلان';
-        return;
-    }
-    noItems.style.display='none';
-    list.forEach(a=>{
-        const el = document.createElement('div');
-        el.className='card';
-        if(a.ref_code) el.id = 'ad-' + a.ref_code;
-        // ملاحظة: تم تعديل عرض الصورة لتفادي مشاكل الـ Base64 في الشريط الأمامي
-        const mediaHtml = a.image ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">` : '<div class="small muted">لا توجد صورة</div>';
-        
-        const displayDate = a.date ? new Date(a.date).toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' }) : '---';
-        
-        el.innerHTML = `
-            <div class="media">${mediaHtml}</div>
-            <div class="body">
-                <div class="title">${escapeHtml(a.name||'')}</div>
-                <div class="desc">${escapeHtml(a.description||'')}</div>
-                <div class="meta">
-                    <div class="badge">${escapeHtml(a.category||'عام')}</div>
-                    <div class="price">${escapeHtml(a.price||'')}</div>
+            // إذا لم يكن هناك رابط صورة، نستخدم رابط افتراضي
+            const imageUrl = ad.Image_URL && ad.Image_URL.startsWith('http') ? ad.Image_URL : 'https://via.placeholder.com/300x200?text=No+Image';
+
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${ad.Name}" loading="lazy" />
+                <div class="ad-details">
+                    <h3>${ad.Name || 'لا يوجد اسم'}</h3>
+                    <p><strong>الموقع:</strong> ${ad.Location || 'غير محدد'}</p>
+                    <p><strong>التفاصيل:</strong> ${ad.Description ? ad.Description.substring(0, 70) + '...' : 'لا يوجد وصف'}</p>
+                    <p class="price">${ad.Price || 'للتفاوض'}</p>
+                    <p><strong>للتواصل:</strong> <a href="https://wa.me/${ad.Contact || '971501234567'}" target="_blank">واتساب</a></p>
                 </div>
-                <div class="meta">
-                    <div class="small">${escapeHtml(a.location||'')}</div>
-                    <div class="small">${escapeHtml(a.ref_code||'')} (${displayDate})</div>
-                </div>
-            </div>
-        `;
-        el.addEventListener('click', () => {
-            window.location.hash = a.ref_code || ''; 
-            openDetails(a);
-        });
-        grid.appendChild(el);
-    });
-    countEl.textContent = list.length + ' إعلان';
-}
+            `;
+            return card;
+        }
 
-function applyFiltersAndRender(){
-    const q = (qEl && qEl.value || '').trim().toLowerCase();
-    const cat = (catFilter && catFilter.value || '').trim();
-    let out = ads.slice();
+        /* -------------------------------------------------------- */
+        /* 2. دالة العرض بعد الفلترة (Render Ads)                   */
+        /* -------------------------------------------------------- */
+        function renderAds(adsToRender) {
+            cardsContainer.innerHTML = ''; // تفريغ الحاوية
 
-    if(cat){
-        out = out.filter(a => (a.category||'').toString() === cat);
-    }
+            if (adsToRender.length === 0) {
+                cardsContainer.innerHTML = '<div class="no-results">لم يتم العثور على إعلانات تطابق معايير البحث.</div>';
+                return;
+            }
 
-    if(q){
-        out = out.filter(a => {
-            // البحث في الاسم، الوصف، الموقع، والرقم المرجعي
-            const hay = ((a.name || '') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.ref_code||'')).toLowerCase();
-            return hay.indexOf(q) !== -1;
-        });
-    }
+            adsToRender.forEach(ad => {
+                cardsContainer.appendChild(createAdCard(ad));
+            });
+        }
 
-    renderGrid(out); 
-}
+        /* -------------------------------------------------------- */
+        /* 3. دالة تطبيق الفلاتر (Apply Filters)                    */
+        /* -------------------------------------------------------- */
+        function applyFiltersAndRender() {
+            const query = qEl.value.toLowerCase().trim();
+            const category = catFilter.value;
 
-function loadAdsFromGithub() {
-    console.log("Loading ads data from JSON file and placeholders...");
-    
-    // Placeholder ads (للحصول على قائمة غنية)
-    const defaultAds = [
-        // تم تحديث التواريخ لضمان فرز منطقي
-        {ref_code: 'ELD-1702488600000', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-11T12:00:00Z'},
-        {ref_code: 'ELD-1702402200000', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10T15:30:00Z'},
-    ];
-    
-    // 💡 التعديل: قراءة وتحليل محتوى ملف JSON الذي تم تحميله
-    const uploadedAdJson = `{
-      "ref_code": "RDGPT2S",
-      "name": "غرفة نوم",
-      "description": "سرير دبل+مرتبه\\nتسريحة بي مرايه\\nدولاب 3 ضلف\\n2 كمودينا\\nالحالة: جيده",
-      "location": "بورتسودان",
-      "price": "مليار و 950 الف جنيه",
-      "contact": "0922741186",
-      "category": "اثاث",
-      "image": "data:image/webp;base64,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..."
-    }`;
-    
-    let uploadedAd = null;
-    try {
-        uploadedAd = JSON.parse(uploadedAdJson);
-        uploadedAd.date = new Date(Date.now()).toISOString();
-        uploadedAd.ref_code = uploadedAd.ref_code || `UPLOADED-${Date.now()}`;
-        // ملاحظة: تم معالجة الصورة في ملف الـ JSON لكي تظهر.
-        console.log('Successfully parsed uploaded JSON ad.');
-    } catch (e) {
-        console.error('Error parsing uploaded JSON:', e);
-        displayMessage('error', '❌   الذي تم تحميله. لن يتم عرض هذا الإعلان.');
-    }
-    
-    // دمج الإعلان الذي تم تحميله مع الإعلانات الافتراضية
-    ads = uploadedAd ? [uploadedAd, ...defaultAds] : defaultAds; 
+            // استخدام allAds لضمان تطبيق الفلترة على كامل البيانات الأصلية
+            const filteredAds = allAds.filter(ad => {
+                const matchesQuery = !query || 
+                                     (ad.Name && ad.Name.toLowerCase().includes(query)) ||
+                                     (ad.Description && ad.Description.toLowerCase().includes(query)) ||
+                                     (ad.Location && ad.Location.toLowerCase().includes(query));
 
-    populateCategories(ads);
-    applyFiltersAndRender();
-    countEl.textContent = ads.length + ' إعلان';
-}
+                const matchesCategory = !category || 
+                                        (ad.Category && ad.Category.trim() === category);
+                
+                return matchesQuery && matchesCategory;
+            });
+            
+            // تحديث المتغير العالمي للعرض
+            window.ads = filteredAds;
+            renderAds(filteredAds);
+        }
 
-function populateCategories(data){ 
-    const categories = new Set();
-    data.forEach(a => {
-        if(a.category) categories.add(a.category);
-    });
-    catFilter.innerHTML = '<option value="">كل الاقسام</option>';
-    categories.forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        catFilter.appendChild(opt);
-    });
-}
-
-
-/* --- MODAL LOGIC (Modified close to clear hash) --- */
-const modalClose = document.getElementById('modalClose');
-const modalTitle = document.getElementById('modalTitle');
-const modalMeta = document.getElementById('modalMeta');
-const modalDescription = document.getElementById('modalDescription');
-const modalLoc = document.getElementById('modalLoc');
-const modalCat = document.getElementById('modalCat');
-const modalPrice = document.getElementById('modalPrice');
-const modalContact = document.getElementById('modalContact');
-const modalMainImg = document.getElementById('modalMainImg');
-const modalCall = document.getElementById('modalCall');
-const modalWhats = document.getElementById('modalWhats');
-
-function closeModal(){
-    window.history.replaceState(null, null, window.location.pathname + window.location.search);
-    modal.setAttribute('aria-hidden','true');
-    modal.classList.remove('open');
-    currentAd = null; // Clear current ad
-}
-
-modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
-
-
-function openDetails(item){ 
-    currentAd = item; // Store ad object for sharing
-
-    const displayDate = item.date ? new Date(item.date).toLocaleString('ar-EG', { dateStyle: 'full', timeStyle: 'short' }) : '---';
-
-    modalTitle.textContent = item.name || 'تفاصيل الإعلان';
-    modalMeta.textContent = `نشر في: ${displayDate} | رمز: ${item.ref_code || '---'}`;
-    modalDescription.textContent = item.description ? item.description.replace(/\\n/g, '\n') : 'لا يوجد وصف متاح.';
-    modalLoc.textContent = item.location || 'غير محدد';
-    modalCat.textContent = item.category || 'عام';
-    modalPrice.textContent = item.price || 'عند الاتصال';
-    modalContact.textContent = item.contact || 'يرجى التواصل عبر الواتساب';
-    
-    if (item.image) {
-        modalMainImg.src = item.image;
-        modalMainImg.style.display = 'block';
-        modalMainImg.alt = item.name || '';
-    } else {
-        modalMainImg.style.display = 'none';
-        modalMainImg.src = '';
-    }
-
-    // 1. Contact Button (Call)
-    if (item.contact && item.contact.match(/^\d+$/)) { 
-        modalCall.href = `tel:${item.contact}`;
-        modalCall.style.display = 'inline-block';
-    } else {
-        modalCall.style.display = 'none';
-    }
-
-    // 2. Contact Button (WhatsApp)
-// NEW Code:
-const whatsappContactText = `مرحباً، أنا مهتم بإعلان: ${item.name || '---'} (الرمز: ${item.ref_code}). السعر المعروض هو: ${item.price || 'عند الاتصال'}. هل لا يزال الإعلان متاحاً؟`;
-    const whatsappContactLink = `https://wa.me/${item.contact || WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappContactText)}`;
-    modalWhats.href = whatsappContactLink;
-
-    window.location.hash = item.ref_code || '';
-    
-    modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('open');
-}
-
-// 💡 NEW: Share Ad Logic (Web Share API fallback to WhatsApp)
-modalShare.addEventListener('click', () => {
-    if (!currentAd) return;
-    
-    // Construct the ad link for sharing (Deep Link)
-    const adLink = window.location.href.split('#')[0] + '#' + currentAd.ref_code;
-    
-    const shareMessage = 
-        `✨ إعلان مميز على الدلالة! ✨\n\n` +
-        `📢 *${currentAd.name || 'إعلان بدون عنوان'}*\n` +
-        `💰 السعر: *${currentAd.price || 'عند الاتصال'}*\n` +
-        `📍 الموقع: ${currentAd.location || 'غير محدد'}\n\n` +
-        `🔗 شاهد التفاصيل : ${adLink}\n\n` +
-        `#الدلالة #سوق_السودان`;
-
-    // Try Web Share API first
-    if (navigator.share) {
-        navigator.share({
-            title: currentAd.name || 'إعلان على الدلالة',
-            text: `إعلان: ${currentAd.name} بسعر ${currentAd.price} - شاهده هنا:`,
-            url: adLink,
-        })
-        .then(() => console.log('Successful share'))
-        .catch((error) => {
-             console.error('Error sharing, falling back to WhatsApp:', error);
-             // Fallback to WhatsApp link (URL encoded)
-             window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank');
-        });
-    } else {
-        // Fallback directly to WhatsApp
-        window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank');
-    }
-});
-
-
-/* -------------------------------------------------------------------------- */
-/* NAVIGATION & DEEP LINKING LOGIC */
-/* -------------------------------------------------------------------------- */
-
-function setupNavigation(targetId = 'home') {
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const sections = document.querySelectorAll('main > section');
-    const mainContent = document.querySelector('main');
-    const targetButton = document.querySelector(`.nav-btn[data-target="${targetId}"]`);
-    const targetSection = document.getElementById(targetId);
-
-    navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
-    sections.forEach(sec => sec.classList.remove('active'));
-
-    if (targetButton) {
-        targetButton.setAttribute('aria-current', 'true');
-    }
-    if (targetSection) {
-        targetSection.classList.add('active');
-    }
-
-    if (!setupNavigation.listenersAttached) {
-        navButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const clickTargetId = btn.getAttribute('data-target');
-                setupNavigation(clickTargetId); 
-                if (mainContent) {
-                     mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        /* -------------------------------------------------------- */
+        /* 4. دالة ملء خيارات الفئة (Populate Categories)            */
+        /* -------------------------------------------------------- */
+        function populateCategories(adsData) {
+            const categories = new Set();
+            adsData.forEach(ad => {
+                if (ad.Category && ad.Category.trim()) {
+                    categories.add(ad.Category.trim());
                 }
             });
-        });
-        setupNavigation.listenersAttached = true;
-    }
-}
-setupNavigation.listenersAttached = false; 
 
-function openAdFromHash() {
-    const hash = window.location.hash.substring(1); 
-    if (!hash) return;
-    
-    // تأكد من تحميل الإعلانات أولاً قبل البحث
-    if(ads.length === 0) {
-        // إذا لم تكن الإعلانات محملة بعد، قم بالتأجيل قليلاً.
-        setTimeout(openAdFromHash, 500); 
-        return;
-    }
-
-    const ad = ads.find(a => a.ref_code === hash);
-    
-    if (ad) {
-        setupNavigation('home'); 
-        openDetails(ad);
-    } else {
-        window.history.replaceState(null, null, window.location.pathname + window.location.search);
-    }
-}
-
-
-/* -------------------------------------------------------------------------- */
-/* ADS SUBMISSION LOGIC (Retained from previous version) */
-/* -------------------------------------------------------------------------- */
-(function(){
-    
-    const ADMIN_WHATSAPP_NUMBER = WHATSAPP_NUMBER; 
-    
-    const form = document.getElementById('adSubmissionForm');
-    const adName = document.getElementById('adName');
-    const adPrice = document.getElementById('adPrice');
-    const adDescription = document.getElementById('adDescription');
-    const adLocation = document.getElementById('adLocation');
-    const adContact = document.getElementById('adContact');
-    const picUpload = document.getElementById('picUpload');
-    
-    const agree = document.getElementById('agree');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusElement = document.getElementById('statusMessage');
-    
-    if(agree && submitBtn) {
-        agree.addEventListener('change', () => {
-            submitBtn.disabled = !agree.checked;
-        });
-    }
-
-    form && form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        if (submitBtn.disabled) return;
-        
-        statusElement.className = '';
-        statusElement.textContent =' ... يرجى الانتظار.';
-        submitBtn.disabled = true;
-
-        const timestamp = Date.now();
-        const referenceNumber = `ELD-${timestamp}`;
-        const adDate = new Date(timestamp).toISOString(); 
-
-        const formData = new FormData(); 
-
-        try {
+            catFilter.innerHTML = '<option value="">جميع الفئات</option>'; // إعادة تعيين
             
-            const adData = {
-                name: adName.value,
-                price: adPrice.value,
-                desc: adDescription.value,
-                loc: adLocation.value,
-                contact: adContact.value,
-                date: adDate 
-            };
-
-            formData.append('reference', referenceNumber); 
-            formData.append('jsonData', JSON.stringify(adData)); 
-
-            const imageFile = picUpload.files[0];
-            if (!imageFile) {
-                 throw new Error("يرجى اختيار صورة للإعلان."); 
-            }
-            if (!imageFile.type.match('image/(png|jpeg)')) {
-                 throw new Error("نوع الملف غير مدعوم. يرجى تحميل صورة بصيغة PNG أو JPEG فقط."); 
-            }
-            
-            const fileExtension = imageFile.name.split('.').pop();
-            const newFileName = `${referenceNumber}.${fileExtension}`;
-            
-            formData.append('imageFile', imageFile, newFileName); 
-
-        } catch (e) {
-            console.error('Error in form data preparation or config:', e);
-            statusElement.className = 'small error';
-            statusElement.textContent = `❌ خطأ في إعداد البيانات أو الإعدادات: ${e.message}`;
-            displayMessage('error', e.message);
-            submitBtn.disabled = false;
-            return;
+            Array.from(categories).sort().forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                catFilter.appendChild(option);
+            });
         }
 
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: formData, 
-            mode: 'no-cors' 
-        })
-        .then(() => {
-            statusElement.className = 'small success';
-            statusElement.textContent = `✅ تم رفع الملفات بنجاح. الرقم المرجعي: ${referenceNumber}. سيتم فتح الواتساب للمتابعة...`;
-            displayMessage('success', 'تم الإرسال بنجاح. يرجى إكمال عملية المراجعة عبر واتساب.');
-            
-            // NEW Code for Concise and Informative WhatsApp Message (for Reviewer)
-const localWhatsAppMessage = 
-    ` طلب إعلان   ` \n+ 
-    `الرمز: ${referenceNumber}`\n +
-    `-العنوان: ${adName.value}` \n+ 
-    `-السعر: ${adPrice.value}` \n+
-    `-الموقع: ${adLocation.value}`\n + 
-    `-التواصل:* ${adContact.value}`\n +
-    `-الوصف:* ${adDescription.value}`   ;
+        /* -------------------------------------------------------- */
+        /* 5. دالة تحميل الإعلانات من Apps Script (Load Data)       */
+        /* -------------------------------------------------------- */
+        async function loadAdsFromGoogleSheet() {
+            cardsContainer.innerHTML = '<div class="loading-message">... جاري تحميل الإعلانات من قاعدة البيانات ...</div>';
 
-            const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(localWhatsAppMessage)}`;
-            
-            setTimeout(() => {
-                window.location.href = whatsappUrl; 
-            }, 2000);
-            
-            submitBtn.disabled = true;
+            try {
+                const response = await fetch(WEB_APP_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // تخزين البيانات
+                allAds = data; 
 
-        })
-        .catch(error => {
-            console.error('Network Submission Error:', error);
-            statusElement.className = 'small error';
-            statusElement.textContent = 'فشل في الاتصال بالشبكة  .';
-            displayMessage('error', 'فشل في الإرسال  .');
-            submitBtn.disabled = false;
-        });
-    });
-})();
-/* -------------------------------------------------------------------------- */
-/* END ADS SUBMISSION LOGIC */
-/* -------------------------------------------------------------------------- */
+                // ملء خيارات الفئات
+                populateCategories(allAds);
+                
+                // تطبيق الفلاتر وعرض الإعلانات (لأننا نريد عرض الكل في البداية)
+                applyFiltersAndRender(); 
+                
+            } catch (error) {
+                console.error('Error loading ads from Google Sheet:', error);
+                cardsContainer.innerHTML = '<div class="error-message">❌ فشل تحميل الإعلانات. يرجى التأكد من أن Apps Script يعمل بصلاحية (Anyone).</div>';
+            }
+        }
 
 
-// --- General Functionality ---
-if(qEl){
-  qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
-}
+        /* -------------------------------------------------------- */
+        /* 6. إعداد الأحداث (Event Listeners)                       */
+        /* -------------------------------------------------------- */
 
-if(catFilter){
-  catFilter.addEventListener('change', applyFiltersAndRender);
-}
+        // تحميل البيانات عند بدء تشغيل الصفحة
+        window.addEventListener('load', loadAdsFromGoogleSheet); 
 
-// Ticker Tape Logic
-(function(){
-  const tickerTape = document.getElementById('tickerTape');
-  const tickerItems = tickerTape ? tickerTape.querySelectorAll('.ticker-item') : null;
-  
-  if(tickerTape && tickerItems && tickerItems.length > 0){
-    tickerTape.classList.add('has-messages');
-  }
-})();
+        // ربط الفلترة بالبحث والتصنيف
+        if(qEl){
+            qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
+        }
 
-// Initial load handler
-window.addEventListener('load', async ()=>{ 
-  setupNavigation(); 
-  loadAdsFromGithub(); 
-  openAdFromHash(); 
-  checkAndToggleVisibility();
-});
+        if(catFilter){
+            catFilter.addEventListener('change', applyFiltersAndRender);
+        }
 
-</script>
+        // زر التحديث
+        const refreshBtn = document.getElementById('refresh');
+        if(refreshBtn){
+            refreshBtn.addEventListener('click', loadAdsFromGoogleSheet);
+        }
 
+    </script>
 </body>
 </html>
