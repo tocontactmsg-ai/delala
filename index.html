@@ -335,10 +335,22 @@ button.btn.alt#modalCall {
           <label for="refNum">الرقم المرجعي (مطلوب)</label>
           <input type="text" id="refNum" name="reference" placeholder="اكتب رقم مرجعي فريد لإعلانك، مثال: ELD-12345" required>
           
-          <label for="jsonInput">بيانات الإعلان بصيغة JSON (مثال: {"name":"اسم","price":"السعر","desc":"الوصف","loc":"الموقع","contact":"الرقم"})</label>
-          <textarea id="jsonInput" name="jsonData" rows="7" placeholder='يرجى إدخال جميع البيانات هنا بصيغة JSON' required></textarea>
+          <label for="adName">عنوان الإعلان (مطلوب)</label>
+          <input type="text" id="adName" placeholder="مثال: سيارة تويوتا كامري للبيع" required>
           
-          <label for="picUpload">الصورة المُحسّنة للتحميل (مطلوب)</label>
+          <label for="adPrice">السعر (مطلوب)</label>
+          <input type="text" id="adPrice" placeholder="مثال: 5,000,000 جنيه سوداني" required>
+          
+          <label for="adDescription">وصف الإعلان (مطلوب)</label>
+          <textarea id="adDescription" rows="5" placeholder="أدخل تفاصيل الإعلان هنا..." required></textarea>
+          
+          <label for="adLocation">الموقع / المدينة (مطلوب)</label>
+          <input type="text" id="adLocation" placeholder="مثال: الخرطوم - الرياض" required>
+          
+          <label for="adContact">رقم التواصل (مطلوب)</label>
+          <input type="text" id="adContact" placeholder="مثال: 249912345678" required>
+          
+          <label for="picUpload">صورة الإعلان (PNG/JPG) (مطلوب)</label>
           <input type="file" id="picUpload" name="imageFile" accept="image/png, image/jpeg" required>
           
           <label style="display:flex;gap:8px;align-items:center;margin-top:10px">
@@ -513,14 +525,12 @@ function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); ti
 /* ========================================================== */
 const msgContainer = document.getElementById('msges-container');
 
-// Toggles the visibility of the messages container
 function checkAndToggleVisibility() {
     if (msgContainer) {
         msgContainer.style.display = msgContainer.children.length > 0 ? 'block' : 'none';
     }
 }
 
-// Function to display a new message
 function displayMessage(type, text) {
     if (!msgContainer) return;
     try {
@@ -533,20 +543,17 @@ function displayMessage(type, text) {
         
         const closeBtn = document.createElement('button');
         closeBtn.className = 'close-btn';
-        closeBtn.innerHTML = '&times;'; // 'x' symbol
+        closeBtn.innerHTML = '&times;'; 
 
-        // Close button logic
         closeBtn.addEventListener('click', function() {
             newMsg.remove();
-            checkAndToggleVisibility(); // Re-check visibility after removal
+            checkAndToggleVisibility(); 
         });
         newMsg.appendChild(closeBtn);
 
-        // Append the message and show the container
         msgContainer.appendChild(newMsg);
         checkAndToggleVisibility();
         
-        // Auto-hide after 7 seconds for success messages
         if (type === 'success') {
             setTimeout(() => {
                 if (newMsg.parentNode) {
@@ -560,8 +567,6 @@ function displayMessage(type, text) {
     }
 }
 /* 🛑 END NEW MESSAGE SYSTEM FUNCTIONS */
-/* ========================================================== */
-
 
 /* --- ADS LOADING AND FILTERING LOGIC --- */
 let ads = [];
@@ -625,18 +630,12 @@ function applyFiltersAndRender(){
     renderGrid(out);
 }
 
-// Placeholder functions for ad loading and opening details
 function loadAdsFromGithub() {
-    // This is the core ad loading logic from your original file, typically fetching JSON data.
-    // Since I cannot execute the full logic here, this remains a placeholder.
-    // In a live environment, this function successfully populates the 'ads' array.
     console.log("Fetching ads data from GitHub... (Placeholder)");
-    // Example data for testing purposes:
     ads = [
-        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', image: 'placeholder.jpg'},
-        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', image: 'placeholder.jpg'}
+        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg'},
+        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg'}
     ];
-    // After loading:
     populateCategories(ads);
     applyFiltersAndRender();
     countEl.textContent = ads.length + ' إعلان (تجريبي)';
@@ -675,6 +674,7 @@ function closeModal(){
     modal.setAttribute('aria-hidden','true');
     modal.classList.remove('open');
 }
+
 modalClose.addEventListener('click', closeModal);
 modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
@@ -688,7 +688,6 @@ async function openDetails(item){
     modalPrice.textContent = item.price || 'عند الاتصال';
     modalContact.textContent = item.contact || 'يرجى التواصل عبر الواتساب';
     
-    // Image handling
     if (item.image) {
         modalMainImg.src = item.image;
         modalMainImg.style.display = 'block';
@@ -698,8 +697,7 @@ async function openDetails(item){
         modalMainImg.src = '';
     }
 
-    // Actions
-    if (item.contact && item.contact.match(/^\d+$/)) { // Simple check for phone number
+    if (item.contact && item.contact.match(/^\d+$/)) { 
         modalCall.href = `tel:${item.contact}`;
         modalCall.style.display = 'inline-block';
     } else {
@@ -716,134 +714,8 @@ async function openDetails(item){
 
 
 /* -------------------------------------------------------------------------- */
-/* 🛑 NEW ADS SUBMISSION LOGIC 🛑 */
+/* 🛑 NEW ADS SUBMISSION LOGIC (USING ORGANIZED FIELDS) 🛑 */
 /* -------------------------------------------------------------------------- */
 (function(){
     // Configuration
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW/exec'; 
-    const ADMIN_WHATSAPP_NUMBER = WHATSAPP_NUMBER; 
-    const form = document.getElementById('adSubmissionForm');
-    const refNum = document.getElementById('refNum');
-    const agree = document.getElementById('agree');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusElement = document.getElementById('statusMessage');
-
-    // --- Navigation Logic ---
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const sections = document.querySelectorAll('main > section');
-
-    navButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            
-            // Update active state for buttons
-            navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
-            btn.setAttribute('aria-current', 'true');
-            
-            // Update active state for sections
-            sections.forEach(sec => {
-                sec.classList.remove('active');
-                if (sec.id === targetId) {
-                    sec.classList.add('active');
-                }
-            });
-        });
-    });
-    
-    // --- Submission Button Enable/Disable ---
-    if(agree && submitBtn) {
-        agree.addEventListener('change', () => {
-            submitBtn.disabled = !agree.checked;
-        });
-    }
-
-    // --- Form Submission Handler ---
-    form && form.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        if (submitBtn.disabled) return;
-        
-        statusElement.className = '';
-        statusElement.textContent = 'جاري رفع الملفات إلى Google Drive... يرجى الانتظار.';
-        submitBtn.disabled = true;
-
-        const formData = new FormData(form);
-        const referenceNumber = refNum.value;
-
-        // 1. Send Data to Google Apps Script
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: formData, 
-            mode: 'no-cors' 
-        })
-        .then(() => {
-            // Success handler
-            statusElement.className = 'small success';
-            statusElement.textContent = '✅ تم رفع الملفات بنجاح إلى Google Drive. سيتم فتح الواتساب للمتابعة...';
-            
-            // 2. Construct the WhatsApp Message
-            const localWhatsAppMessage = 
-                `👋 طلب إعلان جديد للمراجعة!%0A%0A` + 
-                `الرقم المرجعي: *${referenceNumber}*%0A%0A` + 
-                `✅ تم رفع بيانات الإعلان والصورة إلى مجلد Google Drive الخاص بالإدارة. يرجى المراجعة والرد على المعلن عبر المنصة أو الرقم الموضح في بيانات JSON.`;
-
-            // 3. Redirect to WhatsApp (No PNG card attached)
-            const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${localWhatsAppMessage}`;
-            
-            setTimeout(() => {
-                window.location.href = whatsappUrl; 
-            }, 2000);
-        })
-        .catch(error => {
-            console.error('Submission Error:', error);
-            statusElement.className = 'small error';
-            statusElement.textContent = '❌ حدث خطأ أثناء الإرسال. يرجى التأكد من الرابط أو المحاولة لاحقاً.';
-            submitBtn.disabled = false;
-        });
-    });
-})();
-/* -------------------------------------------------------------------------- */
-/* 🛑 END NEW ADS SUBMISSION LOGIC 🛑 */
-/* -------------------------------------------------------------------------- */
-
-
-// --- General Functionality ---
-if(qEl){
-  qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
-}
-
-if(catFilter){
-  catFilter.addEventListener('change', applyFiltersAndRender);
-}
-
-// Placeholder for hash opening logic (kept from original file)
-function openAdFromHash(){} 
-
-// Placeholder for ad refresh logic (kept from original file)
-const refreshBtn = document.getElementById('refresh');
-if(refreshBtn){
-  refreshBtn.addEventListener('click', loadAdsFromGithub);
-}
-
-// Ticker Tape Logic
-(function(){
-  const tickerTape = document.getElementById('tickerTape');
-  const tickerItems = tickerTape ? tickerTape.querySelectorAll('.ticker-item') : null;
-  
-  if(tickerTape && tickerItems && tickerItems.length > 0){
-    tickerTape.classList.add('has-messages');
-  }
-})();
-
-// Initial load
-window.addEventListener('load', async ()=>{ 
-  document.getElementById('home').classList.add('active');
-  await loadAdsFromGithub(); 
-  openAdFromHash(); 
-  checkAndToggleVisibility();
-});
-
-</script>
-
-</body>
-</html>
+    const WEB_APP_URL = 'https://script.google
