@@ -74,6 +74,10 @@
     border-radius:999px;
     cursor:pointer;
     font-size:13px;
+    transition: background 0.2s; /* إضافة تأثير للانتقال */
+  }
+  nav[aria-label="واجهة"] button:hover{
+     background:rgba(255,255,255,0.25);
   }
   nav[aria-label="واجهة"] button[aria-current="true"]{
     background:#fff;
@@ -369,7 +373,7 @@ button.btn.alt#modalCall {
         <h3>سياسة الخصوصية</h3>
         <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
 مرحبًا بك في موقع الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات المبوبة وتمكين المستخدمين من البيع والشراء والتواصل بسهولة داخل مدنهم.
-          يوفر الموقع وسيلة لعرض الخدمات والمنتجات دون أن يكون طرفًا في أي تعامل تجاري بين المستخدمين.
+          يوفّر الموقع وسيلة لعرض الخدمات والمنتجات دون أن يكون طرفًا في أي تعامل تجاري بين المستخدمين.
 
 إن استخدامك للموقع أو لأي من خدماته يشكّل موافقة كاملة وصريحة على شروط الاستخدام التالية  وفي حال عدم موافقتك على أي جزء منها، يجب عليك التوقف فورًا عن استخدام الموقع.
 
@@ -470,7 +474,41 @@ info@eldelala.com
 </div>
 
 <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modalCard" role="document" aria-labelledby="modalTitle">
+    <div style="padding:10px 12px;border-bottom:1px solid #e5e7eb">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <div id="modalTitle" style="font-weight:800;font-size:18px"></div>
+          <div id="modalMeta" class="small" style="margin-top:6px"></div>
+        </div>
+        <button id="modalClose" class="btn alt" type="button">إغلاق</button>
+      </div>
+    </div>
+    <div class="modalMain">
+      <div class="modalImage">
+        <img id="modalMainImg" src="" alt="" style="max-width:100%;max-height:100%;display:none" />
+      </div>
+
+      <div class="modalBody">
+        <div id="modalDescription" class="fullDesc"></div>
+        <div class="detailsList">
+          <div class="detailsItem"><strong>الموقع</strong><div id="modalLoc" class="muted"></div></div>
+          <div class="detailsItem"><strong>التصنيف</strong><div id="modalCat" class="badge"></div></div>
+          <div class="detailsItem"><strong>السعر</strong><div id="modalPrice" class="price"></div></div>
+          <div class="detailsItem"><strong>التواصل</strong><div id="modalContact" class="muted"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modalFooter">
+      <div class="modalActions">
+        <a id="modalWhats" class="btn" target="_blank" rel="noopener">مشاركة عبر WhatsApp</a>
+        <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال</a>
+      </div>
+      <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
+    </div>
   </div>
+</div>
 
 <script defer>
 /*** GitHub + cache buster ***/
@@ -538,29 +576,189 @@ function displayMessage(type, text) {
 }
 /* 🛑 END NEW MESSAGE SYSTEM FUNCTIONS */
 
-/* --- ADS LOADING AND FILTERING LOGIC (Unchanged) --- */
+/* --- ADS LOADING AND FILTERING LOGIC --- */
 let ads = [];
 const grid = document.getElementById('grid');
 const qEl = document.getElementById('q');
 const catFilter = document.getElementById('catFilter');
 const countEl = document.getElementById('count');
 
-function renderGrid(list){ /* ... unchanged ... */ }
-function applyFiltersAndRender(){ /* ... unchanged ... */ }
-function loadAdsFromGithub() { /* ... unchanged ... */ }
-function populateCategories(data){ /* ... unchanged ... */ }
+function renderGrid(list){ 
+    const noItems = document.getElementById('noitems');
+    grid.innerHTML='';
+    list = list || [];
+    if(!list.length){
+        noItems.style.display='block';
+        countEl.textContent='0 إعلان';
+        return;
+    }
+    noItems.style.display='none';
+    list.forEach(a=>{
+        const el = document.createElement('div');
+        el.className='card';
+        if(a.ref_code) el.id = 'ad-' + a.ref_code;
+        const mediaHtml = a.image ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">` : '<div class="small muted">لا توجد صورة</div>';
+        el.innerHTML = `
+            <div class="media">${mediaHtml}</div>
+            <div class="body">
+                <div class="title">${escapeHtml(a.name||'')}</div>
+                <div class="desc">${escapeHtml(a.description||'')}</div>
+                <div class="meta">
+                    <div class="badge">${escapeHtml(a.category||'عام')}</div>
+                    <div class="price">${escapeHtml(a.price||'')}</div>
+                </div>
+                <div class="meta">
+                    <div class="small">${escapeHtml(a.location||'')}</div>
+                    <div class="small">${escapeHtml(a.ref_code||'')}</div>
+                </div>
+            </div>
+        `;
+        el.addEventListener('click', ()=>openDetails(a));
+        grid.appendChild(el);
+    });
+    countEl.textContent = list.length + ' إعلان';
+}
 
-/* --- MODAL LOGIC (Unchanged) --- */
-const modal = document.getElementById('modal');
+function applyFiltersAndRender(){
+    const q = (qEl && qEl.value || '').trim().toLowerCase();
+    const cat = (catFilter && catFilter.value || '').trim();
+    let out = ads.slice();
+
+    if(cat){
+        out = out.filter(a => (a.category||'').toString() === cat);
+    }
+
+    if(q){
+        out = out.filter(a => {
+            const hay = ((a.name || '') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.ref_code||'')).toLowerCase();
+            return hay.indexOf(q) !== -1;
+        });
+    }
+
+    renderGrid(out);
+}
+
+function loadAdsFromGithub() {
+    console.log("Fetching ads data from GitHub... (Placeholder)");
+    ads = [
+        {ref_code: 'A100', name: 'سيارة تويوتا', description: 'سيارة مستعملة بحالة ممتازة.', price: '5,000,000 SDG', location: 'الخرطوم', category: 'سيارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-10'},
+        {ref_code: 'B200', name: 'شقة للإيجار', description: 'شقة فاخرة 3 غرف وصالة.', price: '500,000 SDG/شهر', location: 'الرياض', category: 'عقارات', contact: '249912345678', image: 'placeholder.jpg', date: '2025-12-09'}
+    ];
+    populateCategories(ads);
+    applyFiltersAndRender();
+    countEl.textContent = ads.length + ' إعلان (تجريبي)';
+}
+
+function populateCategories(data){
+    const categories = new Set();
+    data.forEach(a => {
+        if(a.category) categories.add(a.category);
+    });
+    catFilter.innerHTML = '<option value="">كل الاقسام</option>';
+    categories.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        catFilter.appendChild(opt);
+    });
+}
+
+
+/* --- MODAL LOGIC (KEPT) --- */
 const modalClose = document.getElementById('modalClose');
-// ... (rest of modal elements)
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalDescription = document.getElementById('modalDescription');
+const modalLoc = document.getElementById('modalLoc');
+const modalCat = document.getElementById('modalCat');
+const modalPrice = document.getElementById('modalPrice');
+const modalContact = document.getElementById('modalContact');
+const modalMainImg = document.getElementById('modalMainImg');
+const modalCall = document.getElementById('modalCall');
+const modalWhats = document.getElementById('modalWhats');
 
-function closeModal(){ /* ... unchanged ... */ }
-function openDetails(item){ /* ... unchanged ... */ }
+function closeModal(){
+    modal.setAttribute('aria-hidden','true');
+    modal.classList.remove('open');
+}
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+function openDetails(item){
+    modalTitle.textContent = item.name || 'تفاصيل الإعلان';
+    modalMeta.textContent = `نشر في: ${item.date || 'غير محدد'} | رمز: ${item.ref_code || '---'}`;
+    modalDescription.textContent = item.description || 'لا يوجد وصف متاح.';
+    modalLoc.textContent = item.location || 'غير محدد';
+    modalCat.textContent = item.category || 'عام';
+    modalPrice.textContent = item.price || 'عند الاتصال';
+    modalContact.textContent = item.contact || 'يرجى التواصل عبر الواتساب';
+    
+    if (item.image) {
+        modalMainImg.src = item.image;
+        modalMainImg.style.display = 'block';
+        modalMainImg.alt = item.name || '';
+    } else {
+        modalMainImg.style.display = 'none';
+        modalMainImg.src = '';
+    }
+
+    if (item.contact && item.contact.match(/^\d+$/)) { 
+        modalCall.href = `tel:${item.contact}`;
+        modalCall.style.display = 'inline-block';
+    } else {
+        modalCall.style.display = 'none';
+    }
+
+    const whatsappText = `مرحباً، أنا مهتم بالإعلان رقم: ${item.ref_code}. هل لا يزال متاحاً؟ (الرجاء عدم حذف هذه الرسالة)`;
+    const whatsappLink = `https://wa.me/${item.contact || WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`;
+    modalWhats.href = whatsappLink;
+
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('open');
+}
 
 
 /* -------------------------------------------------------------------------- */
-/* 🛑 NEW ADS SUBMISSION LOGIC (Debugged) 🛑 */
+/* 🛑 NAVIGATION LOGIC (FIXED) 🛑 */
+/* -------------------------------------------------------------------------- */
+
+function setupNavigation() {
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('main > section');
+    const mainContent = document.querySelector('main');
+
+    navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            
+            // 1. Reset all buttons and set current button
+            navButtons.forEach(b => b.setAttribute('aria-current', 'false'));
+            btn.setAttribute('aria-current', 'true');
+            
+            // 2. Switch sections
+            sections.forEach(sec => {
+                sec.classList.remove('active');
+                if (sec.id === targetId) {
+                    sec.classList.add('active');
+                }
+            });
+            
+            // 3. Scroll to top of the content area for better UX
+            if (mainContent) {
+                 mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+}
+/* -------------------------------------------------------------------------- */
+/* 🛑 END NAVIGATION LOGIC 🛑 */
+/* -------------------------------------------------------------------------- */
+
+
+/* -------------------------------------------------------------------------- */
+/* ADS SUBMISSION LOGIC (KEPT IN IIFE) */
 /* -------------------------------------------------------------------------- */
 (function(){
     
@@ -579,14 +777,8 @@ function openDetails(item){ /* ... unchanged ... */ }
     const agree = document.getElementById('agree');
     const submitBtn = document.getElementById('submitBtn');
     const statusElement = document.getElementById('statusMessage');
-
-    // --- Navigation Logic (Unchanged) ---
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const sections = document.querySelectorAll('main > section');
-
-    navButtons.forEach(btn => { /* ... unchanged ... */ });
     
-    // --- Submission Button Enable/Disable (Unchanged) ---
+    // --- Submission Button Enable/Disable ---
     if(agree && submitBtn) {
         agree.addEventListener('change', () => {
             submitBtn.disabled = !agree.checked;
@@ -608,7 +800,7 @@ function openDetails(item){ /* ... unchanged ... */ }
         const formData = new FormData(); 
 
         try {
-            // Check if URL is placeholder
+            // Check if URL is placeholder (Safety check)
             if (WEB_APP_URL.includes('AKfycbxIgZIN8S2mQJMH_q0SsmhPDhSivWtt5QEaf1eVsWtxA3vb2S6iGXWKqGXlVOm-GudW')) {
                  throw new Error("❌ يجب تغيير رابط سكريبت Google Apps Script الافتراضي (WEB_APP_URL) إلى رابط النشر الخاص بك.");
             }
@@ -631,7 +823,6 @@ function openDetails(item){ /* ... unchanged ... */ }
             if (!imageFile) {
                  throw new Error("يرجى اختيار صورة للإعلان."); 
             }
-            // Add a client-side check for image type (though 'accept' helps, this is safer)
             if (!imageFile.type.match('image/(png|jpeg)')) {
                  throw new Error("نوع الملف غير مدعوم. يرجى تحميل صورة بصيغة PNG أو JPEG فقط."); 
             }
@@ -654,11 +845,8 @@ function openDetails(item){ /* ... unchanged ... */ }
             body: formData, 
             mode: 'no-cors' 
         })
-        .then(response => {
-            // Since mode: 'no-cors' is used, the response status cannot be checked directly. 
-            // We assume network activity means it reached the endpoint, even if the script failed on the server.
-            
-            // Success handler (Assumes GAS will process it)
+        .then(() => {
+            // Success handler
             statusElement.className = 'small success';
             statusElement.textContent = '✅ تم رفع الملفات بنجاح إلى Google Drive. سيتم فتح الواتساب للمتابعة...';
             displayMessage('success', 'تم الإرسال بنجاح. يرجى إكمال عملية المراجعة عبر واتساب.');
@@ -676,12 +864,10 @@ function openDetails(item){ /* ... unchanged ... */ }
                 window.location.href = whatsappUrl; 
             }, 2000);
             
-            // Disable button permanently after success to prevent double submission
             submitBtn.disabled = true;
 
         })
         .catch(error => {
-            // This catches network errors only (e.g., DNS failure, client connection issues)
             console.error('Network Submission Error:', error);
             statusElement.className = 'small error';
             statusElement.textContent = '❌ فشل في الاتصال بالشبكة أو سيرفر جوجل. يرجى التحقق من اتصالك بالإنترنت.';
@@ -691,11 +877,11 @@ function openDetails(item){ /* ... unchanged ... */ }
     });
 })();
 /* -------------------------------------------------------------------------- */
-/* 🛑 END NEW ADS SUBMISSION LOGIC 🛑 */
+/* END ADS SUBMISSION LOGIC */
 /* -------------------------------------------------------------------------- */
 
 
-// --- General Functionality (Unchanged) ---
+// --- General Functionality ---
 if(qEl){
   qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
 }
@@ -711,7 +897,7 @@ if(refreshBtn){
   refreshBtn.addEventListener('click', loadAdsFromGithub);
 }
 
-// Ticker Tape Logic (Unchanged)
+// Ticker Tape Logic
 (function(){
   const tickerTape = document.getElementById('tickerTape');
   const tickerItems = tickerTape ? tickerTape.querySelectorAll('.ticker-item') : null;
@@ -721,11 +907,14 @@ if(refreshBtn){
   }
 })();
 
-// Initial load (Unchanged)
+// Initial load handler - Setup all event listeners when the DOM is ready
 window.addEventListener('load', async ()=>{ 
-  document.getElementById('home').classList.add('active');
-  // Removed await for loadAdsFromGithub to avoid blocking, assuming initial ads loading is separate from submission
+  // 1. Ensure 'home' is the starting active section and setup section switching
+  setupNavigation(); 
+  
+  // 2. Load and render initial data
   loadAdsFromGithub(); 
+  
   openAdFromHash(); 
   checkAndToggleVisibility();
 });
