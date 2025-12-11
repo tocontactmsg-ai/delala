@@ -14,7 +14,7 @@
   gtag('config', 'G-VFM8VZCQY6');
 </script>
 
-<meta name="description" content="الدلالة — معرض وسوق متميز لنشر ومتابعة الإعلانات المبوبة بسهولة ويسر في السودان . انشر إعلانك بسهولة وتواصل مع المشترين في منطقتك مباشرة , متعة وسهولة في العرض والطلب ,فقط عبر الواتساب يمكنك تقديم طلب اعلان واذا تمت الموافقة سيعرض اعلانك علي الملايين من الزوار." />
+  <meta name="description" content="الدلالة — معرض وسوق متميز لنشر ومتابعة الإعلانات المبوبة بسهولة ويسر في السودان . انشر إعلانك بسهولة وتواصل مع المشترين في منطقتك مباشرة , متعة وسهولة في العرض والطلب ,فقط عبر الواتساب يمكنك تقديم طلب اعلان واذا تمت الموافقة سيعرض اعلانك علي الملايين من الزوار." />
 <link rel="canonical" href="https://eldelala.com/" />
 <link rel="icon" type="image/png" href="/favicon.ico">
 
@@ -233,7 +233,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="image_file">ملف الصورة (مطلوب - سيتم معالجته وتحويله عند الرفع)</label>
+                    <label for="image_file">ملف الصورة (مطلوب - سيتم معالجته ورفعه)</label>
                     <input type="file" id="image_file" name="image_file" accept="image/*" required>
                 </div>
 
@@ -311,8 +311,8 @@
     /* 🛑 التكوين (Configuration) 🛑 */
     /* ========================================================== */
     const ADMIN_WHATSAPP_NUMBER = '249998615193'; // رقم الواتساب الخاص بك
-    // ⚠️ هام: استبدل هذا الرابط برابط نشر Apps Script Deployment URL (الذي ينتهي بـ /exec)
-    const WEB_APP_URL = '*** ضع رابط Apps Script URL هنا ***'; 
+    // ⚠️ تم وضع رابط النشر الجديد هنا:
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyFxIpZWjJAAf1tSJGEtUuR8cG7UR4lUIZPhcA42cgddRvKGwX5_xf7Cwt_ehBSU4pa/exec'; 
 
     /* ========================================================== */
     /* 🛑 المتغيرات العامة وعناصر DOM 🛑 */
@@ -336,7 +336,7 @@
     const modalCat = document.getElementById('modalCat');
     const modalPrice = document.getElementById('modalPrice');
     const modalContact = document.getElementById('modalContact');
-    const modalImageContainer = document.getElementById('modalImage'); // تم تغيير اسم العنصر
+    const modalImageContainer = document.getElementById('modalImage');
     const modalWhats = document.getElementById('modalWhats');
     const modalShare = document.getElementById('modalShare');
 
@@ -345,7 +345,6 @@
     /* 1. وظائف المساعدة (Helpers) */
     /* ========================================================== */
 
-    // دالة للهروب من محارف HTML (لمنع مشاكل الأمان XSS)
     function escapeHtml(str) {
         if (typeof str !== 'string' && typeof str !== 'number') return '';
         return String(str).replace(/[&<>"']/g, function(m) {
@@ -359,7 +358,6 @@
         });
     }
 
-    // دالة لعرض التاريخ بصيغة ودية
     function displayDate(dateString) {
         const date = new Date(dateString);
         if (isNaN(date)) return 'تاريخ غير معروف';
@@ -373,7 +371,6 @@
         return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
     }
     
-    // دالة مساعدة لتأخير تنفيذ الفلترة (لتحسين الأداء عند الكتابة)
     function debounce(func, delay) {
         let timeout;
         return function(...args) {
@@ -382,7 +379,6 @@
         };
     }
 
-    // دالة لعرض رسالة (نجاح/خطأ) في قسم النشر
     function displayMessage(type, message) {
         const statusElement = document.getElementById('status');
         if (statusElement) {
@@ -422,7 +418,7 @@
     /* ========================================================== */
     
     /**
-     * 🛑 الوظيفة الجديدة: تحميل الإعلانات من Apps Script (من index (2).html)
+     * 🛑 الوظيفة الجديدة: تحميل الإعلانات من Apps Script
      */
     async function loadAdsFromGoogleSheet() {
         if (!grid) return;
@@ -432,7 +428,7 @@
         try {
             const response = await fetch(WEB_APP_URL, {
                 method: 'GET',
-                redirect: 'follow', // قد تحتاج Apps Script لهذه الخاصية
+                redirect: 'follow',
                 headers: {
                     'Content-Type': 'application/json',
                 }
@@ -676,7 +672,7 @@
 
 
     /* -------------------------------------------------------------------------- */
-    /* 6. منطق إرسال الإعلانات (Form Submission Logic) - 💡 التحديث لرفع الصور */
+    /* 6. منطق إرسال الإعلانات (Form Submission Logic) - 💡 رفع الصور مباشرة */
     /* -------------------------------------------------------------------------- */
     (function() {
         const adForm = document.getElementById('adForm');
@@ -718,7 +714,7 @@
                 
                 // 3. تحضير Payload للإرسال عبر POST إلى Apps Script
                 const finalPayload = {
-                    action: 'submitAd', // يجب أن تكون هذه القيمة مدعومة في دالة doPost في Apps Script
+                    action: 'submitAd', 
                     data: {
                         Name: adData.name,
                         Description: adData.description,
@@ -734,7 +730,7 @@
                     }
                 };
 
-                statusElement.textContent = 'جاري إرسال الإعلان وقاعدة البيانات...';
+                statusElement.textContent = 'جاري إرسال الإعلان وحفظه في قاعدة البيانات...';
 
                 try {
                     // 4. إرسال البيانات عبر POST إلى Apps Script
@@ -742,27 +738,26 @@
                         method: 'POST', 
                         mode: 'cors', 
                         cache: 'no-cache',
-                        // يتم استخدام Content-Type هذا لأنه الأفضل للتعامل مع Apps Script POST
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded', 
                         },
-                        // يجب إرسال الكائن كـ JSON ليتمكن Apps Script من قراءته عبر e.postData.contents
+                        // يتم إرسال الكائن كـ JSON ليتمكن Apps Script من قراءته عبر e.postData.contents
                         body: JSON.stringify(finalPayload) 
                     });
 
                     const result = await response.json();
 
                     if (result.status === 'success') {
-                        displayMessage('success', '✅ تم استلام إعلانك للمراجعة بنجاح! سيتم رفعه خلال لحظات. شكراً لك.');
+                        displayMessage('success', '✅ تم استلام إعلانك للمراجعة بنجاح! سيظهر في لوحة التحكم خلال لحظات.');
                         adForm.reset();
                     } else {
                         // Apps Script returned an error
-                        displayMessage('error', `❌ فشل الإرسال: ${result.message || 'حدث خطأ في جهة الخادم.'}`);
+                        displayMessage('error', `❌ فشل الإرسال: ${result.message || 'حدث خطأ في جهة الخادم. (راجع Console)'}`);
                     }
 
                 } catch (error) {
                     console.error('Network Submission Error:', error);
-                    displayMessage('error', '❌ فشل في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وتأكد أن رابط Apps Script يعمل بـ POST.');
+                    displayMessage('error', '❌ فشل في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وتأكد أن رابط Apps Script يعمل.');
                 } finally {
                     submitBtn.disabled = false;
                 }
