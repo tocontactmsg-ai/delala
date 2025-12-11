@@ -658,7 +658,7 @@ function loadAdsFromGithub() {
         console.log('Successfully parsed uploaded JSON ad.');
     } catch (e) {
         console.error('Error parsing uploaded JSON:', e);
-        displayMessage('error', '❌ فشل في قراءة ملف الإعلان JSON الذي تم تحميله. لن يتم عرض هذا الإعلان.');
+        displayMessage('error', '❌   الذي تم تحميله. لن يتم عرض هذا الإعلان.');
     }
     
     // دمج الإعلان الذي تم تحميله مع الإعلانات الافتراضية
@@ -932,14 +932,13 @@ function openAdFromHash() {
             
             // NEW Code for Concise and Informative WhatsApp Message (for Reviewer)
 const localWhatsAppMessage = 
-    `⭐ *طلب مراجعة إعلان جديد*%0A` + 
-    `*الرمز:* ${referenceNumber}%0A%0A` +
-    `*العنوان:* ${adName.value}%0A` + 
-    `*السعر:* ${adPrice.value}%0A` +
-    `*الموقع:* ${adLocation.value}%0A` + 
-    `*التواصل:* ${adContact.value}%0A%0A` +
-    `*الوصف:* ${adDescription.value}%0A%0A` + 
-    `---%0A`  ;
+    ` طلب إعلان   ` \n+ 
+    `الرمز: ${referenceNumber}`\n +
+    `-العنوان: ${adName.value}` \n+ 
+    `-السعر: ${adPrice.value}` \n+
+    `-الموقع: ${adLocation.value}`\n + 
+    `-التواصل:* ${adContact.value}`\n +
+    `-الوصف:* ${adDescription.value}`   ;
 
             const whatsappUrl = `https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(localWhatsAppMessage)}`;
             
