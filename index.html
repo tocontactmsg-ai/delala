@@ -486,8 +486,8 @@ info@eldelala.com
 
 <script defer>
 /*** Google Sheets Config ***/
-// 🛑 هام: استبدل هذا الرابط برابط النشر الخاص بسكربت Google Apps Script (بعد إعداده).
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrAZ2-SF-IQ9DqEj6sPM5AOdOcJ62UghmGWy2TuS_M0KA7Y0FPPeTJ3DMxdfGLuh0n/exec'; 
+// 🛑 هام: تم تحديث هذا الرابط ليطابق الرابط الجديد الذي زودتنا به.
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzb6cUx8UP2N2NhsaRQFKzeDW72L5GoipbC9kOhUWa1dVlZ-vubABwXX3Uvbz3PVdAf/exec'; 
 /* رقم الواتساب لاستقبال طلبات النشر */
 const WHATSAPP_NUMBER = '249998615193'; 
 
@@ -689,10 +689,11 @@ async function openDetails(item){
 
 /* تحميل الإعلانات من Google Sheet */
 async function loadAdsFromGoogleSheet(){
-  if(APPS_SCRIPT_URL === ''){
+  if(APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE' || APPS_SCRIPT_URL === ''){
     displayMessage('error', '⚠️ الرجاء تحديث رابط سكربت Google Apps Script في ملف index.html.');
     return;
   }
+  // جلب الإعلانات المنشورة (doGet)
   const url = APPS_SCRIPT_URL + '?action=fetchPublished';
   const noItemsEl = document.getElementById('noitems');
   
@@ -751,6 +752,7 @@ function checkAndToggleVisibility() {
 function displayMessage(type, text) {
     if (!msgContainer) return;
     try {
+        // Clear previous messages
         msgContainer.innerHTML = '';
 
         const newMsg = document.createElement('div');
@@ -828,7 +830,8 @@ function displayMessage(type, text) {
         return;
       }
       
-      if(APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE'){
+      // تم تحديث APPS_SCRIPT_URL، لا داعي لهذا التحقق إلا إذا كان فارغاً
+      if(APPS_SCRIPT_URL === ''){
         submitStatus.textContent = 'خطأ: لم يتم تعيين رابط السكربت.';
         displayMessage('error', '⚠️ لم يتم تعيين رابط سكربت Google Apps Script في الكود.');
         submitBtn.disabled = false;
@@ -864,14 +867,18 @@ function displayMessage(type, text) {
       
       submitStatus.textContent = 'جارٍ الإرسال إلى السيرفر...';
       
-      // الإرسال إلى Google Apps Script
+      // الإرسال إلى Google Apps Script (doPost)
       const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
+          // مهم: يتم استخدام no-cors للاتصال بـ doPost من موقع خارجي، مما يمنع قراءة الاستجابة،
+          // لذا نعتمد على نجاح اتصال الشبكة وحده.
           mode: 'no-cors', 
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams(payload).toString()
       });
       
+      // بمجرد أن يحل "fetch" بنجاح، نفترض أن الدالة doPost قد تم تنفيذها
+      // (لا يمكن قراءة الاستجابة 'OK' بسبب 'no-cors')
       
       refCodeEl.textContent = ref;
       afterSubmit.style.display = 'block';
@@ -897,6 +904,17 @@ function displayMessage(type, text) {
       
       openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
       openWa.target = '_blank';
+      
+      // مسح حقول النموذج بعد الإرسال الناجح
+      f_name.value = '';
+      f_price.value = '';
+      f_desc.value = '';
+      f_loc.value = '';
+      f_contact.value = '';
+      f_cat.value = '';
+      f_file.value = '';
+      agree.checked = false;
+
 
     }catch(err){
       console.error(err);
