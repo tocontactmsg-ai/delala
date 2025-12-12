@@ -430,12 +430,11 @@ button.btn.alt#modalCall {
 
     <section id="send">
       <div class="panel">
-        <h2>لتقديم طلب موافقة على إعلان املأ الحقول وانشئ بطاقة ، يُفضّل استخدام متصفح Google Chrome للحصول على أفضل تجربة.</h2>
+        <h2>لتقديم طلب موافقة على إعلان املأ الحقول وأرسل البيانات مباشرة، يُفضّل استخدام متصفح Google Chrome للحصول على أفضل تجربة.</h2>
+        <p class="small muted">سيتم مراجعة إعلانك ونشره بعد الموافقة.</p>
 
-<h1>بعد تحميل الملف ارسله عبر الواتساب</h1>
-
-       <div style="display:grid;gap:8px">
-          <input id="f_name" placeholder="اسم الإعلان">
+        <div style="display:grid;gap:8px">
+          <input id="f_name" placeholder="اسم الإعلان" required>
           <input id="f_price" placeholder="السعر">
           <textarea id="f_desc" placeholder="وصف الإعلان" rows="4"></textarea>
           <input id="f_loc" placeholder="الموقع">
@@ -443,32 +442,16 @@ button.btn.alt#modalCall {
           <input id="f_cat" placeholder="القسم">
           <div><input id="f_file" type="file" accept="image/*"></div>
           <label style="display:flex;gap:8px;align-items:center">
-            <input type="checkbox" id="agree" />
+            <input type="checkbox" id="agree" required/>
             <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
           </label>
           <div style="display:flex;gap:8px;align-items:center">
-            <button id="submitBtn" class="btn" type="button">بدء</button>
+            <button id="submitBtn" class="btn" type="button">إرسال الإعلان للمراجعة</button>
             <div id="submitStatus" class="small"></div>
           </div>
-          <div id="afterSubmit" style="display:none;margin-top:8px">
-            <div>تم حفظ الاعلان في السيرفر , حمّل البطاقة وارسلها لتأكيد النشر</div>
-            <div class="refBox" style="margin-top:6px">
-              <div id="refCode" class="refCode"></div>
-              <a id="openWa" class="btn alt" target="_blank" style="display:none">اضغط هنا لفتح الواتساب - البطاقة ستجدها ضمن المستندات</a>
-              <button id="downloadEmbeddedBtn" class="btn" style="display:none" type="button">⬇ تنزيل البطاقة</button>
-            </div>
-            <div id="fallbackJson" style="display:none;margin-top:8px">
-              <div class="small">اعد المحاولة.</div>
-            </div>
-            <div id="previewCard" class="subCard" style="display:none">
-              <div class="small" style="margin-bottom:6px">مالم ترسل البطاقة عبر الواتساب لن ينشر الاعلان:</div>
-              <div id="previewCanvasWrap"></div>
-            </div>
           </div>
-        </div>
       </div>
     </section>
-
     <section id="privacy">
       <div class="panel">
         <h3>سياسة الخصوصية</h3>
@@ -654,11 +637,13 @@ const CACHE_BUSTER  = 'v1.0.1'; // تم التحديث
 const WHATSAPP_NUMBER = '249998615193'; // بدون علامة + أو مسافات
 // 💡 NEW: Admin Password Constant
 const ADMIN_PASSWORD = 'super-secret-admin-access';
+// 💡 NEW: Google Apps Script Web App URL for submission - REPLACE THIS WITH YOUR DEPLOYED URL
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'; 
 
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
 function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
-function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
+function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); } // Kept as a fallback/mock for now
 
 /* تبويبات */
 const listControls = document.getElementById('listControls');
@@ -864,9 +849,6 @@ async function openDetails(item, isEditing = false){
 }
 
 /* تحميل الإعلانات من GitHub */
-
-
-
 async function loadAdsFromGithub(){
   const noItemsEl = document.getElementById('noitems');
   const loadMoreBtn = document.getElementById('loadMoreBtn'); // kept as fallback/status
@@ -1119,200 +1101,6 @@ async function loadAdsFromGithub(){
 
 
 /* = = */
-
-const MARKER = 'ELDELALA_PAYLOAD:';
-
-function dataUrlToBlob(dataUrl){
-  const parts = dataUrl.split(',');
-  const meta = parts[0];
-  const data = parts[1] || '';
-  const mimeMatch = meta.match(/:(.*?);/);
-  const mime = mimeMatch ? mimeMatch[1] : 'image/png';
-  const bin = atob(data);
-  const len = bin.length;
-  const u8 = new Uint8Array(len);
-  for(let i=0;i<len;i++) u8[i] = bin.charCodeAt(i);
-  return new Blob([u8], { type: mime });
-}
-
-async function blobToUint8(blob){
-  const ab = await blob.arrayBuffer();
-  return new Uint8Array(ab);
-}
-
-function jsonToBase64String(obj){
-  const json = JSON.stringify(obj);
-  const utf8 = unescape(encodeURIComponent(json));
-  return btoa(utf8);
-}
-
-async function embedJsonInImageBlob(imageBlob, payloadObj){
-  const origBytes = await blobToUint8(imageBlob);
-  const markerBytes = new TextEncoder().encode(MARKER);
-  const b64 = jsonToBase64String(payloadObj);
-  const b64Bytes = new TextEncoder().encode(b64);
-  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
-  out.set(origBytes,0);
-  out.set(markerBytes, origBytes.length);
-  out.set(b64Bytes, origBytes.length + markerBytes.length);
-  return new Blob([out], { type: imageBlob.type || 'image/png' });
-}
-
-async function fileOrBlobToDataUrl(fileOrBlob){
-  return new Promise((resolve,reject)=>{
-    const fr = new FileReader();
-    fr.onload = ()=>resolve(fr.result);
-    fr.onerror = reject;
-    fr.readAsDataURL(fileOrBlob);
-  });
-}
-
-async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.8){
-  const dataURL = await fileOrBlobToDataUrl(file);
-  const img = await new Promise((resolve, reject)=>{
-    const i = new Image();
-    i.onload = ()=>resolve(i);
-    i.onerror = reject;
-    i.src = dataURL;
-  });
-  let w = img.width, h = img.height;
-  const scale = Math.min(1, maxW / w, maxH / h);
-  const cw = Math.max(1, Math.round(w * scale));
-  const ch = Math.max(1, Math.round(h * scale));
-  const c = document.createElement('canvas');
-  c.width = cw; c.height = ch;
-  const ctx = c.getContext('2d');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
-  ctx.drawImage(img, 0, 0, cw, ch);
-  return c.toDataURL('image/webp', quality);
-}
-
-/* */
-async function createPlaceholderImageBlob(){
-  const c = document.createElement('canvas');
-  c.width = 900;
-  c.height = 900;
-  const ctx = c.getContext('2d');
-  ctx.fillStyle = '#e5f0ff';
-  ctx.fillRect(0,0,c.width,c.height);
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 40px Tajawal, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('الدلالة', c.width/2, c.height/2 - 10);
-  ctx.font = '20px Tajawal, sans-serif';
-  ctx.fillText('إعلان بدون صورة', c.width/2, c.height/2 + 30);
-  const dataURL = c.toDataURL('image/png');
-  return dataUrlToBlob(dataURL);
-}
-
-/* ت  */
-function canvasToPngBlob(canvas){
-  return new Promise((resolve,reject)=>{
-    if(canvas.toBlob){
-      canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png');
-    }else{
-      try{
-        const dataURL = canvas.toDataURL('image/png');
-        resolve(dataUrlToBlob(dataURL));
-      }catch(e){
-        reject(e);
-      }
-    }
-  });
-}
-
-/* ك   */
-async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
-  const baseDataUrl = await fileOrBlobToDataUrl(fileOrBlob);
-  const img = await new Promise((resolve,reject)=>{
-    const i = new Image();
-    i.onload = ()=>resolve(i);
-    i.onerror = reject;
-    i.src = baseDataUrl;
-  });
-
-  const W = 900;
-  const H = 1100;
-  const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
-
-  //  ة
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0,'#f5f8ff');
-  grad.addColorStop(1,'#e8f5ff');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0,0,W,H);
-
-  // إط حة
-  const cardX = 60;
-  const cardY = 60;
-  const cardW = W - 120;
-  const cardH = H - 120;
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  const r = 30;
-  ctx.moveTo(cardX+r, cardY);
-  ctx.lineTo(cardX+cardW-r, cardY);
-  ctx.quadraticCurveTo(cardX+cardW, cardY, cardX+cardW, cardY+r);
-  ctx.lineTo(cardX+cardW, cardY+cardH-r);
-  ctx.quadraticCurveTo(cardX+cardW, cardY+cardH, cardX+cardW-r, cardY+cardH);
-  ctx.lineTo(cardX+r, cardY+cardH);
-  ctx.quadraticCurveTo(cardX, cardY+cardH, cardX, cardY+cardH-r);
-  ctx.lineTo(cardX, cardY+r);
-  ctx.quadraticCurveTo(cardX, cardY, cardX+r, cardY);
-  ctx.closePath();
-  ctx.fill();
-
-  //  
-  const imgMargin = 40;
-  const imgAreaX = cardX + imgMargin;
-  const imgAreaY = cardY + imgMargin;
-  const imgAreaW = cardW - imgMargin*2;
-  const imgAreaH = 550;
-
-  const ratio = Math.min(imgAreaW / img.width, imgAreaH / img.height);
-  const drawW = img.width * ratio;
-  const drawH = img.height * ratio;
-  const dx = imgAreaX + (imgAreaW - drawW)/2;
-  const dy = imgAreaY + (imgAreaH - drawH)/2;
-
-  ctx.save();
-  ctx.beginPath();
-  const ir = 26;
-  ctx.moveTo(imgAreaX+ir, imgAreaY);
-  ctx.lineTo(imgAreaX+imgAreaW-ir, imgAreaY);
-  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY, imgAreaX+imgAreaW, imgAreaY+ir);
-  ctx.lineTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH-ir);
-  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH, imgAreaX+imgAreaW-ir, imgAreaY+imgAreaH);
-  ctx.lineTo(imgAreaX+ir, imgAreaY+imgAreaH);
-  ctx.quadraticCurveTo(imgAreaX, imgAreaY+imgAreaH, imgAreaX, imgAreaY+imgAreaH-ir);
-  ctx.lineTo(imgAreaX, imgAreaY+ir);
-  ctx.quadraticCurveTo(imgAreaX, imgAreaY, imgAreaX+ir, imgAreaY);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(img, dx, dy, drawW, drawH);
-  ctx.restore();
-
-  // ref co ورة
-  const refText = payload.ref_code || '';
-  ctx.textAlign = 'center';
-
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 52px Tajawal, sans-serif';
-  ctx.fillText(refText, W/2, imgAreaY + imgAreaH + 120);
-
-  //  
-  ctx.fillStyle = '#4b5563';
-  ctx.font = '24px Tajawal, sans-serif';
-  ctx.fillText('نشكرك علي استخدامك موقع الدلالة', W/2, imgAreaY + imgAreaH + 170);
-
-  const pngBlob = await canvasToPngBlob(canvas);
-  const pngDataUrl = canvas.toDataURL('image/png');
-  return { blob: pngBlob, dataURL: pngDataUrl };
-}
 
 /* ========================================================== */
 /* 💡 NEW: MESSAGE SYSTEM FUNCTIONS */
@@ -1651,7 +1439,7 @@ function renderAdminPanel() {
     let pendingTableHtml = '<div style="text-align:center; padding:20px;" class="small muted">لا توجد إعلانات بانتظار المراجعة.</div>';
     if (mockPendingAds.length > 0) {
         // Sort by ref_code (newest first)
-        const sortedPending = mockPendingAds.slice().sort((A,B) => (B.ref_code || '').localeCompare((A.ref_code || '')));
+        const sortedPending = mockPendingAds.slice().sort((A,B) => (B.ref_code || '').localeCompare((A.ref_code || ''));
         pendingTableHtml = `
             <table class="admin-table">
                 <thead>
@@ -1725,14 +1513,22 @@ document.getElementById('adminNavBtn').addEventListener('click', renderAdminPane
 /* ========================================================== */
 
 
-/* " */
+/* ========================================================== */
+/* 💡 NEW: AD SUBMISSION LOGIC USING GOOGLE APPS SCRIPT */
+/* ========================================================== */
+
+function fileToDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 (function(){
   const submitBtn = document.getElementById('submitBtn');
   const submitStatus = document.getElementById('submitStatus');
-  const afterSubmit = document.getElementById('afterSubmit');
-  const refCodeEl = document.getElementById('refCode');
-  const openWa = document.getElementById('openWa');
-  const downloadEmbeddedBtn = document.getElementById('downloadEmbeddedBtn');
   const f_name = document.getElementById('f_name');
   const f_price = document.getElementById('f_price');
   const f_desc = document.getElementById('f_desc');
@@ -1741,8 +1537,6 @@ document.getElementById('adminNavBtn').addEventListener('click', renderAdminPane
   const f_cat = document.getElementById('f_cat');
   const f_file = document.getElementById('f_file');
   const agree = document.getElementById('agree');
-  const previewCanvasWrap = document.getElementById('previewCanvasWrap');
-  const fallbackBox = document.getElementById('fallbackJson');
 
   function showStatus(msg, isError=false){
     submitStatus.textContent = msg;
@@ -1751,154 +1545,84 @@ document.getElementById('adminNavBtn').addEventListener('click', renderAdminPane
 
   submitBtn && submitBtn.addEventListener('click', async ()=>{
     try{
-      // 💡 NEW: Clear previous messages before starting
       msgContainer.innerHTML = '';
       checkAndToggleVisibility();
       
       if(submitBtn.disabled) return;
-      submitBtn.disabled = true;
-      showStatus('جارٍ تجهيز الإعلان...');
-
-      if(!f_name.value || f_name.value.trim().length < 2){
-        showStatus('الرجاء إدخال اسم للإعلان', true);
-        // 💡 NEW: Display Error Message in the unified container
-        displayMessage('error', '⚠️ الرجاء إدخال اسم واضح ومناسب للإعلان قبل البدء.');
-        submitBtn.disabled = false;
+      
+      const name = f_name.value.trim();
+      if(!name || name.length < 2){
+        displayMessage('error', '⚠️ الرجاء إدخال اسم واضح ومناسب للإعلان قبل الإرسال.');
         return;
       }
       if(!agree.checked){
-        showStatus('يجب الموافقة على الشروط', true);
-        // 💡 NEW: Display Error Message in the unified container
         displayMessage('error', 'يجب عليك الموافقة على شروط النشر أولاً للمتابعة.');
-        submitBtn.disabled = false;
         return;
       }
-
-      const ref = genRef();
-      refCodeEl.textContent = ref;
-      afterSubmit.style.display = 'block';
-      downloadEmbeddedBtn.style.display = 'none';
-      if(openWa) openWa.style.display = 'none';
-      fallbackBox.style.display = 'none';
-      showStatus('جاري إنشاء البطاقة...');
-
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = '...جاري الإرسال';
+      showStatus('جاري إرسال الإعلان إلى السيرفر...');
+      
+      let imageBase64 = null;
+      let mimeType = null;
+      if(f_file.files && f_file.files[0]){
+        showStatus('جاري معالجة الصورة...');
+        const file = f_file.files[0];
+        const dataUrl = await fileToDataUrl(file);
+        // Extract Base64 part and MIME type
+        const parts = dataUrl.split(';');
+        mimeType = parts[0].split(':')[1];
+        imageBase64 = parts[1].split(',')[1];
+      }
+      
       const payload = {
-        ref_code: ref,
-        name: f_name.value.trim(),
+        name: name,
         price: f_price.value.trim(),
         description: f_desc.value.trim(),
         location: f_loc.value.trim(),
         contact: f_contact.value.trim(),
         category: f_cat.value.trim(),
-        created_at: new Date().toISOString(),
-        image: ''
+        image: imageBase64,
+        mime: mimeType
       };
-
-      // تجهيز الصورة
-      let fileOrBlob;
-      if(f_file.files && f_file.files[0]){
-        fileOrBlob = f_file.files[0];
-      }else{
-        fileOrBlob = await createPlaceholderImageBlob();
+      
+      if (APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_WEB_APP_URL_HERE')) {
+         throw new Error("❌ لم يتم تعيين رابط Google Apps Script. الرجاء تعيين APPS_SCRIPT_URL.");
       }
 
-      // تخزين WEBP داخل JSON
-      try{
-        const webpDataUrl = await imageFileToWebpDataUrl(fileOrBlob, 900, 900, 0.8);
-        payload.image = webpDataUrl;
-      }catch(e){
-        console.warn('failed to convert to webp, keeping image empty', e);
-        payload.image = '';
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Crucial for Apps Script doPost
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await response.json();
+      
+      if(response.ok && result.status === 'success'){
+        displayMessage('success', `✅ تم استلام طلبك بنجاح. رمز المراجعة: ${result.ref_code}. سيتم مراجعة الإعلان قريباً.`);
+        showStatus('تم الإرسال بنجاح. رمز الإعلان: ' + result.ref_code, false);
+        // Clear form
+        f_name.value = f_price.value = f_desc.value = f_loc.value = f_contact.value = f_cat.value = '';
+        f_file.value = null;
+        agree.checked = false;
+      } else {
+        throw new Error(result.error || 'فشل غير معروف في الإرسال إلى Apps Script.');
       }
-
-      // إنشاء الكرت
-      let card;
-      try{
-        card = await createCardPngFromImageFileOrBlob(fileOrBlob, payload);
-      }catch(e){
-        console.error('failed to create card png', e);
-        card = null;
-      }
-
-      // معاينة
-      previewCanvasWrap.innerHTML = '';
-      if(card && card.dataURL){
-        const imgEl = document.createElement('img');
-        imgEl.style.width='100%';
-        imgEl.style.borderRadius='12px';
-        imgEl.src = card.dataURL;
-        previewCanvasWrap.appendChild(imgEl);
-        document.getElementById('previewCard').style.display='block';
-      }else{
-        document.getElementById('previewCard').style.display='none';
-      }
-
-      // ت م 
-      if(card && card.blob){
-        try{
-          const embedded = await embedJsonInImageBlob(card.blob, payload);
-          const url = URL.createObjectURL(embedded);
-          downloadEmbeddedBtn.style.display = 'inline-block';
-          downloadEmbeddedBtn.onclick = function(){
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = payload.ref_code + '_eldelala.png';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(()=>{
-              URL.revokeObjectURL(url);
-              a.remove();
-              if(openWa){
-                openWa.style.display = 'inline-block';
-                const base = window.location.href.split('#')[0];
-                const adLink = base + '#ad-' + payload.ref_code;
-   const msg = `
-مرحباً! 👋
-
-معلومات إعلانك:
-- 📝 الاسم: ${payload.name}
-- 💰 السعر: ${payload.price}
-- 🔖 الرمز: ${payload.ref_code}
-- 📞 التواصل: ${payload.contact}
-رابط الإعلان بعد القبول:
-  ${adLink}
-
-لإتمام النشر، نرجو إرسال بطاقة الإعلان:
-📎 ${payload.ref_code}_eldelala.png
-`;
-
-
-                
-                // ✅ استخدام الرقم المحدد في رابط واتساب
-                openWa.href = `https://wa.me/${+249998615193}?text=` + encodeURIComponent(msg);
-                openWa.target = '_blank';
-              }
-            }, 800);
-          };
-        }catch(e){
-          console.error('failed to embed JSON into PNG', e);
-          downloadEmbeddedBtn.style.display = 'none';
-          fallbackBox.style.display = 'block';
-        }
-      }else{
-        downloadEmbeddedBtn.style.display = 'none';
-        fallbackBox.style.display = 'block';
-      }
-
-      showStatus('تم إنشاء البطاقة. يمكنك تحميلها الآن.', false);
-      // 💡 NEW: Display Success Message in the unified container
-      displayMessage('success', '✅ تم تجهيز بطاقة الإعلان! قم بتنزيلها وإرسالها عبر الواتساب لتأكيد النشر.');
 
     }catch(err){
       console.error(err);
-      showStatus('حدث خطأ أثناء الإنشاء (تفاصيل في Console).', true);
-      // 💡 NEW: Display General Error Message
-      displayMessage('error', 'حدث خطأ غير متوقع أثناء إنشاء البطاقة. يرجى المحاولة مرة أخرى.');
+      const errorMsg = err.message || 'حدث خطأ غير متوقع أثناء إرسال الإعلان. يرجى التحقق من رابط Apps Script.';
+      displayMessage('error', '🚫 فشل الإرسال: ' + errorMsg);
+      showStatus('حدث خطأ أثناء الإرسال. انظر تفاصيل الخطأ في الرسالة.', true);
     }finally{
       submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال الإعلان للمراجعة';
     }
   });
 })();
+/* 🛑 END NEW AD SUBMISSION LOGIC */
+
 
 /* ===== ت = */
 
