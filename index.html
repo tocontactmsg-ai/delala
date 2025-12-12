@@ -12,190 +12,138 @@
 <meta property="og:title" content="الدلالة — اعلن ببساطة وسهولة" />
 <meta property="og:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة. اعلن الان وقم ببيع وشراء ما تريد بسهولة" />
 <meta property="og:url" content="https://eldelala.com/" />
+
 <style>
 /* ---------------------------------------------------------------------- */
-/* CSS Reset and Global Styles */
+/* BASIC & MINIMALIST CSS (للسماح لك بإضافة تصميمك القديم) */
 /* ---------------------------------------------------------------------- */
 body {
-    font-family: 'Tajawal', sans-serif;
-    background-color: #f0f4f8;
-    color: #1f2937;
+    font-family: Tahoma, Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
     margin: 0;
     padding: 0;
     direction: rtl;
     text-align: right;
-    scroll-behavior: smooth;
+    line-height: 1.6;
 }
 .container {
-    max-width: 1200px;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
 }
 a {
-    color: #0078d7;
+    color: #007bff;
     text-decoration: none;
-    transition: color 0.2s;
 }
-a:hover {
-    color: #005bb5;
-}
-/* ---------------------------------------------------------------------- */
-/* Header, Navbar, and Banner */
-/* ---------------------------------------------------------------------- */
 header {
     background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 50;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    margin-bottom: 20px;
 }
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
 }
 .logo h1 {
-    font-size: 1.5rem;
-    color: #0078d7;
+    font-size: 24px;
+    color: #333;
     margin: 0;
-    font-weight: 700;
 }
 nav a {
     margin-right: 15px;
-    color: #4b5563;
-    font-weight: 500;
-    padding-bottom: 5px;
-    border-bottom: 2px solid transparent;
-}
-nav a.active {
-    color: #0078d7;
-    border-bottom: 2px solid #0078d7;
+    color: #555;
 }
 .cta-button {
-    background-color: #047857;
-    color: #fff;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-weight: 600;
-    transition: background-color 0.2s;
+    background-color: #28a745;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
 }
-.cta-button:hover {
-    background-color: #065f46;
-}
-/* ---------------------------------------------------------------------- */
+
 /* Search and Filters */
-/* ---------------------------------------------------------------------- */
 .filters-bar {
     background-color: #fff;
-    padding: 15px 20px;
-    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid #ddd;
     margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    display: flex;
-    gap: 15px;
-    align-items: center;
+    overflow: hidden; /* لتنظيف الفلوت */
 }
-.search-input {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 1rem;
-    text-align: right;
+.search-input, .filter-select, .refresh-btn {
+    float: right;
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     box-sizing: border-box;
+    max-width: 250px;
 }
-.filter-select {
-    padding: 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    font-size: 1rem;
+.search-input { width: 40%; }
+.filter-select { width: 20%; }
+.refresh-btn { 
+    background-color: #007bff; 
+    color: white; 
     cursor: pointer;
-    min-width: 150px;
+    width: auto;
 }
-.refresh-btn {
-    padding: 10px 15px;
-    background-color: #4b5563;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-/* ---------------------------------------------------------------------- */
-/* Ad Cards Grid */
-/* ---------------------------------------------------------------------- */
+
+/* Ad Cards */
 .ad-grid {
-    display: grid;
-    gap: 25px;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* تصميم شبكي بسيط يعتمد على الفلوت */
+    overflow: hidden;
 }
 .ad-card {
+    width: 30%; /* ثلاث بطاقات في الصف تقريبا */
+    float: right;
+    margin: 0 1.65% 20px 0; /* هوامش لـ 3 بطاقات */
     background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-    display: flex;
-    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
 }
-.ad-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+.ad-card:nth-child(3n) {
+    margin-right: 0; /* إزالة الهامش من البطاقة الثالثة في الصف */
 }
 .ad-card img {
     width: 100%;
-    height: 180px;
+    height: auto;
+    max-height: 150px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-.ad-title {
-    font-weight: 700;
-    font-size: 1.2rem;
-    color: #0078d7;
+    border-radius: 4px;
     margin-bottom: 10px;
 }
-.ad-meta {
-    font-size: 0.95rem;
+.ad-title {
+    font-size: 18px;
+    color: #007bff;
+    margin-top: 0;
     margin-bottom: 5px;
-    color: #4b5563;
-    display: flex;
-    gap: 10px;
 }
-.ad-meta strong {
-    color: #1f2937;
-    min-width: 70px;
+.ad-meta {
+    font-size: 14px;
+    margin-bottom: 3px;
+    color: #555;
 }
 .ad-desc-snippet {
-    font-size: 0.9rem;
-    color: #6b7280;
-    max-height: 40px;
-    overflow: hidden;
-    margin-bottom: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
+    font-size: 13px;
+    color: #777;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: 1px dashed #eee;
 }
-.no-ads-message {
+.no-ads-message, .loading-indicator {
     text-align: center;
-    padding: 50px;
-    background: #fff;
-    border-radius: 8px;
-    color: #6b7280;
+    padding: 40px;
     margin-top: 20px;
-    font-size: 1.1rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }
-.loading-indicator {
-    text-align: center;
-    padding: 50px;
-    font-size: 1.5rem;
-    color: #0078d7;
-}
-/* ---------------------------------------------------------------------- */
-/* Modal (Popup for Ad Details) */
-/* ---------------------------------------------------------------------- */
+
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -205,17 +153,16 @@ nav a.active {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.7);
-    padding-top: 60px;
+    background-color: rgba(0,0,0,0.6);
+    padding-top: 50px;
 }
 .modal-content {
     background-color: #fefefe;
     margin: 5% auto;
-    padding: 30px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 8px;
     width: 90%;
-    max-width: 700px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    max-width: 600px;
     position: relative;
 }
 .close-btn {
@@ -223,123 +170,86 @@ nav a.active {
     float: left;
     font-size: 28px;
     font-weight: bold;
-    position: absolute;
-    top: 10px;
-    left: 20px;
-}
-.close-btn:hover, .close-btn:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
 }
 .modal-img {
     max-width: 100%;
-    max-height: 350px;
-    object-fit: contain;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    height: auto;
     display: block;
-    margin-right: auto;
-    margin-left: auto;
-}
-.modal-title {
-    color: #0078d7;
-    font-size: 1.8rem;
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-.modal-meta {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #4b5563;
-}
-.modal-meta strong {
-    color: #1f2937;
-    min-width: 100px;
-}
-.modal-desc {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-    font-size: 1rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
+    margin: 0 auto 15px;
+    border-radius: 6px;
 }
 .contact-btn {
     display: block;
     width: 100%;
     text-align: center;
-    padding: 12px;
-    margin-top: 20px;
-    background-color: #25d366; /* WhatsApp Green */
-    color: #fff;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    transition: background-color 0.2s;
-}
-.contact-btn:hover {
-    background-color: #128c7e;
-}
-/* ---------------------------------------------------------------------- */
-/* Submit Ad Section (Footer) */
-/* ---------------------------------------------------------------------- */
-.submit-section {
-    background-color: #1f2937;
-    color: #fff;
-    padding: 40px 20px;
-    text-align: center;
-    margin-top: 40px;
-}
-.submit-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    max-width: 800px;
-    margin: 0 auto;
-}
-.submit-info h2 {
-    color: #0078d7;
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-}
-.submit-info p {
-    font-size: 1rem;
-    margin-bottom: 20px;
-}
-.whatsapp-btn {
+    padding: 10px;
+    margin-top: 15px;
     background-color: #25d366;
     color: #fff;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1.1rem;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* Submit Section */
+.submit-section {
+    background-color: #343a40;
+    color: #fff;
+    padding: 30px 10px;
+    text-align: center;
+    margin-top: 30px;
+}
+.submit-info h2 { color: #007bff; }
+.whatsapp-btn {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
     display: inline-block;
 }
-.whatsapp-btn:hover {
-    background-color: #128c7e;
-}
 .qr-code img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     background: #fff;
     padding: 5px;
-    border-radius: 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 20px;
 }
-/* ---------------------------------------------------------------------- */
-/* Footer */
-/* ---------------------------------------------------------------------- */
 footer {
     text-align: center;
-    padding: 15px;
-    background-color: #0078d7;
+    padding: 10px;
+    background-color: #007bff;
     color: #fff;
-    font-size: 0.9rem;
+    font-size: 12px;
 }
-/* Load Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+
+/* Media Query for Mobile - لإعادة البطاقات إلى صف واحد */
+@media (max-width: 600px) {
+    .ad-card {
+        width: 98%;
+        float: none;
+        margin: 10px auto;
+    }
+    .filters-bar {
+        display: block;
+    }
+    .search-input, .filter-select, .refresh-btn {
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .submit-content {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .qr-code { order: -1; } /* نقل QR للأعلى في الهاتف */
+}
+
+/* ---------------------------------------------------------------------- */
+/* END OF BASIC CSS */
+/* ---------------------------------------------------------------------- */
 </style>
 </head>
 <body>
@@ -360,11 +270,11 @@ footer {
 <main class="container">
     
     <div class="filters-bar">
-        <input type="text" id="searchQuery" class="search-input" placeholder="ابحث بالاسم، الموقع، أو الوصف..." />
+        <button id="refresh" class="refresh-btn">تحديث</button>
         <select id="categoryFilter" class="filter-select">
             <option value="">جميع التصنيفات</option>
             </select>
-        <button id="refresh" class="refresh-btn">تحديث</button>
+        <input type="text" id="searchQuery" class="search-input" placeholder="ابحث بالاسم، الموقع، أو الوصف..." />
     </div>
 
     <div id="adGrid" class="ad-grid">
@@ -381,7 +291,7 @@ footer {
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
         <img id="modalImg" class="modal-img" src="" alt="صورة الإعلان" style="display:none;">
-        <div id="noModalImg" class="ad-image no-image-placeholder" style="display:flex; align-items:center; justify-content:center; background:#eee; color:#6b7280; height: 180px; border-radius: 8px; margin-bottom: 20px;">لا توجد صورة مرفقة</div>
+        <div id="noModalImg" class="ad-image no-image-placeholder" style="display:flex; align-items:center; justify-content:center; background:#eee; color:#6b7280; height: 180px; border-radius: 8px; margin-bottom: 20px; text-align: center;">لا توجد صورة مرفقة</div>
 
         <h3 id="modalTitle" class="modal-title"></h3>
         
@@ -396,20 +306,22 @@ footer {
 </div>
 
 <section id="submit-ad" class="submit-section">
-    <div class="submit-content">
+    <div class="submit-content container">
+        <div class="qr-code">
+            <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://placeholder.com" alt="QR Code" />
+        </div>
         <div class="submit-info">
             <h2>هل لديك شيء للبيع؟</h2>
             <p>انشر إعلانك مجاناً وبسهولة فائقة عبر واتساب. سنراجعه وننشره لك على الفور.</p>
             <a id="whatsappLink" href="#" target="_blank" class="whatsapp-btn">أرسل إعلانك الآن عبر واتساب</a>
         </div>
-        <div class="qr-code">
-            <img id="qrCodeImg" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://placeholder.com" alt="QR Code" />
-        </div>
     </div>
 </section>
 
 <footer>
-    جميع الحقوق محفوظة &copy; 2024 الدلالة
+    <div class="container">
+        جميع الحقوق محفوظة &copy; 2024 الدلالة
+    </div>
 </footer>
 
 <script>
@@ -423,16 +335,15 @@ footer {
     const catFilter = document.getElementById('categoryFilter');
     const qEl = document.getElementById('searchQuery');
     
-    let allAds = []; // مخزن البيانات الأصلية
-    let filteredAds = []; // مخزن البيانات المصفاة
-    let whatsappUrl = ''; // لتخزين رابط الواتساب
+    let allAds = []; 
+    let filteredAds = []; 
+    let whatsappUrl = ''; 
 
     // ----------------------------------------------------------------------
     // Utility Functions
     // ----------------------------------------------------------------------
     function closeModal() {
         modal.style.display = "none";
-        // إزالة الهاش من الرابط عند الإغلاق
         history.pushState("", document.title, window.location.pathname + window.location.search);
     }
     
@@ -453,12 +364,10 @@ footer {
         const selectedCategory = catFilter.value;
 
         filteredAds = allAds.filter(ad => {
-            // تصفية حسب التصنيف
             if (selectedCategory && ad.category !== selectedCategory) {
                 return false;
             }
 
-            // تصفية حسب البحث (Search Query)
             if (query) {
                 const searchFields = [
                     ad.name, 
@@ -468,7 +377,6 @@ footer {
                     ad.price
                 ];
                 
-                // البحث في أي من الحقول، مع التأكد من أنها سلاسل نصية
                 return searchFields.some(field => 
                     field && String(field).toLowerCase().includes(query)
                 );
@@ -479,12 +387,10 @@ footer {
     }
     
     function renderAdCard(ad) {
-        // التحقق الأساسي للتحصين
         if (!ad || !ad.name) return null; 
 
         const card = document.createElement('div');
         card.className = 'ad-card';
-        // إضافة معرف فريد لاستخدامه في الهاش
         card.setAttribute('data-ref-code', ad.ref_code || ad.row_index); 
         
         card.onclick = () => openAdModal(ad);
@@ -493,12 +399,12 @@ footer {
         const price = ad.price || '-';
         const category = ad.category || 'عام';
         const location = ad.location || '-';
-        const descriptionSnippet = (ad.description || '-').substring(0, 100) + '...';
+        const descriptionSnippet = (ad.description || '-').substring(0, 80) + '...';
         
-        const imgSrc = ad.imagebase64 || ad.image || ''; // التحقق من imagebase64 و image
+        const imgSrc = ad.imagebase64 || ad.image || ''; 
         const imageHtml = imgSrc ? 
             `<img src="${imgSrc}" alt="${name}" loading="lazy"/>` : 
-            `<div class="ad-image no-image-placeholder" style="display:flex; align-items:center; justify-content:center; background:#eee; color:#6b7280; height: 180px; border-radius: 8px;">لا توجد صورة</div>`;
+            `<div class="ad-image no-image-placeholder" style="display:flex; align-items:center; justify-content:center; background:#eee; color:#6b7280; height: 150px; border-radius: 4px;">لا توجد صورة</div>`;
 
         card.innerHTML = `
             ${imageHtml}
@@ -512,7 +418,7 @@ footer {
     }
 
     function renderAds() {
-        adGrid.innerHTML = ''; // تفريغ الشبكة
+        adGrid.innerHTML = ''; 
         loadingIndicator.style.display = 'none';
 
         if (filteredAds.length === 0) {
@@ -530,7 +436,6 @@ footer {
                 }
             } catch (e) {
                 console.error("Failed to render ad:", ad, e);
-                // يستمر في عرض الإعلانات التالية
             }
         });
     }
@@ -541,7 +446,7 @@ footer {
     }
     
     // ----------------------------------------------------------------------
-    // Modal Handling
+    // Modal Handling (يتضمن منطق رسالة واتساب الجديدة)
     // ----------------------------------------------------------------------
 
     function openAdModal(ad) {
@@ -551,28 +456,45 @@ footer {
         document.getElementById('modalLocation').textContent = ad.location || '-';
         document.getElementById('modalDescription').textContent = ad.description || '-';
 
-        const contactLink = ad.contact; // رابط الاتصال هو القيمة المحفوظة
+        const contactLink = ad.contact; 
         const contactBtn = document.getElementById('modalContactBtn');
         
+        const adName = ad.name || 'هذا الإعلان';
+        const adPrice = ad.price ? `بسعر ${ad.price}` : '';
+        const adRef = ad.ref_code || ad.row_index || 'غير متوفر';
+
+        // منطق الرسالة الجديدة: تضمين تفاصيل الإعلان
+        const defaultMessage = 
+            `مرحباً، أود الاستفسار عن الإعلان: "${adName}" ${adPrice} (رمز: ${adRef}). هل هو متوفر؟`;
+        
+        const encodedMessage = encodeURIComponent(defaultMessage);
+
         // ربط زر التواصل برابط الواتساب أو رقم الهاتف
         if (contactLink) {
-            contactBtn.href = contactLink.startsWith('http') || contactLink.startsWith('tel:') ? contactLink : `tel:${contactLink}`;
-            contactBtn.textContent = contactLink.startsWith('http') || contactLink.startsWith('tel:') ? 'تواصل عبر الرابط' : 'اتصل الآن';
             
-            // تعديل النص ليشمل الواتساب إذا كان رقم هاتف
-            if (contactLink.match(/^[0-9+()-\s]+$/)) { // Check for common phone number format
-                contactBtn.textContent = 'تواصل عبر الواتساب أو الهاتف';
+            if (contactLink.includes('wa.me')) {
+                contactBtn.href = `${contactLink}&text=${encodedMessage}`;
+                contactBtn.textContent = 'تواصل عبر واتساب';
+                contactBtn.onclick = null;
+            } 
+            else if (contactLink.match(/^[0-9+()-\s]+$/)) { 
+                const phoneNumber = contactLink.replace(/\D/g, '');
+                const whatsappContact = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                const telContact = `tel:${contactLink}`;
                 
-                // إنشاء رابط واتساب احتياطي لاستخدامه في حالة عدم عمل رابط الهاتف مباشرة
-                const whatsappContact = `https://wa.me/${contactLink.replace(/\D/g, '')}`; 
+                contactBtn.href = whatsappContact;
+                contactBtn.textContent = 'تواصل عبر واتساب/هاتف';
+                
                 contactBtn.onclick = (e) => {
                     e.preventDefault();
-                    // محاولة فتح واتساب أولاً
                     window.open(whatsappContact, '_blank');
-                    // يمكن إضافة منطق لفتح الهاتف هنا إذا فشل الواتساب، لكن نتركها بسيطة حالياً
+                    console.log(`Try to call: ${telContact}`);
                 };
-            } else {
-                 contactBtn.onclick = null; // إزالة الـ onclick إذا كان رابط URL
+            } 
+            else {
+                 contactBtn.href = contactLink;
+                 contactBtn.textContent = 'تواصل عبر الرابط';
+                 contactBtn.onclick = null;
             }
 
         } else {
@@ -580,7 +502,6 @@ footer {
             contactBtn.textContent = 'لا تتوفر وسيلة اتصال';
             contactBtn.onclick = (e) => e.preventDefault();
         }
-
 
         const modalImg = document.getElementById('modalImg');
         const noModalImg = document.getElementById('noModalImg');
@@ -592,15 +513,13 @@ footer {
             noModalImg.style.display = 'none';
         } else {
             modalImg.style.display = 'none';
-            noModalImg.style.display = 'flex';
+            noModalImg.style.display = 'block';
         }
 
         modal.style.display = "block";
-        // تحديث الهاش في الرابط لتمكين المشاركة
         history.pushState(null, null, `#ad-${ad.ref_code || ad.row_index}`);
     }
 
-    // فتح الإعلان مباشرة إذا كان الهاش موجوداً
     function openAdFromHash() {
         const hash = window.location.hash;
         if (hash && hash.startsWith('#ad-')) {
@@ -608,7 +527,6 @@ footer {
             const ad = allAds.find(a => a.ref_code === refCode || String(a.row_index) === refCode);
             if (ad) {
                 openAdModal(ad);
-                // تمرير الشاشة إلى الأعلى (المكان المثالي للـ Modal)
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -629,7 +547,7 @@ footer {
     }
 
     function populateCategories(categories) {
-        catFilter.innerHTML = '<option value="">جميع التصنيفات</option>'; // إعادة تعيين
+        catFilter.innerHTML = '<option value="">جميع التصنيفات</option>'; 
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat;
@@ -644,7 +562,6 @@ footer {
         noAdsMessage.style.display = 'none';
 
         try {
-            // 1. جلب الإعلانات
             const adsResponse = await new Promise((resolve, reject) => {
                 google.script.run
                     .withSuccessHandler(resolve)
@@ -655,11 +572,9 @@ footer {
             if (adsResponse.status === 'success') {
                 allAds = adsResponse.ads;
                 
-                // 2. تحديث التصنيفات
                 const categories = extractCategories(allAds);
                 populateCategories(categories);
 
-                // 3. تطبيق التصفية وعرض الإعلانات
                 applyFiltersAndRender();
             } else {
                 throw new Error(adsResponse.message || 'فشل في جلب الإعلانات.');
@@ -684,7 +599,6 @@ footer {
                 whatsappUrl = contactInfo.qr_url;
                 document.getElementById('whatsappLink').href = whatsappUrl;
                 
-                // تحديث رمز QR (استخدام خدمة خارجية)
                 const qrImg = document.getElementById('qrCodeImg');
                 const qrLink = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(whatsappUrl)}`;
                 qrImg.src = qrLink;
@@ -698,27 +612,20 @@ footer {
     // Initialization
     // ----------------------------------------------------------------------
     
-    // إغلاق المودال عند النقر خارجها
     window.onclick = function(event) {
         if (event.target === modal) {
             closeModal();
         }
     }
     
-    // الاستماع لأحداث التصفية والبحث
     qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
     catFilter.addEventListener('change', applyFiltersAndRender);
     document.getElementById('refresh').addEventListener('click', loadAdsFromGithub);
     
-    // عند تحميل الصفحة
     window.addEventListener('load', async ()=>{ 
-        // 1. تفعيل التبويب
         document.getElementById('home').classList.add('active');
-        // 2. تحميل البيانات
         await loadAdsFromGithub(); 
-        // 3. تحميل معلومات الاتصال
         await loadContactInfo(); 
-        // 4. التحقق من الهاش
         openAdFromHash(); 
     });
 </script>
