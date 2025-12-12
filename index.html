@@ -6,809 +6,599 @@
 <title>الدلالة | سوق إلكتروني للبيع والشراء في السودان</title>
 <link rel="icon" type="image/png" href="/favicon.ico">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-VFM8VZCQY6');
-</script>
+<meta name="description" content="الدلالة — سوق إلكتروني." />
 
-  <meta name="description" content="الدلالة — معرض وسوق متميز لنشر ومتابعة الإعلانات المبوبة بسهولة ويسر في السودان . انشر إعلانك بسهولة وتواصل مع المشترين في منطقتك مباشرة , متعة وسهولة في العرض والطلب ,فقط عبر الواتساب يمكنك تقديم طلب اعلان واذا تمت الموافقة سيعرض اعلانك علي الملايين من الزوار." />
-<link rel="canonical" href="https://eldelala.com/" />
-<link rel="icon" type="image/png" href="/favicon.ico">
-
-<meta property="og:type" content="website" />
-<meta property="og:title" content="الدلالة — اعلن ببساطة وسهولة" />
-<meta property="og:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta property="og:url" content="https://eldelala.com/" />
-<meta property="og:image" content="https://eldelala.com/logo-1200x630.png" />
-
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="الدلالة — سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta name="twitter:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
-<meta name="twitter:image" content="https://eldelala.com/logo-800x418.png" />
-
-
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet"></noscript>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800&display=swap" rel="stylesheet">
 
 <style>
-  /* --- التصميم من index (1).html --- */
+  /* --- CORE STYLES --- */
+  :root {
+    --primary: #0078d7;
+    --bg: #f7fbff;
+    --text: #0b1320;
+    --white: #ffffff;
+    --accent: #ffcc00;
+  }
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
-  body{margin:0;background:#f7fbff;color:#0b1320;line-height:1.4}
-  .container{max-width:1100px;margin:16px auto;padding:12px}
-  header{background:#0078d7;color:#fff;padding:12px;border-radius:14px;box-shadow:0 12px 40px rgba(0,120,215,0.35);margin-bottom:16px}
-  header .brand{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-  .brand .title{font-size:24px;font-weight:900}
-  nav[aria-label="واجهة"]{display:flex;gap:8px;flex-wrap:wrap}
-  nav[aria-label="واجهة"] button{
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-    border:1px solid rgba(255,255,255,0.4);
-    padding:6px 10px;
-    border-radius:999px;
-    cursor:pointer;
-    font-size:13px;
-    transition: background 0.2s;
-  }
-  nav[aria-label="واجهة"] button:hover{
-     background:rgba(255,255,255,0.25);
-  }
-  nav[aria-label="واجهة"] button[aria-current="true"]{
-    background:#fff;
-    color:#0078d7;
-    border-color:#fff;
-  }
-  /* أدوات التحكم (البحث والفلترة) */
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
-  input, textarea, select{
-    padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff
-  }
-  textarea{min-height:80px;resize:vertical}
-  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px;text-decoration:none;display:inline-block;text-align:center;}
-  button.btn.alt#modalClose { background: #dc2626; } 
-  .btn.alt{background:green }
-  button.btn#modalShare { background: #5271ff; }
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
-
-  /* الشبكة والبطاقات (Grid & Cards) */
-  .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:14px}
-  @media (min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
-  @media (min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
-  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.06);cursor:pointer;display:flex;flex-direction:column;min-height:360px}
-  .card:hover{box-shadow:0 10px 30px rgba(15,23,42,0.1);transform:translateY(-2px)}
-  .card .media{height:160px;overflow:hidden;background:#f0f4f8;display:flex;align-items:center;justify-content:center}
-  .card .media img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
-  .card:hover .media img{transform:scale(1.05)}
-  .card .body{padding:14px;flex-grow:1;display:flex;flex-direction:column}
-  .card .title{font-size:16px;font-weight:700;margin-bottom:6px;color:#0078d7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .card .desc{font-size:13px;color:#556;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex-grow:1}
-  .card .meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-wrap:wrap;gap:4px}
-  .card .badge{background:#e0f7fa;color:#00bcd4;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700}
-  .card .price{font-size:15px;font-weight:900;color:#28a745}
-  .card .small{font-size:11px;color:#999}
-  .count-bar{text-align:center;font-size:14px;color:#555;padding:10px 0;margin-top:10px}
+  body{margin:0;background:var(--bg);color:var(--text);line-height:1.5;padding-bottom: 80px;}
+  .container{max-width:1100px;margin:0 auto;padding:12px}
   
-  /* تصميم الـ Modal (نافذة التفاصيل) */
-  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:999;padding:12px} 
-  .modal[aria-hidden="false"]{display:flex}
-  .modalCard{background:#fff;border-radius:12px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,0.3);position:relative}
-  .modalHeader{padding:15px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
-  .modalTitle{font-size:22px;font-weight:700;color:#0078d7}
-  #modalClose{font-size:28px;line-height:1;background:none;color:#555;padding:0;border:none}
-  .modalBody{padding:20px}
-  .modalContent{display:flex;gap:25px}
-  .modalDetails{flex-grow:1}
-  .modalDescription{margin-top:10px;font-size:15px;color:#333;line-height:1.6;border-bottom:1px solid #eee;padding-bottom:15px;margin-bottom:15px}
-  .detailsGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
-  .detailsItem strong{display:block;font-size:13px;color:#888;margin-bottom:5px}
-  .detailsItem div{font-size:16px;font-weight:600;color:#0b1320}
-  .modalImage{max-height: 60vh; display: flex; align-items: center; justify-content: center; background: #020617;}
-  .modalImage img{max-height: 55vh; width: auto; height: auto; object-fit: contain;}
-  .modalFooter{padding:15px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-  .modalActions{display:flex;gap:10px}
-  .small.muted{font-size:11px;color:#999}
-
-  /* الشريط المتحرك (Ticker Tape) */
-  .ticker-tape{
-    overflow:hidden;
-    background:#ffeadf; /* لون خفيف */
-    padding:8px 0;
-    white-space:nowrap;
-    box-shadow:0 2px 5px rgba(0,0,0,0.05);
-    margin-bottom:16px;
-    display:none; /* إخفاء افتراضياً */
-  }
-  .ticker-tape.has-messages{
-    display:block; /* إظهار في حالة وجود رسائل */
-  }
-  .ticker-content{
-    display:inline-block;
-    animation:marquee 30s linear infinite;
-    padding-left:100%; /* يبدأ من خارج الشاشة */
-  }
-  .ticker-item{
-    padding:0 30px;
-    font-size:14px;
-    color:#e65100; /* لون برتقالي للتنبيه */
-    font-weight:600;
-  }
-  @keyframes marquee{
-    0%{transform:translateX(0)}
-    100%{transform:translateX(-100%)}
-  }
+  /* HEADER */
+  header{background:var(--primary);color:var(--white);padding:12px;border-radius:0 0 14px 14px;box-shadow:0 4px 20px rgba(0,120,215,0.25);margin-bottom:16px;position:sticky;top:0;z-index:50;}
+  header .brand{display:flex;align-items:center;justify-content:space-between;}
+  .brand .title{font-size:22px;font-weight:900;letter-spacing:-0.5px}
   
-  /* أقسام الواجهة */
-  main > section{display:none}
-  main > section.active{display:block}
-  .form-group{margin-bottom:12px}
-  .error, .success{padding:10px;border-radius:8px;font-weight:700;margin-top:10px;text-align:center}
-  .error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
-  .success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
-  
-  /* Media Query for Modal Content on small screens */
-  @media (max-width:600px){
-    .modalContent{flex-direction:column}
-    .modalImage{max-height:40vh;width:100%}
-    .modalImage img{max-height:35vh;width:100%;object-fit:contain}
+  /* NAVIGATION */
+  nav{display:flex;gap:8px;}
+  nav button{
+    background:rgba(255,255,255,0.15);color:#fff;border:none;
+    padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:700;
+    transition: all 0.2s;
   }
+  nav button:hover, nav button.active{background:#fff;color:var(--primary);transform:scale(1.05);}
 
+  /* CONTROLS (Search & Filter) */
+  .controls{display:grid;grid-template-columns:1fr 140px;gap:10px;margin-bottom:16px;}
+  @media(max-width:480px){ .controls{grid-template-columns:1fr;} }
+  
+  input, select, textarea{
+    padding:12px;border-radius:12px;border:1px solid #e6eef8;width:100%;
+    font-size:15px;background:#fff;outline:none;transition:0.2s;
+  }
+  input:focus, select:focus, textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,120,215,0.1);}
+  
+  /* GRID & CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px}
+  .card{
+    background:#fff;border-radius:16px;overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:transform .2s, box-shadow .2s;
+    cursor:pointer;position:relative;border:1px solid #f0f4f8;
+  }
+  .card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,0.08);}
+  
+  .media{height:200px;background:#f1f5f9;position:relative;overflow:hidden;}
+  .media img{width:100%;height:100%;object-fit:cover;transition:0.3s;}
+  .card:hover .media img{transform:scale(1.03);}
+  
+  .body{padding:14px;}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+  .price{font-weight:800;color:#059669;font-size:16px;}
+  .cat-badge{font-size:11px;background:#eff6ff;color:var(--primary);padding:4px 8px;border-radius:8px;font-weight:700;}
+  
+  .title{font-weight:800;font-size:16px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .loc{font-size:12px;color:#64748b;display:flex;align-items:center;gap:4px;}
+  
+  /* BUTTONS */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:var(--primary);color:#fff;padding:12px 20px;
+    border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:14px;
+    text-decoration:none;transition:0.2s;width:100%;
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn.red{background:#ef4444;}
+  .btn.green{background:#10b981;}
+  .btn.orange{background:#f59e0b;}
+  .btn:disabled{opacity:0.6;cursor:not-allowed;}
+
+  /* SECTIONS */
+  main > section{display:none;animation: fadeIn 0.3s ease-in-out;}
+  main > section.active{display:block;}
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+  /* ADMIN PANEL STYLES */
+  #adminLogin{text-align:center;padding:40px 20px;}
+  .admin-dashboard{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.05);padding:16px;margin-top:20px;}
+  .admin-tabs{display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #f1f5f9;padding-bottom:10px;}
+  .tab-btn{background:none;border:none;padding:8px 16px;cursor:pointer;color:#64748b;font-weight:700;}
+  .tab-btn.active{color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-12px;}
+  
+  .admin-list .card{flex-direction:row;display:flex;height:auto;margin-bottom:12px;padding:8px;}
+  .admin-list .media{width:80px;height:80px;border-radius:8px;flex-shrink:0;}
+  .admin-list .body{padding:0 12px;flex:1;}
+  .admin-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .mini-btn{padding:6px 10px;border-radius:8px;font-size:12px;border:none;cursor:pointer;color:white;display:flex;align-items:center;gap:4px;}
+  
+  /* MODAL */
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.8);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;backdrop-filter:blur(4px);}
+  .modal.open{display:flex;}
+  .modal-card{background:#fff;width:100%;max-width:600px;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;max-height:90vh;}
+  .modal-img-box{background:#000;height:300px;display:flex;align-items:center;justify-content:center;}
+  .modal-img-box img{max-width:100%;max-height:100%;}
+  .modal-content{padding:20px;overflow-y:auto;}
+  .modal-footer{padding:16px;background:#f8fafc;display:flex;gap:10px;}
+  
+  /* EDIT MODAL SPECIFIC */
+  #editModal .modal-card{max-height:95vh;}
+
+  /* UTILS */
+  .hidden{display:none !important;}
+  .spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;margin-left:8px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <div class="brand">
-            <span class="title">الدلالة</span>
-            <nav aria-label="واجهة">
-                <button data-target="home" aria-current="true">الإعلانات (السوق)</button>
-                <button data-target="submit">انشر إعلانك</button>
-                <button data-target="about">من نحن / الشروط</button>
-            </nav>
-        </div>
-    </header>
-
-    <div id="tickerTape" class="ticker-tape" role="marquee" aria-live="off">
-        <div class="ticker-content">
-            <span class="ticker-item"> سيتم التواصل مع المرشحين المختارين فقط </span>
-            <span class="ticker-item"> تأكد دائماً من صحة المعلومات بنفسك قبل التعامل </span>
-            <span class="ticker-item"> الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات </span>
-        </div>
+  <header>
+    <div class="brand">
+      <div class="title" onclick="tryAdmin()">الدلالة</div>
+      <nav>
+        <button onclick="nav('home')" class="active" id="btn-home">الرئيسية</button>
+        <button onclick="nav('send')" id="btn-send">أعلن</button>
+      </nav>
     </div>
+  </header>
 
-    <main>
-        <section id="home" class="active" aria-live="polite">
-            <div class="controls">
-                <input type="search" id="qEl" placeholder="ابحث بعنوان الإعلان أو وصفه..." style="flex-grow: 1;">
-                <select id="catFilter" style="width: 200px;">
-                    <option value="">جميع الفئات</option>
-                    </select>
-                <button id="refresh" class="btn" style="background: #ffc107; color: #333;">تحديث</button>
+  <div id="msgBox" style="display:none;padding:12px;border-radius:12px;margin-bottom:16px;color:white;font-weight:bold;text-align:center;"></div>
+
+  <main>
+    <!-- HOME SECTION -->
+    <section id="home" class="active">
+      <div class="controls">
+        <input id="search" placeholder="🔍 ابحث عن سيارة، عقار..." oninput="filterAds()">
+        <select id="catFilter" onchange="filterAds()">
+          <option value="">كل الأقسام</option>
+          <option value="سيارات">سيارات</option>
+          <option value="عقارات">عقارات</option>
+          <option value="هواتف">هواتف</option>
+          <option value="أثاث">أثاث</option>
+          <option value="خدمات">خدمات</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+      
+      <div id="loader" style="text-align:center;padding:40px;color:#64748b;">
+        جاري تحميل الإعلانات...
+      </div>
+      
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <!-- SEND AD SECTION -->
+    <section id="send">
+      <div style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
+        <h2 style="margin-top:0;">إضافة إعلان جديد</h2>
+        <form id="adForm" onsubmit="submitAd(event)">
+          <!-- Using same inputs as Edit Modal for consistency -->
+          <div style="display:grid;gap:12px;">
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#64748b">عنوان الإعلان</label>
+              <input type="text" id="f_title" required placeholder="مثال: تويوتا كورولا 2020">
             </div>
             
-            <div id="grid" class="grid">
-                <div class="count-bar" style="grid-column: 1 / -1;">جاري تحميل الإعلانات من قاعدة البيانات ...</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <label style="font-size:13px;font-weight:700;color:#64748b">السعر (SDG)</label>
+                <input type="text" id="f_price" required placeholder="مثال: 5000000">
+              </div>
+              <div>
+                <label style="font-size:13px;font-weight:700;color:#64748b">القسم</label>
+                <select id="f_cat" required>
+                  <option value="سيارات">سيارات</option>
+                  <option value="عقارات">عقارات</option>
+                  <option value="هواتف">هواتف</option>
+                  <option value="أثاث">أثاث</option>
+                  <option value="خدمات">خدمات</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
             </div>
-            
-            <div id="countEl" class="count-bar"></div>
-        </section>
 
-        <section id="submit">
-            <h3>تقديم طلب إعلان جديد</h3>
-            <div id="messageStatus" class="small muted" style="text-align: right; margin-bottom: 15px;">
-                سيتم مراجعة إعلانك من قبل فريق الإدارة قبل النشر.
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#64748b">الوصف</label>
+              <textarea id="f_desc" rows="4" required placeholder="وصف كامل للإعلان..."></textarea>
             </div>
 
-            <form id="adForm">
-                <div class="form-group">
-                    <label for="name">عنوان الإعلان (مختصر)</label>
-                    <input type="text" id="name" name="name" required placeholder="مثل: غرفة نوم مودرن، شقة للايجار ببحري">
-                </div>
-                
-                <div class="form-group">
-                    <label for="description">وصف كامل ومفصل</label>
-                    <textarea id="description" name="description" required placeholder="اذكر جميع التفاصيل والميزات والعيوب إن وجدت."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">الفئة</label>
-                    <input type="text" id="category" name="category" required placeholder="مثل: عقارات، سيارات، أثاث">
-                </div>
-                
-                <div class="form-group">
-                    <label for="location">الموقع</label>
-                    <input type="text" id="location" name="location" required placeholder="المدينة والحي/المنطقة">
-                </div>
-                
-                <div class="form-group">
-                    <label for="price">السعر</label>
-                    <input type="text" id="price" name="price" required placeholder="مثل: 500,000 جنيه، أو تفاوض">
-                </div>
-                
-                <div class="form-group">
-                    <label for="contact">رقم التواصل (WhatsApp)</label>
-                    <input type="text" id="contact" name="contact" required placeholder="مثال: 0912345678">
-                </div>
-                
-                <div class="form-group">
-                    <label for="image_file">ملف الصورة (مطلوب - سيتم معالجته ورفعه)</label>
-                    <input type="file" id="image_file" name="image_file" accept="image/*" required>
-                </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#64748b">رقم الهاتف (واتساب)</label>
+              <input type="tel" id="f_phone" required placeholder="0912345678">
+            </div>
 
-                <div class="form-group">
-                    <div id="status" class="small muted"></div>
-                </div>
+            <div>
+              <label style="font-size:13px;font-weight:700;color:#64748b">صورة الإعلان</label>
+              <input type="file" id="f_img" accept="image/*" required style="padding:8px;">
+              <div style="font-size:11px;color:#ef4444;margin-top:4px;">* سيتم ضغط الصورة تلقائياً لسرعة التحميل</div>
+            </div>
 
-                <button type="submit" id="submitBtn" class="btn" style="width: 100%; padding: 12px; font-size: 16px;">إرسال طلب الإعلان</button>
-            </form>
-        </section>
+            <button type="submit" class="btn" id="submitBtn">نشر الإعلان</button>
+          </div>
+        </form>
+      </div>
+    </section>
 
-        <section id="about">
-            <h3>من نحن؟</h3>
-            <p>منصة الدلالة هي سوق إلكتروني يهدف إلى تسهيل عملية البيع والشراء ونشر الإعلانات المبوبة داخل السودان. نحن نوفر واجهة بسيطة وسهلة للمستخدمين للتواصل المباشر عبر الواتساب.</p>
-            
-            <h3>شروط الاستخدام الأساسية:</h3>
-            <ul>
-                <li><strong>المسؤولية الشخصية:</strong> يقع التعامل بين المعلن والمشتري أو الأطراف الثالثة على مسؤولية المستخدم الشخصية بالكامل.</li>
-                <li><strong>إخلاء المسؤولية:</strong> لا يتحمل الموقع أي مسؤولية قانونية أو مالية أو تعويضية تتعلق بنتائج التعاملات، الخسائر أو الأضرار، الاحتيال أو التضليل، سوء الاستخدام، أو أي نزاعات أو مطالبات تنشأ بين المستخدمين أو المعلنين.</li>
-                <li><strong>الالتزامات:</strong> يتعهد المستخدم بالالتزام باستخدام الموقع وفقًا للقوانين والأنظمة السارية وعدم نشر أي محتوى مسيء أو مخالف أو مضلل.</li>
-            </ul>
-        </section>
+    <!-- ADMIN SECTION -->
+    <section id="admin">
+      <div id="adminLogin">
+        <h3>🔐 الدخول للوحة التحكم</h3>
+        <input type="password" id="adminPass" placeholder="كلمة المرور" style="max-width:300px;text-align:center;margin-bottom:12px;">
+        <button onclick="loginAdmin()" class="btn" style="max-width:300px;">دخول</button>
+      </div>
 
-    </main>
+      <div id="adminDash" class="hidden">
+        <div class="admin-dashboard">
+          <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchAdminTab('pending')">⏳ بانتظار الموافقة</button>
+            <button class="tab-btn" onclick="switchAdminTab('active')">✅ الإعلانات النشطة</button>
+          </div>
+          <div id="adminList" class="admin-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
-<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modalCard">
-        <div class="modalHeader">
-            <h3 id="modalTitle" class="modalTitle">عنوان الإعلان</h3>
-            <button id="modalClose" class="btn alt" type="button" aria-label="إغلاق">&times;</button>
+<!-- ITEM MODAL (VIEW) -->
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card">
+    <div class="modal-img-box">
+      <img id="m_img" src="" alt="">
+    </div>
+    <div class="modal-content">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span id="m_price" class="price"></span>
+        <span id="m_cat" class="cat-badge"></span>
+      </div>
+      <h2 id="m_title" style="margin:0 0 12px 0;"></h2>
+      <p id="m_desc" style="white-space:pre-wrap;color:#334155;font-size:15px;"></p>
+      <div style="margin-top:20px;padding-top:10px;border-top:1px solid #eee;">
+        <small style="color:#94a3b8">📍 السودان • <span id="m_date"></span></small>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a id="m_wa" href="#" target="_blank" class="btn green">تواصل واتساب</a>
+      <button onclick="closeModal()" class="btn" style="background:#e2e8f0;color:#334155;">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL (ADMIN) -->
+<div id="editModal" class="modal">
+    <div class="modal-card">
+        <div style="padding:16px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:bold;">تعديل الإعلان</div>
+        <div class="modal-content">
+            <input type="hidden" id="e_id">
+            <input type="hidden" id="e_sheet"> <!-- To know if Pending or Active -->
+            
+            <label style="font-size:12px;color:#64748b;">العنوان</label>
+            <input type="text" id="e_title" style="margin-bottom:10px;">
+            
+            <label style="font-size:12px;color:#64748b;">السعر</label>
+            <input type="text" id="e_price" style="margin-bottom:10px;">
+            
+            <label style="font-size:12px;color:#64748b;">القسم</label>
+            <select id="e_cat" style="margin-bottom:10px;">
+                <option value="سيارات">سيارات</option>
+                <option value="عقارات">عقارات</option>
+                <option value="هواتف">هواتف</option>
+                <option value="أثاث">أثاث</option>
+                <option value="خدمات">خدمات</option>
+                <option value="أخرى">أخرى</option>
+            </select>
+            
+            <label style="font-size:12px;color:#64748b;">الهاتف</label>
+            <input type="text" id="e_phone" style="margin-bottom:10px;">
+            
+            <label style="font-size:12px;color:#64748b;">الوصف</label>
+            <textarea id="e_desc" rows="5"></textarea>
         </div>
-        <div class="modalBody">
-            <div class="modalContent">
-                <div id="modalImage" class="modalImage">
-                    </div>
-                <div class="modalDetails">
-                    <p id="modalMeta" class="small muted" style="text-align: left;"></p>
-                    <p id="modalDescription" class="modalDescription"></p>
-                    
-                    <div class="detailsGrid">
-                        <div class="detailsItem">
-                            <strong>الفئة</strong>
-                            <div id="modalCat"></div>
-                        </div>
-                        <div class="detailsItem">
-                            <strong>الموقع</strong>
-                            <div id="modalLoc"></div>
-                        </div>
-                        <div class="detailsItem">
-                            <strong>السعر</strong>
-                            <div id="modalPrice" class="price"></div>
-                        </div>
-                        <div class="detailsItem">
-                            <strong>التواصل</strong>
-                            <div id="modalContact" class="muted"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modalFooter">
-            <div class="modalActions">
-                <button id="modalShare" class="btn" type="button" style="background:#5271ff;">مشاركة مع صديق</button>
-                <a id="modalWhats" class="btn" target="_blank" rel="noopener">تواصل (WhatsApp)</a>
-                <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال هاتفي</a>
-            </div>
-            <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك قبل التعامل.</div>
+        <div class="modal-footer">
+            <button onclick="saveEdit()" class="btn green">حفظ التعديلات</button>
+            <button onclick="document.getElementById('editModal').classList.remove('open')" class="btn red">إلغاء</button>
         </div>
     </div>
 </div>
 
-<script defer>
-    /* ========================================================== */
-    /* 🛑 التكوين (Configuration) 🛑 */
-    /* ========================================================== */
-    const ADMIN_WHATSAPP_NUMBER = '249998615193'; // رقم الواتساب الخاص بك
-    // ⚠️ تم وضع رابط النشر الجديد هنا:
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyFxIpZWjJAAf1tSJGEtUuR8cG7UR4lUIZPhcA42cgddRvKGwX5_xf7Cwt_ehBSU4pa/exec'; 
+<script>
+// ================= CONFIGURATION =================
+// 🛑 REPLACE THIS URL WITH YOUR NEW DEPLOYED GOOGLE SCRIPT URL 🛑
+const API_URL = "REPLACE_WITH_YOUR_DEPLOYED_WEB_APP_URL"; 
+// =================================================
 
-    /* ========================================================== */
-    /* 🛑 المتغيرات العامة وعناصر DOM 🛑 */
-    /* ========================================================== */
-    let allAds = []; // قائمة لتخزين جميع الإعلانات
-    let isDataLoaded = false;
+let allAds = [];
+let pendingAds = [];
+let isAdmin = false;
+let currentAdminTab = 'pending';
+
+// --- NAVIGATION ---
+function nav(id){
+  document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  if(document.getElementById('btn-'+id)) document.getElementById('btn-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// --- DATA FETCHING ---
+async function loadAds(forceAdmin = false) {
+  const loader = document.getElementById('loader');
+  if(loader) loader.style.display = 'block';
+  
+  const type = forceAdmin ? 'admin_read' : 'read';
+  const pass = document.getElementById('adminPass').value;
+  
+  try {
+    let url = `${API_URL}?action=${type}`;
+    if(forceAdmin) url += `&password=${encodeURIComponent(pass)}`;
     
-    // عناصر الواجهة
-    const grid = document.getElementById('grid');
-    const countEl = document.getElementById('countEl');
-    const qEl = document.getElementById('qEl');
-    const catFilter = document.getElementById('catFilter');
-
-    // عناصر الـ Modal
-    const modal = document.getElementById('modal');
-    const modalClose = document.getElementById('modalClose');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalMeta = document.getElementById('modalMeta');
-    const modalDescription = document.getElementById('modalDescription');
-    const modalLoc = document.getElementById('modalLoc');
-    const modalCat = document.getElementById('modalCat');
-    const modalPrice = document.getElementById('modalPrice');
-    const modalContact = document.getElementById('modalContact');
-    const modalImageContainer = document.getElementById('modalImage');
-    const modalWhats = document.getElementById('modalWhats');
-    const modalShare = document.getElementById('modalShare');
-
-
-    /* ========================================================== */
-    /* 1. وظائف المساعدة (Helpers) */
-    /* ========================================================== */
-
-    function escapeHtml(str) {
-        if (typeof str !== 'string' && typeof str !== 'number') return '';
-        return String(str).replace(/[&<>"']/g, function(m) {
-            return {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            }[m];
-        });
-    }
-
-    function displayDate(dateString) {
-        const date = new Date(dateString);
-        if (isNaN(date)) return 'تاريخ غير معروف';
-        const now = new Date();
-        const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-        if (diffInDays === 0) return 'اليوم';
-        if (diffInDays === 1) return 'أمس';
-        if (diffInDays < 7) return `${diffInDays} أيام مضت`;
-        
-        return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
-    }
+    // Add a cache-buster to prevent browser caching for immediate updates
+    url += `&_t=${Date.now()}`; 
     
-    function debounce(func, delay) {
-        let timeout;
-        return function(...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), delay);
-        };
-    }
-
-    function displayMessage(type, message) {
-        const statusElement = document.getElementById('status');
-        if (statusElement) {
-            statusElement.className = `small ${type}`;
-            statusElement.textContent = message;
-        }
-    }
+    const res = await fetch(url);
+    const data = await res.json();
     
-    // 💡 وظيفة جديدة: الحصول على رابط صورة مُحسَّن
-    function getOptimizedImageUrl(originalUrl, size = 'w400') {
-        if (!originalUrl || !originalUrl.startsWith('http')) {
-            return 'https://via.placeholder.com/400x300?text=صورة+غير+متوفرة';
-        }
-        
-        // ** معالجة خاصة لروابط Google Drive لتحسين العرض والتحميل **
-        if (originalUrl.includes('drive.google.com') || originalUrl.includes('googleusercontent.com')) {
-            // استخلاص معرف الملف (File ID) من الرابط
-            const fileIdMatch = originalUrl.match(/id=([a-zA-Z0-9_-]+)|d\/([a-zA-Z0-9_-]+)/);
-            let fileId = null;
-            if (fileIdMatch) {
-                fileId = fileIdMatch[1] || fileIdMatch[2];
-            }
-            
-            if (fileId) {
-                // استخدام رابط الـ Thumbnail لـ Google Drive لتقليل حجم الصورة
-                return `https://drive.google.com/thumbnail?id=${fileId}&sz=${size}`;
-            }
-        }
+    if(data.error) {
+      // Replaced alert() with console.error and message box
+      console.error(data.error);
+      if(forceAdmin) showMsg('red', data.error);
 
-        // استخدام الرابط الأصلي إذا لم يكن رابط Google Drive
-        return originalUrl;
+      // If it's the public read and it fails, just show a message.
+      if(!forceAdmin) loader.innerHTML = "فشل في تحميل الإعلانات.";
+      return;
     }
 
+    if(forceAdmin) {
+      allAds = data.active.reverse();
+      pendingAds = data.pending.reverse();
+      renderAdminList(currentAdminTab);
+      document.getElementById('adminLogin').classList.add('hidden');
+      document.getElementById('adminDash').classList.remove('hidden');
+      isAdmin = true;
+      showMsg('success', '✅ تم تحديث البيانات.');
+    } else {
+      allAds = data.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by Date (latest first)
+      renderGrid(allAds);
+      loader.style.display = 'none';
+    }
+  } catch(e) {
+    console.error(e);
+    if(!forceAdmin) loader.innerHTML = "خطأ في الاتصال بالسيرفر.";
+  }
+}
 
-    /* ========================================================== */
-    /* 2. وظائف التحميل والتصنيف (Loading & Categorization) */
-    /* ========================================================== */
+// --- RENDERING ---
+function renderGrid(list) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  
+  if(list.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;">لا توجد إعلانات حالياً</div>';
+    return;
+  }
+
+  list.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    const imgUrl = item.image || 'https://via.placeholder.com/300x200?text=No+Image';
     
-    /**
-     * 🛑 الوظيفة الجديدة: تحميل الإعلانات من Apps Script
-     */
-    async function loadAdsFromGoogleSheet() {
-        if (!grid) return;
-        grid.innerHTML = '<div class="count-bar" style="grid-column: 1 / -1;">جاري تحميل الإعلانات...</div>';
-        isDataLoaded = false;
-        
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'GET',
-                redirect: 'follow',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+    el.innerHTML = `
+      <div class="media"><img src="${imgUrl}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Image+Load+Failed';"></div>
+      <div class="body">
+        <div class="card-top">
+           <div class="price">${Number(item.price).toLocaleString()} SDG</div>
+           <div class="cat-badge">${item.category}</div>
+        </div>
+        <div class="title">${item.title}</div>
+        <div class="loc">📍 ${new Date(item.date).toLocaleDateString('ar-EG')}</div>
+      </div>
+    `;
+    el.onclick = () => openModal(item);
+    grid.appendChild(el);
+  });
+}
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            
-            // تخزين البيانات
-            allAds = data; 
-            isDataLoaded = true;
+function filterAds() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value;
+  
+  const filtered = allAds.filter(a => {
+    const matchText = (a.title + a.description).toLowerCase().includes(q);
+    const matchCat = cat ? a.category === cat : true;
+    return matchText && matchCat;
+  });
+  renderGrid(filtered);
+}
 
-            // ملء خيارات الفئات
-            populateCategories(allAds);
-            
-            // تطبيق الفلاتر وعرض الإعلانات (لأننا نريد عرض الكل في البداية)
-            applyFiltersAndRender(); 
-            
-        } catch (error) {
-            console.error('Error loading ads from Google Sheet:', error);
-            grid.innerHTML = '<div class="error-message" style="grid-column: 1 / -1;">❌ فشل تحميل الإعلانات. يرجى التأكد من أن Apps Script يعمل بصلاحية (Anyone).</div>';
-        }
-    }
+// --- SUBMISSION LOGIC ---
+async function submitAd(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const fileInput = document.getElementById('f_img');
+  
+  if(!fileInput.files[0]) {
+    showMsg('red', 'يرجى اختيار صورة');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = 'جاري المعالجة <div class="spinner"></div>';
+  
+  try {
+    const base64Img = await compressImage(fileInput.files[0]);
+    const payload = {
+      title: document.getElementById('f_title').value,
+      price: document.getElementById('f_price').value,
+      category: document.getElementById('f_cat').value,
+      description: document.getElementById('f_desc').value,
+      phone: document.getElementById('f_phone').value,
+      image: base64Img,
+      action: 'submit'
+    };
 
-    // ملء قائمة الفئات المنسدلة
-    function populateCategories(ads) {
-        const categories = new Set();
-        ads.forEach(ad => {
-            if (ad.Category) {
-                categories.add(ad.Category);
-            }
-        });
-
-        catFilter.innerHTML = '<option value="">جميع الفئات</option>';
-        Array.from(categories).sort().forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat;
-            option.textContent = cat;
-            catFilter.appendChild(option);
-        });
-    }
-
-
-    /* ========================================================== */
-    /* 3. وظائف الفلترة والعرض (Filtering & Rendering) */
-    /* ========================================================== */
-
-    // دالة تطبيق الفلاتر وعرض النتائج
-    function applyFiltersAndRender() {
-        if (!isDataLoaded) return; // لا تعرض أي شيء حتى يتم تحميل البيانات
-        const q = (qEl && qEl.value || '').trim().toLowerCase();
-        const cat = (catFilter && catFilter.value || '').trim();
-        let out = allAds.slice();
-
-        // فلترة بالبحث النصي (العنوان، الوصف، الموقع)
-        if (q) {
-            out = out.filter(a => 
-                (a.Name && a.Name.toLowerCase().includes(q)) ||
-                (a.Description && a.Description.toLowerCase().includes(q)) ||
-                (a.Location && a.Location.toLowerCase().includes(q))
-            );
-        }
-
-        // فلترة بالتصنيف
-        if (cat) {
-            out = out.filter(a => a.Category === cat);
-        }
-
-        renderAds(out);
-    }
-    
-    // دالة عرض الإعلانات في الشبكة (Grid)
-    function renderAds(list) {
-        grid.innerHTML = ''; 
-        if (list.length === 0) {
-            grid.innerHTML = `<div class="count-bar" style="grid-column: 1 / -1;">لا توجد إعلانات مطابقة لعملية البحث.</div>`;
-            countEl.textContent = '0 إعلان';
-            return;
-        }
-
-        list.forEach(a => {
-            const el = document.createElement('div');
-            el.className = 'card';
-            
-            // 💡 استخدام الدالة الجديدة للحصول على رابط صورة محسّن للبطاقة
-            const imageSrc = getOptimizedImageUrl(a.Image_URL, 'w400');
-            
-            // تحديد محتوى الصورة (إذا كانت الصورة عبارة عن كود Base64)
-            // 💡 استخدام وسم <picture> لطلب WebP كأولوية للمتصفحات الداعمة
-            const mediaHtml = a.Image_URL && a.Image_URL.startsWith('data:image/') ? 
-                                `<img src="${a.Image_URL}" alt="${escapeHtml(a.Name || '')}" loading="lazy">` :
-                                `<picture>
-                                    <source srcset="${imageSrc}" type="image/webp">
-                                    <img src="${imageSrc}" alt="${escapeHtml(a.Name || '')}" loading="lazy">
-                                </picture>`;
-
-            el.innerHTML = `
-                <div class="media">${mediaHtml}</div>
-                <div class="body">
-                    <div class="title">${escapeHtml(a.Name || '')}</div>
-                    <div class="desc">${escapeHtml(a.Description || '')}</div>
-                    <div class="meta">
-                        <div class="badge">${escapeHtml(a.Category || 'عام')}</div>
-                        <div class="price">${escapeHtml(a.Price || '')}</div>
-                    </div>
-                    <div class="meta">
-                        <div class="small">${escapeHtml(a.Location || '')}</div>
-                        <div class="small">(${displayDate(a.Date || '')})</div>
-                    </div>
-                </div>
-            `;
-            
-            // ربط حدث النقر لفتح التفاصيل
-            el.addEventListener('click', () => {
-                window.location.hash = a.ref_code || '';
-                openDetails(a);
-            });
-            grid.appendChild(el);
-        });
-
-        countEl.textContent = list.length + ' إعلان';
-    }
-
-
-    /* ========================================================== */
-    /* 4. وظائف المودال (Modal & Deep Linking) */
-    /* ========================================================== */
-
-    // دالة لفتح نافذة التفاصيل
-    function openDetails(ad) {
-        // ملء البيانات
-        modalTitle.textContent = escapeHtml(ad.Name || 'إعلان غير محدد');
-        modalDescription.textContent = escapeHtml(ad.Description || 'لا يوجد وصف متاح.');
-        modalCat.textContent = escapeHtml(ad.Category || 'عام');
-        modalLoc.textContent = escapeHtml(ad.Location || 'غير محدد');
-        modalPrice.textContent = escapeHtml(ad.Price || 'N/A');
-        modalContact.textContent = escapeHtml(ad.Contact || 'N/A');
-        
-        const refCode = ad.ref_code || '';
-        const adDate = displayDate(ad.Date || '');
-        modalMeta.textContent = `الكود المرجعي: ${refCode} | تاريخ النشر: ${adDate}`;
-        
-        // 💡 استخدام الدالة الجديدة للحصول على رابط صورة محسّن للتفاصيل (حجم أكبر)
-        const imageSrc = getOptimizedImageUrl(ad.Image_URL, 'w800');
-        
-        // 💡 استخدام وسم <picture> لطلب WebP كأولوية للمتصفحات الداعمة
-        modalImageContainer.innerHTML = `
-            <picture>
-                <source srcset="${imageSrc}" type="image/webp">
-                <img id="modalMainImg" src="${imageSrc}" alt="${escapeHtml(ad.Name || '')}" loading="lazy">
-            </picture>
-        `;
-
-        // روابط التواصل
-        const whatsMessage = `مرحباً، أنا مهتم بالإعلان رقم ${refCode} ( بعنوان: ${ad.Name} ). هل الإعلان متاح بعد؟`;
-        modalWhats.href = `https://wa.me/${escapeHtml(ad.Contact || '')}?text=${encodeURIComponent(whatsMessage)}`;
-        
-        // رابط المشاركة (يستخدم Web Share API)
-        modalShare.onclick = () => {
-            const shareMessage = `شاهد هذا الإعلان على الدلالة: ${ad.Name}\n${window.location.href}`;
-             if (navigator.share) {
-                navigator.share({
-                    title: ad.Name,
-                    text: shareMessage,
-                    url: window.location.href,
-                }).catch(error => console.error('Error sharing:', error));
-            } else {
-                // Fallback to WhatsApp link (URL encoded)
-                window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank');
-            }
-        };
-
-        modal.setAttribute('aria-hidden', 'false');
-    }
-
-    // دالة لإغلاق نافذة التفاصيل
-    function closeModal() {
-        window.history.replaceState(null, null, window.location.pathname + window.location.search);
-        modal.setAttribute('aria-hidden', 'true');
-    }
-    
-    // دالة لفتح الإعلان مباشرة من رابط يحتوي على هاش (#ref_code)
-    function openAdFromHash() {
-        const hash = window.location.hash.substring(1);
-        if (hash) {
-            const ad = allAds.find(a => a.ref_code === hash);
-            if (ad) {
-                openDetails(ad);
-            }
-        }
-    }
-
-
-    /* ========================================================== */
-    /* 5. وظائف التنقل (Navigation) */
-    /* ========================================================== */
-
-    // دالة التبديل بين الأقسام
-    function setupNavigation(targetId = 'home') {
-        const navButtons = document.querySelectorAll('nav[aria-label="واجهة"] button');
-        const sections = document.querySelectorAll('main > section');
-
-        // دالة التبديل الفعلية
-        const switchSection = (target) => {
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === target) {
-                    section.classList.add('active');
-                }
-            });
-            navButtons.forEach(btn => {
-                const isActive = btn.getAttribute('data-target') === target;
-                btn.setAttribute('aria-current', isActive ? 'true' : 'false');
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        };
-        
-        // ربط الأحداث بالأزرار
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                switchSection(button.getAttribute('data-target'));
-            });
-        });
-        
-        // تفعيل القسم الأولي
-        switchSection(targetId);
-    }
-    
-    // دالة للتحقق من وجود رسائل في الشريط المتحرك وإظهاره
-    function checkAndToggleVisibility() {
-        const tickerTape = document.getElementById('tickerTape');
-        const tickerItems = tickerTape ? tickerTape.querySelectorAll('.ticker-item') : null;
-        
-        if (tickerTape && tickerItems && tickerItems.length > 0) {
-            tickerTape.classList.add('has-messages');
-        }
-    }
-
-
-    /* -------------------------------------------------------------------------- */
-    /* 6. منطق إرسال الإعلانات (Form Submission Logic) - 💡 رفع الصور مباشرة */
-    /* -------------------------------------------------------------------------- */
-    (function() {
-        const adForm = document.getElementById('adForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const statusElement = document.getElementById('status');
-
-        if (!adForm || !submitBtn) return; 
-
-        adForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            statusElement.textContent = 'جاري تحضير ورفع الصورة...';
-            statusElement.className = 'small muted';
-
-            const formData = new FormData(adForm);
-            const adData = {};
-            for (let [key, value] of formData.entries()) {
-                adData[key] = value.trim();
-            }
-            
-            // 1. الحصول على ملف الصورة
-            const fileInput = document.getElementById('image_file');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                displayMessage('error', '❌ يرجى اختيار ملف صورة.');
-                submitBtn.disabled = false;
-                return;
-            }
-
-            // 2. قراءة الملف كـ Base64
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = async function() {
-                // إزالة رأس البيانات (data:image/jpeg;base64,) للحصول على Base64 النقي
-                const base64Data = reader.result.split(',')[1]; 
-                const mimeType = file.type;
-                
-                // 3. تحضير Payload للإرسال عبر POST إلى Apps Script
-                const finalPayload = {
-                    action: 'submitAd', 
-                    data: {
-                        Name: adData.name,
-                        Description: adData.description,
-                        Category: adData.category,
-                        Location: adData.location,
-                        Price: adData.price,
-                        Contact: adData.contact,
-                        ImageBase64: base64Data, // إرسال بيانات الصورة
-                        MimeType: mimeType, // إرسال نوع الصورة
-                        ref_code: 'AD' + Date.now().toString().slice(-6),
-                        Date: new Date().toISOString(),
-                        Status: 'Pending'
-                    }
-                };
-
-                statusElement.textContent = 'جاري إرسال الإعلان وحفظه في قاعدة البيانات...';
-
-                try {
-                    // 4. إرسال البيانات عبر POST إلى Apps Script
-                    const response = await fetch(WEB_APP_URL, {
-                        method: 'POST', 
-                        mode: 'cors', 
-                        cache: 'no-cache',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded', 
-                        },
-                        // يتم إرسال الكائن كـ JSON ليتمكن Apps Script من قراءته عبر e.postData.contents
-                        body: JSON.stringify(finalPayload) 
-                    });
-
-                    const result = await response.json();
-
-                    if (result.status === 'success') {
-                        displayMessage('success', '✅ تم استلام إعلانك للمراجعة بنجاح! سيظهر في لوحة التحكم خلال لحظات.');
-                        adForm.reset();
-                    } else {
-                        // Apps Script returned an error
-                        displayMessage('error', `❌ فشل الإرسال: ${result.message || 'حدث خطأ في جهة الخادم. (راجع Console)'}`);
-                    }
-
-                } catch (error) {
-                    console.error('Network Submission Error:', error);
-                    displayMessage('error', '❌ فشل في الاتصال بالشبكة. يرجى التحقق من اتصالك بالإنترنت وتأكد أن رابط Apps Script يعمل.');
-                } finally {
-                    submitBtn.disabled = false;
-                }
-            };
-
-            reader.onerror = function() {
-                displayMessage('error', '❌ فشل في قراءة ملف الصورة.');
-                submitBtn.disabled = false;
-            };
-        });
-    })();
-    /* -------------------------------------------------------------------------- */
-    /* END ADS SUBMISSION LOGIC */
-    /* -------------------------------------------------------------------------- */
-
-
-    // --- إعداد الأحداث العامة ---
-    if(qEl){
-      qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
-    }
-
-    if(catFilter){
-      catFilter.addEventListener('change', applyFiltersAndRender);
-    }
-
-    const refreshBtn = document.getElementById('refresh');
-    if(refreshBtn){
-      refreshBtn.addEventListener('click', loadAdsFromGoogleSheet);
-    }
-    
-    modalClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => { // إغلاق عند النقر خارج الـ ModalCard
-        if (e.target === modal) {
-            closeModal();
-        }
+    const res = await fetch(https://script.google.com/macros/s/AKfycbxiAcvd4w2DDzhZWEoPdf4OUikRbhttly8F4bI_WaBimjzJwcxi4KCEIiODGpDFqVJNQg/exec, {
+      method: 'POST',
+      mode: 'no-cors', // Must use no-cors with Apps Script POST
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify(payload)
     });
     
-    // Initial load handler
-    window.addEventListener('load', async ()=>{ 
-      // 1. Setup section switching 
-      setupNavigation(); 
-      
-      // 2. Load and render initial data
-      await loadAdsFromGoogleSheet(); // نستخدم await لضمان تحميل البيانات قبل التحقق من الهاش
-      
-      // 3. Check for hash in URL and open the ad modal if found
-      openAdFromHash(); 
-      checkAndToggleVisibility();
-    });
+    // Apps Script POST returns opaque response in no-cors, cannot check status
+    // We assume success and move on
+    
+    showMsg('success', '✅ تم إرسال إعلانك للمراجعة!');
+    document.getElementById('adForm').reset();
+    nav('home');
 
-</script>
+  } catch(err) {
+    showMsg('red', '❌ حدث خطأ أثناء الإرسال');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'نشر الإعلان';
+  }
+}
 
-</body>
-</html>
+// --- IMAGE COMPRESSION ---
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const scale = MAX_WIDTH / img.width;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      };
+      img.onerror = reject;
+    };
+    reader.onerror = reject;
+  });
+}
+
+// --- ADMIN LOGIC ---
+let clickCount = 0;
+function tryAdmin(){
+  clickCount++;
+  if(clickCount === 5) {
+    nav('admin');
+    clickCount = 0;
+  }
+}
+// Check hash for admin login (optional but helpful)
+if(window.location.hash === '#admin') nav('admin');
+
+function loginAdmin() {
+  loadAds(true);
+}
+
+function switchAdminTab(tab) {
+  currentAdminTab = tab;
+  document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  // Find the button that was clicked or corresponds to the tab
+  const btnText = tab === 'pending' ? 'بانتظار' : 'النشطة';
+  const btn = Array.from(document.querySelectorAll('.admin-tabs .tab-btn')).find(b => b.textContent.includes(btnText));
+  if (btn) btn.classList.add('active');
+  renderAdminList(tab);
+}
+
+function renderAdminList(type) {
+  const list = type === 'pending' ? pendingAds : allAds;
+  const container = document.getElementById('adminList');
+  container.innerHTML = '';
+  
+  if(list.length === 0) {
+    container.innerHTML = '<p style="text-align:center">لا يوجد عناصر</p>';
+    return;
+  }
+
+  list.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    
+    // Admin Action Buttons
+    let buttons = '';
+    
+    // 1. Edit Button (Always available)
+    buttons += `<button onclick="openEditModal('${item.id}', '${type}')" class="mini-btn orange">✏️ تعديل</button>`;
+    
+    // 2. Pending Specific (Approve)
+    if(type === 'pending') {
+        buttons += `<button onclick="adminAct('${item.id}', 'approve', 'هل أنت متأكد من نشر الإعلان؟')" class="mini-btn green">✅ نشر</button>`;
+    } 
+    // 3. Active Specific (Bump to Top)
+    else {
+        buttons += `<button onclick="adminAct('${item.id}', 'bump', 'هل أنت متأكد من رفع الإعلان للأعلى؟')" class="mini-btn" style="background:#8b5cf6">⬆️ رفع</button>`;
+    }
+    
+    // 4. Delete (Always available)
+    buttons += `<button onclick="adminAct('${item.id}', 'delete', 'هل أنت متأكد من حذف الإعلان نهائياً؟')" class="mini-btn red">🗑 حذف</button>`;
+
+    // 5. Contact Link
+    buttons += `<a href="https://wa.me/${item.phone}" target="_blank" class="mini-btn" style="background:#25D366">📞</a>`;
+
+    el.innerHTML = `
+      <div class="media"><img src="${item.image}" onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=No+Image';"></div>
+      <div class="body">
+        <div style="font-weight:bold">${item.title}</div>
+        <div style="font-size:12px">${Number(item.price).toLocaleString()} SDG - ${item.category}</div>
+        <div class="admin-actions">${buttons}</div>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+// Replaced confirm() with a custom message box for demonstration
+function adminAct(id, action, message) {
+    // This is a direct replacement for confirm(), usually handled by a custom modal UI.
+    // For this environment, we use a simple alert as a placeholder for a custom UI modal.
+    if (!window.confirm(message)) { 
+        return;
+    }
+    sendAdminRequest({ action, id });
+    loadAds(true); 
+}
+
+// --- EDIT FEATURE ---
+function openEditModal(id, type) {
+    const list = type === 'pending' ? pendingAds : allAds;
+    const item = list.find(x => x.id === id);
+    if(!item) return;
+
+    document.getElementById('e_id').value = item.id;
+    document.getElementById('e_sheet').value = type === 'pending' ? 'Pending' : 'Active';
+    document.getElementById('e_title').value = item.title;
+    document.getElementById('e_price').value = item.price;
+    document.getElementById('e_cat').value = item.category;
+    document.getElementById('e_phone').value = item.phone;
+    document.getElementById('e_desc').value = item.description;
+
+    document.getElementById('editModal').classList.add('open');
+}
+
+async function saveEdit() {
+    const payload = {
+        action: 'edit',
+        id: document.getElementById('e_id').value,
+        sheetName: document.getElementById('e_sheet').value,
+        title: document.getElementById('e_title').value,
+        price: document.getElementById('e_price').value,
+        category: document.getElementById('e_cat').value,
+        phone: document.getElementById('e_phone').value,
+        description: document.getElementById('e_desc').value
+    };
+    
+    document.getElementById('editModal').classList.remove('open');
+    await sendAdminRequest(payload);
+    
+    // Reload the list after saving
+    loadAds(true);
+}
+
+async function sendAdminRequest(data) {
+  const pass = document.getElementById('adminPass').value;
+  data.password = pass;
+  
+  showMsg('info', 'جاري التنفيذ...');
+  
+  try {
