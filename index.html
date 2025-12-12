@@ -6,599 +6,1941 @@
 <title>الدلالة | سوق إلكتروني للبيع والشراء في السودان</title>
 <link rel="icon" type="image/png" href="/favicon.ico">
 
-<meta name="description" content="الدلالة — سوق إلكتروني." />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VFM8VZCQY6');
+</script>
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="الدلالة — معرض وسوق متميز لنشر ومتابعة الإعلانات المبوبة بسهولة ويسر في السودان . انشر إعلانك بسهولة وتواصل مع المشترين في منطقتك مباشرة , متعة وسهولة في العرض والطلب ,فقط عبر الواتساب يمكنك تقديم طلب اعلان واذا تمت الموافقة سيعرض اعلانك علي الملايين من الزوار." />
+<link rel="canonical" href="https://eldelala.com/" />
+<link rel="icon" type="image/png" href="/favicon.ico">
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="الدلالة — اعلن ببساطة وسهولة" />
+<meta property="og:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
+<meta property="og:url" content="https://eldelala.com/" />
+<meta property="og:image" content="https://eldelala.com/logo-1200x630.png" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="الدلالة — سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
+<meta name="twitter:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
+<meta name="twitter:image" content="https://eldelala.com/logo-800x418.png" />
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": ["WebSite", "Organization"],
+  "name": "الدلالة",
+  "url": "https://eldelala.com/",
+  "logo": "https://eldelala.com/logo.png",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+249-9986-15193",
+    "contactType": "customer support",
+    "email": "info@eldelala.com"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://eldelala.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet"></noscript>
 
 <style>
-  /* --- CORE STYLES --- */
-  :root {
-    --primary: #0078d7;
-    --bg: #f7fbff;
-    --text: #0b1320;
-    --white: #ffffff;
-    --accent: #ffcc00;
-  }
+  /* --- EXISTING STYLES --- */
   *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
-  body{margin:0;background:var(--bg);color:var(--text);line-height:1.5;padding-bottom: 80px;}
-  .container{max-width:1100px;margin:0 auto;padding:12px}
-  
-  /* HEADER */
-  header{background:var(--primary);color:var(--white);padding:12px;border-radius:0 0 14px 14px;box-shadow:0 4px 20px rgba(0,120,215,0.25);margin-bottom:16px;position:sticky;top:0;z-index:50;}
-  header .brand{display:flex;align-items:center;justify-content:space-between;}
-  .brand .title{font-size:22px;font-weight:900;letter-spacing:-0.5px}
-  
-  /* NAVIGATION */
-  nav{display:flex;gap:8px;}
-  nav button{
-    background:rgba(255,255,255,0.15);color:#fff;border:none;
-    padding:8px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:700;
-    transition: all 0.2s;
+  body{margin:0;background:#f7fbff;color:#0b1320;line-height:1.4}
+  .container{max-width:1100px;margin:16px auto;padding:12px}
+  header{background:#0078d7;color:#fff;padding:12px;border-radius:14px;box-shadow:0 12px 40px rgba(0,120,215,0.35);margin-bottom:16px}
+  header .brand{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .brand .title{font-size:24px;font-weight:900; cursor:pointer;} /* 💡 Added cursor:pointer for logo */
+  nav[aria-label="واجهة"]{display:flex;gap:8px;flex-wrap:wrap}
+  nav[aria-label="واجهة"] button{
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.4);
+    padding:6px 10px;
+    border-radius:999px;
+    cursor:pointer;
+    font-size:13px;
   }
-  nav button:hover, nav button.active{background:#fff;color:var(--primary);transform:scale(1.05);}
-
-  /* CONTROLS (Search & Filter) */
-  .controls{display:grid;grid-template-columns:1fr 140px;gap:10px;margin-bottom:16px;}
-  @media(max-width:480px){ .controls{grid-template-columns:1fr;} }
-  
-  input, select, textarea{
-    padding:12px;border-radius:12px;border:1px solid #e6eef8;width:100%;
-    font-size:15px;background:#fff;outline:none;transition:0.2s;
+  nav[aria-label="واجهة"] button[aria-current="true"]{
+    background:#fff;
+    color:#0078d7;
+    border-color:#fff;
   }
-  input:focus, select:focus, textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,120,215,0.1);}
-  
-  /* GRID & CARDS */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:16px}
-  .card{
-    background:#fff;border-radius:16px;overflow:hidden;
-    box-shadow:0 4px 12px rgba(0,0,0,0.04);transition:transform .2s, box-shadow .2s;
-    cursor:pointer;position:relative;border:1px solid #f0f4f8;
+
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+  input, textarea, select{
+    padding:10px;border-radius:10px;border:1px solid #e6eef8;width:100%;font-size:15px;background:#fff
   }
-  .card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,0.08);}
-  
-  .media{height:200px;background:#f1f5f9;position:relative;overflow:hidden;}
-  .media img{width:100%;height:100%;object-fit:cover;transition:0.3s;}
-  .card:hover .media img{transform:scale(1.03);}
-  
-  .body{padding:14px;}
-  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
-  .price{font-weight:800;color:#059669;font-size:16px;}
-  .cat-badge{font-size:11px;background:#eff6ff;color:var(--primary);padding:4px 8px;border-radius:8px;font-weight:700;}
-  
-  .title{font-weight:800;font-size:16px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .loc{font-size:12px;color:#64748b;display:flex;align-items:center;gap:4px;}
-  
-  /* BUTTONS */
-  .btn{
-    display:inline-flex;align-items:center;justify-content:center;
-    background:var(--primary);color:#fff;padding:12px 20px;
-    border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:14px;
-    text-decoration:none;transition:0.2s;width:100%;
+  textarea{min-height:80px;resize:vertical}
+  .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
+button.btn.alt#modalClose {
+  background: red; /* or background-color: #FF0000; */
+}
+    .btn{background:#0078d7;color:#fff;padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-size:14px}
+button.btn.alt#modalCall {
+  background: blue; /* or background-color: #FF0000; */
+}
+  .btn.alt{background:green }
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+
+  .grid{display:grid;grid-template-columns:repeat(1,1fr);gap:14px}
+  @media (min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media (min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
+  .card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,0.09);display:flex;flex-direction:column;transition:transform .12s;cursor:pointer}
+  .card:hover{transform:translateY(-4px)}
+  .media{height:220px;background:#f0f4f8;display:flex;align-items:center;justify-content:center;position:relative}
+  .media img{width:100%;height:100%;object-fit:cover;display:block}
+  .body{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .title{font-weight:700;font-size:16px}
+  .desc{font-size:13px;color:#4b5563;max-height:3.6em;overflow:hidden}
+  .meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#6b7280}
+  .badge{background:#eff6ff;color:#1d4ed8;padding:4px 8px;border-radius:999px;font-size:11px}
+  .price{font-weight:700;color:#047857}
+  footer{font-size:12px;color:#6b7280;text-align:center;margin-top:18px}
+  .small{font-size:12px}
+  .muted{color:#6b7280}
+  .panel{background:#fff;border-radius:14px;padding:12px;box-shadow:0 8px 24px rgba(15,23,42,0.08);margin-top:8px}
+  .subCard{background:#0f172a;color:#e5e7eb;border-radius:14px;padding:10px;margin-top:10px}
+  .refBox{background:#eff6ff;border-radius:10px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .refCode{font-family:monospace;font-size:16px;font-weight:800}
+  .fullDesc{white-space:pre-wrap;font-size:14px;color:#111827}
+  .detailsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+  .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
+  .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
+/* يمنع الصورة من تغطية أزرار المشاركة */
+.modalMain{
+  max-height: calc(90vh - 80px);
+  overflow-y: auto;
+}
+
+.modalImage{
+  max-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalImage img{
+  max-height: 55vh; /* يمنع التمدد الزائد */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+  main > section{display:none}
+  main > section.active{display:block}
+
+  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.6);display:none;align-items:center;justify-content:center;z-index:999;padding:12px}
+  .modal[aria-hidden="false"]{display:flex}
+  .modalCard{background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 18px 40px rgba(15,23,42,0.5);display:flex;flex-direction:column}
+  .modalMain{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.1fr);gap:12px;padding:12px}
+  .modalImage{background:#020617;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .modalImage img{max-width:100%;max-height:360px;display:block}
+  .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
+  .modalActions{display:flex;gap:8px;flex-wrap:wrap}
+
+  @media(max-width:720px){
+    .modalMain{grid-template-columns:1fr}
+    .modalImage{order:-1}
+    .detailsList{grid-template-columns:1fr}
   }
-  .btn:active{transform:scale(0.98);}
-  .btn.red{background:#ef4444;}
-  .btn.green{background:#10b981;}
-  .btn.orange{background:#f59e0b;}
-  .btn:disabled{opacity:0.6;cursor:not-allowed;}
 
-  /* SECTIONS */
-  main > section{display:none;animation: fadeIn 0.3s ease-in-out;}
-  main > section.active{display:block;}
-  @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+/* --- Ticker Tape / Marquee Bar Styles --- */
+#tickerTape{
+  background: #fffae8; /* Soft yellow background for attention */
+  border: 1px solid #ffcc00;
+  padding: 8px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+  margin-bottom: 16px;
+  display: none; /* 🛑 Hidden by default */
+}
+#tickerTape.has-messages {
+    display: flex; /* 🛑 Only shown if JS adds the class */
+}
+.ticker-content{
+  display: flex;
+  white-space: nowrap; /* Keep content on a single line */
+  animation: marquee-rtl 25s linear infinite; /* Animation definition */
+}
+.ticker-content:hover{
+  animation-play-state: paused; /* Pause on hover */
+}
+.ticker-item{
+  font-size: 14px;
+  color: #333;
+  padding-left: 50px; /* Space between messages */
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+/* RTL Marquee Animation */
+@keyframes marquee-rtl {
+  100% { transform: translateX(100%); } /* Start off-screen right */
+   0% { transform: translateX(-100%); } /* End off-screen left */
+}
+/* Ensure the items don't stretch */
+.ticker-item:first-child {
+  padding-left: 0;
+}
+/* --- End Ticker Tape Styles --- */
 
-  /* ADMIN PANEL STYLES */
-  #adminLogin{text-align:center;padding:40px 20px;}
-  .admin-dashboard{background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.05);padding:16px;margin-top:20px;}
-  .admin-tabs{display:flex;gap:10px;margin-bottom:20px;border-bottom:2px solid #f1f5f9;padding-bottom:10px;}
-  .tab-btn{background:none;border:none;padding:8px 16px;cursor:pointer;color:#64748b;font-weight:700;}
-  .tab-btn.active{color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-12px;}
-  
-  .admin-list .card{flex-direction:row;display:flex;height:auto;margin-bottom:12px;padding:8px;}
-  .admin-list .media{width:80px;height:80px;border-radius:8px;flex-shrink:0;}
-  .admin-list .body{padding:0 12px;flex:1;}
-  .admin-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
-  .mini-btn{padding:6px 10px;border-radius:8px;font-size:12px;border:none;cursor:pointer;color:white;display:flex;align-items:center;gap:4px;}
-  
-  /* MODAL */
-  .modal{position:fixed;inset:0;background:rgba(15,23,42,0.8);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;backdrop-filter:blur(4px);}
-  .modal.open{display:flex;}
-  .modal-card{background:#fff;width:100%;max-width:600px;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;max-height:90vh;}
-  .modal-img-box{background:#000;height:300px;display:flex;align-items:center;justify-content:center;}
-  .modal-img-box img{max-width:100%;max-height:100%;}
-  .modal-content{padding:20px;overflow-y:auto;}
-  .modal-footer{padding:16px;background:#f8fafc;display:flex;gap:10px;}
-  
-  /* EDIT MODAL SPECIFIC */
-  #editModal .modal-card{max-height:95vh;}
+/* ========================================================== */
+/* 💡 NEW: MESSAGE CONTAINER STYLING (MSEGS) */
+/* ========================================================== */
+:root {
+    /* Eldelala Primary Colors for Messages */
+    --msg-primary-color: #0078d7; /* Header Blue */
+    --msg-text-color: #0b1320;
+    --msg-bg-color: #f7fbff;
+    
+    /* Success Message Colors (Calm Green) */
+    --success-bg: #e6ffed; /* Very light green */
+    --success-border: #047857; /* Price Green */
+    --success-text: #059669; 
+    
+    /* Error/Warning Message Colors (Orange/Red - Using Alt Button color as a base for error) */
+    --error-bg: #fee2e2;
+    --error-border: #dc2626;
+    --error-text: #dc2626;
+}
 
-  /* UTILS */
-  .hidden{display:none !important;}
-  .spinner{width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block;margin-left:8px;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+#msges-container {
+    width: 100%;
+    max-width: 1100px; /* Matching the container width */
+    margin: 0 auto 16px auto; /* Margin above controls, below header */
+    padding: 0 12px;
+    display: none; /* Controlled by JS: disappears when empty */
+}
+
+.msges-box {
+    display: flex; 
+    align-items: center;
+    
+    margin-bottom: 8px;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: right; 
+}
+
+/* Success Message Style */
+.msges-box.success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    /* RTL Border on the right */
+    border-right: 5px solid var(--success-border); 
+}
+
+/* Error Message Style */
+.msges-box.error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border-right: 5px solid var(--error-border); 
+}
+
+/* Close Button Styling */
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: inherit; 
+    /* Push button to the far left in RTL layout */
+    margin-inline-start: auto; 
+    padding: 0 10px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+/* ========================================================== */
+/* 🛑 END OF NEW MESSAGE STYLES */
+/* ========================================================== */
+
+/* ========================================================== */
+/* 💡 NEW: ADMIN PANEL STYLES */
+/* ========================================================== */
+  /* Add styles for the admin panel and stats */
+  .grid-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+  }
+  .stat-card {
+    background: #f0f4f8;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .stat-card strong {
+    display: block;
+    font-size: 28px;
+    color: #0078d7;
+    margin-bottom: 4px;
+  }
+  .stat-card span {
+    font-size: 14px;
+    color: #4b5563;
+  }
+
+  /* Admin List/Table Styling (Responsive) */
+  .admin-list-container {
+    margin-top: 10px;
+    overflow-x: auto; /* Allow horizontal scroll on small screens */
+  }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px; /* Space between rows */
+    min-width: 650px; /* Ensure table is usable on small screens */
+  }
+  .admin-table th, .admin-table td {
+    padding: 12px;
+    text-align: right;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .admin-table th {
+    background: #e6eef8;
+    color: #0b1320;
+    font-weight: 700;
+    position: sticky; /* Keep header visible on horizontal scroll */
+    top: 0;
+    z-index: 10;
+  }
+  .admin-table thead tr th:first-child { border-radius: 8px 0 0 0; }
+  .admin-table thead tr th:last-child { border-radius: 0 8px 0 0; }
+
+  .admin-table tbody tr {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.1s;
+    cursor: default;
+  }
+  .admin-table tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .admin-table .action-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: nowrap;
+    justify-content: flex-end; /* Align buttons to the left (RTL) */
+  }
+  .admin-table .action-btns button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+  }
+  .admin-table .delete-btn { background: #dc2626; color: #fff; }
+  .admin-table .edit-btn { background: #f59e0b; color: #fff; }
+  .admin-table .approve-btn { background: #059669; color: #fff; }
+
+/* Edit Ad Form inside Modal */
+#edit-ad-form input, #edit-ad-form textarea, #edit-ad-form select {
+    margin-bottom: 8px;
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 14px;
+}
+#edit-ad-form textarea {
+    min-height: 60px;
+}
+/* ========================================================== */
+/* 🛑 END OF NEW ADMIN PANEL STYLES */
+/* ========================================================== */
 </style>
 </head>
 <body>
-
-<div class="container">
+<div class="container" id="app">
   <header>
     <div class="brand">
-      <div class="title" onclick="tryAdmin()">الدلالة</div>
-      <nav>
-        <button onclick="nav('home')" class="active" id="btn-home">الرئيسية</button>
-        <button onclick="nav('send')" id="btn-send">أعلن</button>
+      <div class="title">الدلالة</div>
+      <nav aria-label="واجهة">
+        <button type="button" class="nav-btn" data-target="home" aria-current="true">الرئيسية</button>
+        <button type="button" class="nav-btn" data-target="send">أنشر إعلانك</button>
+        <button type="button" class="nav-btn" data-target="privacy">سياسة الخصوصية</button>
+        <button type="button" class="nav-btn" data-target="admin" id="adminNavBtn" style="display:none;">لوحة المشرف</button>
       </nav>
     </div>
   </header>
+  
+  <div id="msges-container">
+    </div>
+  <div class="controls" id="listControls" role="search" aria-label="بحث وتحكم">
+    <div style="flex:1;min-width:180px"><input id="q" type="search" placeholder="ابحث بالعنوان أو الرمز أو الموقع"></div>
+    <div style="width:200px"><select id="catFilter"><option value="">كل الاقسام</option></select></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div id="count" class="small" aria-live="polite">تحميل...</div>
+    </div>
+  </div>
 
-  <div id="msgBox" style="display:none;padding:12px;border-radius:12px;margin-bottom:16px;color:white;font-weight:bold;text-align:center;"></div>
+  <div id="tickerTape" role="marquee" aria-live="off">
+    <div class="ticker-content">
+        <span class="ticker-item">   سيتم التواصل مع المرشحين المختارين فقط </span>
+            <span class="ticker-item">   </span>
 
+      <span class="ticker-item">  اغلاق باب التقديم لوظيفة : مسؤول دعم العملاء – الخرطوم </span>
+
+      <span class="ticker-item">   </span>
+   
+                 <span class="ticker-item">  تأكد دائماً من صحة المعلومات بنفسك قبل التعامل  </span>
+       
+  
+                 <span class="ticker-item">   </span>
+                   
+     <span class="ticker-item"> الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات  </span>
+ 
+        </div>
+  </div>
   <main>
-    <!-- HOME SECTION -->
-    <section id="home" class="active">
-      <div class="controls">
-        <input id="search" placeholder="🔍 ابحث عن سيارة، عقار..." oninput="filterAds()">
-        <select id="catFilter" onchange="filterAds()">
-          <option value="">كل الأقسام</option>
-          <option value="سيارات">سيارات</option>
-          <option value="عقارات">عقارات</option>
-          <option value="هواتف">هواتف</option>
-          <option value="أثاث">أثاث</option>
-          <option value="خدمات">خدمات</option>
-          <option value="أخرى">أخرى</option>
-        </select>
-      </div>
-      
-      <div id="loader" style="text-align:center;padding:40px;color:#64748b;">
-        جاري تحميل الإعلانات...
-      </div>
-      
-      <div id="grid" class="grid"></div>
+    <section id="home" class="active" aria-live="polite">
+      <div id="grid" class="grid" role="list" aria-label="قائمة الإعلانات"></div>
+      <div id="noitems" style="display:none;text-align:center;margin-top:15px" class="small">مرحبا بك , يرجي الانتظار جاري تحميل الاعلانات</div>
     </section>
 
-    <!-- SEND AD SECTION -->
     <section id="send">
-      <div style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.05);">
-        <h2 style="margin-top:0;">إضافة إعلان جديد</h2>
-        <form id="adForm" onsubmit="submitAd(event)">
-          <!-- Using same inputs as Edit Modal for consistency -->
-          <div style="display:grid;gap:12px;">
-            <div>
-              <label style="font-size:13px;font-weight:700;color:#64748b">عنوان الإعلان</label>
-              <input type="text" id="f_title" required placeholder="مثال: تويوتا كورولا 2020">
-            </div>
-            
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-              <div>
-                <label style="font-size:13px;font-weight:700;color:#64748b">السعر (SDG)</label>
-                <input type="text" id="f_price" required placeholder="مثال: 5000000">
-              </div>
-              <div>
-                <label style="font-size:13px;font-weight:700;color:#64748b">القسم</label>
-                <select id="f_cat" required>
-                  <option value="سيارات">سيارات</option>
-                  <option value="عقارات">عقارات</option>
-                  <option value="هواتف">هواتف</option>
-                  <option value="أثاث">أثاث</option>
-                  <option value="خدمات">خدمات</option>
-                  <option value="أخرى">أخرى</option>
-                </select>
-              </div>
-            </div>
+      <div class="panel">
+        <h2>لتقديم طلب موافقة على إعلان املأ الحقول وانشئ بطاقة ، يُفضّل استخدام متصفح Google Chrome للحصول على أفضل تجربة.</h2>
 
-            <div>
-              <label style="font-size:13px;font-weight:700;color:#64748b">الوصف</label>
-              <textarea id="f_desc" rows="4" required placeholder="وصف كامل للإعلان..."></textarea>
-            </div>
+<h1>بعد تحميل الملف ارسله عبر الواتساب</h1>
 
-            <div>
-              <label style="font-size:13px;font-weight:700;color:#64748b">رقم الهاتف (واتساب)</label>
-              <input type="tel" id="f_phone" required placeholder="0912345678">
-            </div>
-
-            <div>
-              <label style="font-size:13px;font-weight:700;color:#64748b">صورة الإعلان</label>
-              <input type="file" id="f_img" accept="image/*" required style="padding:8px;">
-              <div style="font-size:11px;color:#ef4444;margin-top:4px;">* سيتم ضغط الصورة تلقائياً لسرعة التحميل</div>
-            </div>
-
-            <button type="submit" class="btn" id="submitBtn">نشر الإعلان</button>
+       <div style="display:grid;gap:8px">
+          <input id="f_name" placeholder="اسم الإعلان">
+          <input id="f_price" placeholder="السعر">
+          <textarea id="f_desc" placeholder="وصف الإعلان" rows="4"></textarea>
+          <input id="f_loc" placeholder="الموقع">
+          <input id="f_contact" placeholder="رقم التواصل">
+          <input id="f_cat" placeholder="القسم">
+          <div><input id="f_file" type="file" accept="image/*"></div>
+          <label style="display:flex;gap:8px;align-items:center">
+            <input type="checkbox" id="agree" />
+            <span class="small">أقر أن البيانات صحيحة وأوافق على شروط النشر</span>
+          </label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button id="submitBtn" class="btn" type="button">بدء</button>
+            <div id="submitStatus" class="small"></div>
           </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- ADMIN SECTION -->
-    <section id="admin">
-      <div id="adminLogin">
-        <h3>🔐 الدخول للوحة التحكم</h3>
-        <input type="password" id="adminPass" placeholder="كلمة المرور" style="max-width:300px;text-align:center;margin-bottom:12px;">
-        <button onclick="loginAdmin()" class="btn" style="max-width:300px;">دخول</button>
-      </div>
-
-      <div id="adminDash" class="hidden">
-        <div class="admin-dashboard">
-          <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchAdminTab('pending')">⏳ بانتظار الموافقة</button>
-            <button class="tab-btn" onclick="switchAdminTab('active')">✅ الإعلانات النشطة</button>
+          <div id="afterSubmit" style="display:none;margin-top:8px">
+            <div>تم حفظ الاعلان في السيرفر , حمّل البطاقة وارسلها لتأكيد النشر</div>
+            <div class="refBox" style="margin-top:6px">
+              <div id="refCode" class="refCode"></div>
+              <a id="openWa" class="btn alt" target="_blank" style="display:none">اضغط هنا لفتح الواتساب - البطاقة ستجدها ضمن المستندات</a>
+              <button id="downloadEmbeddedBtn" class="btn" style="display:none" type="button">⬇ تنزيل البطاقة</button>
+            </div>
+            <div id="fallbackJson" style="display:none;margin-top:8px">
+              <div class="small">اعد المحاولة.</div>
+            </div>
+            <div id="previewCard" class="subCard" style="display:none">
+              <div class="small" style="margin-bottom:6px">مالم ترسل البطاقة عبر الواتساب لن ينشر الاعلان:</div>
+              <div id="previewCanvasWrap"></div>
+            </div>
           </div>
-          <div id="adminList" class="admin-list"></div>
         </div>
       </div>
     </section>
-  </main>
+
+    <section id="privacy">
+      <div class="panel">
+        <h3>سياسة الخصوصية</h3>
+        <div style="white-space:pre-wrap;background:#fff;padding:12px;border-radius:8px;border:1px solid #eef6ff;margin-top:8px" class="small muted">
+مرحبًا بك في موقع الدلالة؛ منصة إلكترونية تهدف إلى تسهيل نشر الإعلانات المبوبة وتمكين المستخدمين من البيع والشراء والتواصل بسهولة داخل مدنهم.
+          يوفر الموقع وسيلة لعرض الخدمات والمنتجات دون أن يكون طرفًا في أي تعامل تجاري بين المستخدمين.
+
+إن استخدامك للموقع أو لأي من خدماته يشكّل موافقة كاملة وصريحة على شروط الاستخدام التالية  وفي حال عدم موافقتك على أي جزء منها، يجب عليك التوقف فورًا عن استخدام الموقع.
+
+1. نطاق الخدمة وطبيعتها
+
+يوفّر موقع الدلالة منصة إلكترونية لعرض الإعلانات، المحتوى التسويقي، وروابط لمواقع أو خدمات مقدّمة من أطراف ثالثة  ولا يقدم الموقع أي ضمان — صريحًا أو ضمنيًا — يتعلق بـ:
+
+دقة وصحة المعلومات الواردة في الإعلانات.
+
+مصداقية المعلنين.
+
+جودة أو صلاحية المنتجات أو الخدمات المعروضة.
+
+ويدرك المستخدم أن الموقع يعمل كوسيط تقني لعرض الإعلانات فقط، ولا يعد طرفًا في أي معاملة تجارية تتم بين المستخدمين أو بينهم وبين المعلنين.
+
+2. مسؤولية المستخدم والمعاملات
+
+تتم جميع التعاملات بين المستخدم والمعلنين أو الأطراف الثالثة على مسؤولية المستخدم الشخصية بالكامل.
+لا يتحمل الموقع أي مسؤولية قانونية أو مالية أو تعويضية تتعلق بما يلي:
+
+نتائج التعاملات،
+
+الخسائر أو الأضرار،
+
+الاحتيال أو التضليل،
+
+سوء الاستخدام،
+
+أي نزاعات أو مطالبات تنشأ بين المستخدمين أو المعلنين.
+
+3. الالتزامات والاستخدام المشروع
+
+يتعهد المستخدم بالالتزام بما يلي:
+
+استخدام الموقع وفقًا للقوانين والأنظمة السارية.
+
+عدم نشر أي محتوى مسيء أو مخالف أو مضلل أو منتهك لحقوق الملكية الفكرية أو الخصوصية.
+
+عدم محاولة اختراق أو تعطيل الموقع بأي صورة كانت.
+
+عدم استخدام الموقع في أي نشاط غير قانوني أو ضار بالمنصة أو بالمستخدمين الآخرين.
+
+ويحق للموقع حظر أو تعليق وصول أي مستخدم يخالف هذه الشروط، دون إشعار مسبق ودون أي التزام بتقديم الأسباب.
+
+4. الروابط والمحتوى الخارجي
+
+قد يحتوي الموقع على روابط تؤدي إلى مواقع أو خدمات خارجية.
+لا يتحمل موقع الدلالة أي مسؤولية عن:
+
+محتوى تلك المواقع،
+
+سياساتها أو ممارساتها،
+
+أمن المعلومات فيها،
+
+أو أي ضرر قد ينشأ عن زيارتها أو التعامل معها.
+
+ويتولى المستخدم وحده مسؤولية الوصول إلى تلك الروابط واستخدامها.
+
+5. تعديل أو حذف المحتوى
+
+يحتفظ الموقع بالحق الكامل في:
+
+تعديل أو تحديث أي إعلان أو محتوى،
+
+حذف أي مادة يراها مخالفة أو غير مناسبة،
+
+أو إيقاف أي خدمة بشكل جزئي أو كلي.
+
+وذلك دون حاجة لإبداء الأسباب أو تقديم إشعار مسبق.
+
+6. جمع البيانات والخصوصية
+
+قد يقوم الموقع بجمع بيانات بسيطة لتحسين جودة الخدمة وتجربة المستخدم، وتشمل:
+
+ملفات تعريف الارتباط (Cookies)،
+
+وسجلات الاستخدام (Usage Logs).
+
+7. تحديث الشروط
+
+يجوز للموقع تعديل أو تحديث شروط الاستخدام من حين لآخر.
+تصبح التعديلات نافذة فور نشرها، ويُعد استمرار المستخدم في استخدام الموقع قبولًا ضمنيًا بالشروط المحدثة.
+
+8. القبول النهائي
+
+يقر المستخدم بأنه قد قرأ بنود هذه الشروط وفهمها ووافق عليها بالكامل دون قيد أو شرط، ويتعهد بالالتزام بها أثناء استخدامه للموقع.
+ 
+info@eldelala.com
+        </div>
+      </div>
+    </section>
+
+    <section id="admin">
+      <div class="panel">
+        <h2>لوحة تحكم المشرف</h2>
+        <div id="admin-stats" class="grid-stats">
+            <div class="stat-card"><strong>0</strong><span>إجمالي الإعلانات</span></div>
+            <div class="stat-card"><strong>0</strong><span>الإعلانات المنشورة</span></div>
+            <div class="stat-card"><strong>0</strong><span>الإعلانات المعلقة</span></div>
+            <div class="stat-card"><strong>-</strong><span>أكثر قسم</span></div>
+            <div class="stat-card"><strong>-</strong><span>آخر تعديل</span></div>
+        </div>
+        
+        <h3 style="margin-top:30px;">إعلانات بانتظار المراجعة (<span id="pending-count">0</span>)</h3>
+        <div id="admin-pending-ads" class="admin-list-container">
+            <div style="text-align:center; padding:20px;" class="small muted">لا توجد إعلانات بانتظار المراجعة.</div>
+        </div>
+
+        <h3 style="margin-top:30px;">الإعلانات المنشورة (<span id="published-count">0</span>)</h3>
+        <div id="admin-published-ads" class="admin-list-container">
+            <div style="text-align:center; padding:20px;" class="small muted">لا توجد إعلانات منشورة.</div>
+        </div>
+      </div>
+    </section>
+    </main>
+
+  <footer>
+    <div>الدلالة — تأكد دائماً من صحة المعلومات بنفسك قبل التعامل.</div>
+  </footer>
 </div>
 
-<!-- ITEM MODAL (VIEW) -->
-<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-card">
-    <div class="modal-img-box">
-      <img id="m_img" src="" alt="">
-    </div>
-    <div class="modal-content">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-        <span id="m_price" class="price"></span>
-        <span id="m_cat" class="cat-badge"></span>
+<div id="admin-login-modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" style="z-index:1000">
+  <div class="modalCard" role="document" aria-labelledby="loginTitle" style="max-width:400px; padding:20px; text-align:center;">
+    <h3 id="loginTitle" style="margin-bottom:15px;">الوصول إلى لوحة المشرف</h3>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" style="margin-bottom:15px;">
+    <button id="adminLoginBtn" class="btn" type="button">دخول</button>
+    <div id="loginStatus" class="small" style="margin-top:10px; color:red;"></div>
+  </div>
+</div>
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modalCard" role="document" aria-labelledby="modalTitle">
+    <div style="padding:10px 12px;border-bottom:1px solid #e5e7eb">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <div id="modalTitle" style="font-weight:800;font-size:18px"></div>
+          <div id="modalMeta" class="small" style="margin-top:6px"></div>
+        </div>
+        <button id="modalClose" class="btn alt" type="button">إغلاق</button>
       </div>
-      <h2 id="m_title" style="margin:0 0 12px 0;"></h2>
-      <p id="m_desc" style="white-space:pre-wrap;color:#334155;font-size:15px;"></p>
-      <div style="margin-top:20px;padding-top:10px;border-top:1px solid #eee;">
-        <small style="color:#94a3b8">📍 السودان • <span id="m_date"></span></small>
+    </div>
+    <div class="modalMain">
+      <div class="modalImage">
+        <img id="modalMainImg" src="" alt="" style="max-width:100%;max-height:100%;display:none" />
+      </div>
+
+      <div class="modalBody">
+        <div id="modalDescription" class="fullDesc"></div>
+        <div class="detailsList">
+          <div class="detailsItem"><strong>الموقع</strong><div id="modalLoc" class="muted"></div></div>
+          <div class="detailsItem"><strong>التصنيف</strong><div id="modalCat" class="badge"></div></div>
+          <div class="detailsItem"><strong>السعر</strong><div id="modalPrice" class="price"></div></div>
+          <div class="detailsItem"><strong>التواصل</strong><div id="modalContact" class="muted"></div></div>
+        </div>
       </div>
     </div>
-    <div class="modal-footer">
-      <a id="m_wa" href="#" target="_blank" class="btn green">تواصل واتساب</a>
-      <button onclick="closeModal()" class="btn" style="background:#e2e8f0;color:#334155;">إغلاق</button>
+
+    <div class="modalFooter">
+      <div class="modalActions">
+        <a id="modalWhats" class="btn" target="_blank" rel="noopener">مشاركة عبر WhatsApp</a>
+        <a id="modalCall" class="btn alt" style="display:none" href="#">اتصال</a>
+      </div>
+      <div class="small muted">ملاحظة: تأكد من صحة المعلومات بنفسك.</div>
     </div>
   </div>
 </div>
 
-<!-- EDIT MODAL (ADMIN) -->
-<div id="editModal" class="modal">
-    <div class="modal-card">
-        <div style="padding:16px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:bold;">تعديل الإعلان</div>
-        <div class="modal-content">
-            <input type="hidden" id="e_id">
-            <input type="hidden" id="e_sheet"> <!-- To know if Pending or Active -->
-            
-            <label style="font-size:12px;color:#64748b;">العنوان</label>
-            <input type="text" id="e_title" style="margin-bottom:10px;">
-            
-            <label style="font-size:12px;color:#64748b;">السعر</label>
-            <input type="text" id="e_price" style="margin-bottom:10px;">
-            
-            <label style="font-size:12px;color:#64748b;">القسم</label>
-            <select id="e_cat" style="margin-bottom:10px;">
-                <option value="سيارات">سيارات</option>
-                <option value="عقارات">عقارات</option>
-                <option value="هواتف">هواتف</option>
-                <option value="أثاث">أثاث</option>
-                <option value="خدمات">خدمات</option>
-                <option value="أخرى">أخرى</option>
-            </select>
-            
-            <label style="font-size:12px;color:#64748b;">الهاتف</label>
-            <input type="text" id="e_phone" style="margin-bottom:10px;">
-            
-            <label style="font-size:12px;color:#64748b;">الوصف</label>
-            <textarea id="e_desc" rows="5"></textarea>
-        </div>
-        <div class="modal-footer">
-            <button onclick="saveEdit()" class="btn green">حفظ التعديلات</button>
-            <button onclick="document.getElementById('editModal').classList.remove('open')" class="btn red">إلغاء</button>
-        </div>
-    </div>
-</div>
+<script defer>
+/*** GitHub + cache buster ***/
+const GITHUB_OWNER  = 'tocontactmsg-ai';
+const GITHUB_REPO   = 'De';
+const GITHUB_BRANCH = 'main';
+const ADS_DIR       = 'ads';
+const CACHE_BUSTER  = 'v1.0.1'; // تم التحديث
 
-<script>
-// ================= CONFIGURATION =================
-// 🛑 REPLACE THIS URL WITH YOUR NEW DEPLOYED GOOGLE SCRIPT URL 🛑
-const API_URL = "REPLACE_WITH_YOUR_DEPLOYED_WEB_APP_URL"; 
-// =================================================
+/* رقم الواتساب لاستقبال طلبات النشر */
+const WHATSAPP_NUMBER = '249998615193'; // بدون علامة + أو مسافات
+// 💡 NEW: Admin Password Constant
+const ADMIN_PASSWORD = 'super-secret-admin-access';
 
-let allAds = [];
-let pendingAds = [];
-let isAdmin = false;
-let currentAdminTab = 'pending';
 
-// --- NAVIGATION ---
-function nav(id){
-  document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  if(document.getElementById('btn-'+id)) document.getElementById('btn-'+id).classList.add('active');
-  window.scrollTo(0,0);
-}
+function escapeHtml(s){ return String(s||'').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]||c)); }
+function debounce(fn,t=300){ let timer; return (...a)=>{ clearTimeout(timer); timer=setTimeout(()=>fn(...a),t); }; }
+function genRef(){ return 'R' + Date.now().toString(36).slice(-6).toUpperCase(); }
 
-// --- DATA FETCHING ---
-async function loadAds(forceAdmin = false) {
-  const loader = document.getElementById('loader');
-  if(loader) loader.style.display = 'block';
-  
-  const type = forceAdmin ? 'admin_read' : 'read';
-  const pass = document.getElementById('adminPass').value;
-  
-  try {
-    let url = `${API_URL}?action=${type}`;
-    if(forceAdmin) url += `&password=${encodeURIComponent(pass)}`;
+/* تبويبات */
+const listControls = document.getElementById('listControls');
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const target = btn.dataset.target;
+    document.querySelectorAll('main > section').forEach(s=> s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(n=>n.removeAttribute('aria-current'));
+    btn.setAttribute('aria-current','true');
+    listControls.style.display = (target === 'home') ? 'flex' : 'none';
+    window.scrollTo({top:0,behavior:'smooth'});
     
-    // Add a cache-buster to prevent browser caching for immediate updates
-    url += `&_t=${Date.now()}`; 
-    
-    const res = await fetch(url);
-    const data = await res.json();
-    
-    if(data.error) {
-      // Replaced alert() with console.error and message box
-      console.error(data.error);
-      if(forceAdmin) showMsg('red', data.error);
-
-      // If it's the public read and it fails, just show a message.
-      if(!forceAdmin) loader.innerHTML = "فشل في تحميل الإعلانات.";
-      return;
+    // 💡 NEW: Ensure messages are cleared when switching sections
+    if (target !== 'send') {
+        const container = document.getElementById('msges-container');
+        if (container) container.innerHTML = '';
+        checkAndToggleVisibility();
     }
+  });
+});
 
-    if(forceAdmin) {
-      allAds = data.active.reverse();
-      pendingAds = data.pending.reverse();
-      renderAdminList(currentAdminTab);
-      document.getElementById('adminLogin').classList.add('hidden');
-      document.getElementById('adminDash').classList.remove('hidden');
-      isAdmin = true;
-      showMsg('success', '✅ تم تحديث البيانات.');
-    } else {
-      allAds = data.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by Date (latest first)
-      renderGrid(allAds);
-      loader.style.display = 'none';
-    }
-  } catch(e) {
-    console.error(e);
-    if(!forceAdmin) loader.innerHTML = "خطأ في الاتصال بالسيرفر.";
-  }
-}
+/* بيانات الإعلانات */
+let ads = [];
+const grid = document.getElementById('grid');
+const qEl = document.getElementById('q');
+const catFilter = document.getElementById('catFilter');
+const countEl = document.getElementById('count');
 
-// --- RENDERING ---
-function renderGrid(list) {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  
-  if(list.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;">لا توجد إعلانات حالياً</div>';
+function renderGrid(list){
+  const noItems = document.getElementById('noitems');
+  grid.innerHTML='';
+  list = list || [];
+  if(!list.length){
+    noItems.style.display='block';
+    countEl.textContent='0 إعلان';
     return;
   }
-
-  list.forEach(item => {
+  noItems.style.display='none';
+  list.forEach(a=>{
     const el = document.createElement('div');
-    el.className = 'card';
-    const imgUrl = item.image || 'https://via.placeholder.com/300x200?text=No+Image';
-    
+    el.className='card';
+    if(a.ref_code) el.id = 'ad-' + a.ref_code;
+    const mediaHtml = a.image
+      ? `<img src="${escapeHtml(a.image)}" alt="${escapeHtml(a.name||'')}" loading="lazy">`
+      : '<div class="small muted">لا توجد صورة</div>';
     el.innerHTML = `
-      <div class="media"><img src="${imgUrl}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Image+Load+Failed';"></div>
+      <div class="media">${mediaHtml}</div>
       <div class="body">
-        <div class="card-top">
-           <div class="price">${Number(item.price).toLocaleString()} SDG</div>
-           <div class="cat-badge">${item.category}</div>
+        <div class="title">${escapeHtml(a.name||'')}</div>
+        <div class="desc">${escapeHtml(a.description||'')}</div>
+        <div class="meta">
+          <div class="badge">${escapeHtml(a.category||'عام')}</div>
+          <div class="price">${escapeHtml(a.price||'')}</div>
         </div>
-        <div class="title">${item.title}</div>
-        <div class="loc">📍 ${new Date(item.date).toLocaleDateString('ar-EG')}</div>
+        <div class="meta">
+          <div class="small">${escapeHtml(a.location||'')}</div>
+          <div class="small">${escapeHtml(a.ref_code||'')}</div>
+        </div>
       </div>
     `;
-    el.onclick = () => openModal(item);
+    el.addEventListener('click', ()=>openDetails(a));
     grid.appendChild(el);
   });
+  countEl.textContent = list.length + ' إعلان';
 }
 
-function filterAds() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const cat = document.getElementById('catFilter').value;
-  
-  const filtered = allAds.filter(a => {
-    const matchText = (a.title + a.description).toLowerCase().includes(q);
-    const matchCat = cat ? a.category === cat : true;
-    return matchText && matchCat;
-  });
-  renderGrid(filtered);
-}
+function applyFiltersAndRender(){
+  const q = (qEl && qEl.value || '').trim().toLowerCase();
+  const cat = (catFilter && catFilter.value || '').trim();
+  let out = ads.slice();
 
-// --- SUBMISSION LOGIC ---
-async function submitAd(e) {
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
-  const fileInput = document.getElementById('f_img');
-  
-  if(!fileInput.files[0]) {
-    showMsg('red', 'يرجى اختيار صورة');
-    return;
+  if(cat){
+    out = out.filter(a => (a.category||'').toString() === cat);
   }
-  
-  btn.disabled = true;
-  btn.innerHTML = 'جاري المعالجة <div class="spinner"></div>';
-  
-  try {
-    const base64Img = await compressImage(fileInput.files[0]);
-    const payload = {
-      title: document.getElementById('f_title').value,
-      price: document.getElementById('f_price').value,
-      category: document.getElementById('f_cat').value,
-      description: document.getElementById('f_desc').value,
-      phone: document.getElementById('f_phone').value,
-      image: base64Img,
-      action: 'submit'
-    };
-
-    const res = await fetch(https://script.google.com/macros/s/AKfycbxiAcvd4w2DDzhZWEoPdf4OUikRbhttly8F4bI_WaBimjzJwcxi4KCEIiODGpDFqVJNQg/exec, {
-      method: 'POST',
-      mode: 'no-cors', // Must use no-cors with Apps Script POST
-      headers: {'Content-Type': 'text/plain'},
-      body: JSON.stringify(payload)
+  if(q){
+    out = out.filter(a => {
+      const hay = ((a.name || '') + ' ' + (a.description||'') + ' ' + (a.location||'') + ' ' + (a.ref_code||'')).toLowerCase();
+      return hay.indexOf(q) !== -1;
     });
-    
-    // Apps Script POST returns opaque response in no-cors, cannot check status
-    // We assume success and move on
-    
-    showMsg('success', '✅ تم إرسال إعلانك للمراجعة!');
-    document.getElementById('adForm').reset();
-    nav('home');
-
-  } catch(err) {
-    showMsg('red', '❌ حدث خطأ أثناء الإرسال');
-    console.error(err);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'نشر الإعلان';
   }
-}
-
-// --- IMAGE COMPRESSION ---
-function compressImage(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        const scale = MAX_WIDTH / img.width;
-        canvas.width = MAX_WIDTH;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL('image/jpeg', 0.6));
-      };
-      img.onerror = reject;
-    };
-    reader.onerror = reject;
-  });
-}
-
-// --- ADMIN LOGIC ---
-let clickCount = 0;
-function tryAdmin(){
-  clickCount++;
-  if(clickCount === 5) {
-    nav('admin');
-    clickCount = 0;
-  }
-}
-// Check hash for admin login (optional but helpful)
-if(window.location.hash === '#admin') nav('admin');
-
-function loginAdmin() {
-  loadAds(true);
-}
-
-function switchAdminTab(tab) {
-  currentAdminTab = tab;
-  document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-  // Find the button that was clicked or corresponds to the tab
-  const btnText = tab === 'pending' ? 'بانتظار' : 'النشطة';
-  const btn = Array.from(document.querySelectorAll('.admin-tabs .tab-btn')).find(b => b.textContent.includes(btnText));
-  if (btn) btn.classList.add('active');
-  renderAdminList(tab);
-}
-
-function renderAdminList(type) {
-  const list = type === 'pending' ? pendingAds : allAds;
-  const container = document.getElementById('adminList');
-  container.innerHTML = '';
   
-  if(list.length === 0) {
-    container.innerHTML = '<p style="text-align:center">لا يوجد عناصر</p>';
-    return;
-  }
-
-  list.forEach(item => {
-    const el = document.createElement('div');
-    el.className = 'card';
+  // ----------------------------------------------------
+  // التعديل: الترتيب حسب الوقت (رمز الإعلان) تنازلياً (الأحدث أولاً)
+  out.sort((A,B) => {
+    // 1. الترتيب حسب ref_code تنازلياً (B قبل A يعني الأحدث أولاً)
+    const timeSort = (B.ref_code || '').localeCompare((A.ref_code || ''));
+    if(timeSort !== 0) return timeSort;
     
-    // Admin Action Buttons
-    let buttons = '';
-    
-    // 1. Edit Button (Always available)
-    buttons += `<button onclick="openEditModal('${item.id}', '${type}')" class="mini-btn orange">✏️ تعديل</button>`;
-    
-    // 2. Pending Specific (Approve)
-    if(type === 'pending') {
-        buttons += `<button onclick="adminAct('${item.id}', 'approve', 'هل أنت متأكد من نشر الإعلان؟')" class="mini-btn green">✅ نشر</button>`;
-    } 
-    // 3. Active Specific (Bump to Top)
-    else {
-        buttons += `<button onclick="adminAct('${item.id}', 'bump', 'هل أنت متأكد من رفع الإعلان للأعلى؟')" class="mini-btn" style="background:#8b5cf6">⬆️ رفع</button>`;
-    }
-    
-    // 4. Delete (Always available)
-    buttons += `<button onclick="adminAct('${item.id}', 'delete', 'هل أنت متأكد من حذف الإعلان نهائياً؟')" class="mini-btn red">🗑 حذف</button>`;
-
-    // 5. Contact Link
-    buttons += `<a href="https://wa.me/${item.phone}" target="_blank" class="mini-btn" style="background:#25D366">📞</a>`;
-
-    el.innerHTML = `
-      <div class="media"><img src="${item.image}" onerror="this.onerror=null; this.src='https://via.placeholder.com/80x80?text=No+Image';"></div>
-      <div class="body">
-        <div style="font-weight:bold">${item.title}</div>
-        <div style="font-size:12px">${Number(item.price).toLocaleString()} SDG - ${item.category}</div>
-        <div class="admin-actions">${buttons}</div>
-      </div>
-    `;
-    container.appendChild(el);
+    // 2. الترتيب الثانوي: الاسم (أبجدياً)
+    return (A.name || '').toString().localeCompare((B.name || '').toString(), 'ar');
   });
+  // ----------------------------------------------------
+  
+  renderGrid(out);
 }
 
-// Replaced confirm() with a custom message box for demonstration
-function adminAct(id, action, message) {
-    // This is a direct replacement for confirm(), usually handled by a custom modal UI.
-    // For this environment, we use a simple alert as a placeholder for a custom UI modal.
-    if (!window.confirm(message)) { 
-        return;
-    }
-    sendAdminRequest({ action, id });
-    loadAds(true); 
-}
-
-// --- EDIT FEATURE ---
-function openEditModal(id, type) {
-    const list = type === 'pending' ? pendingAds : allAds;
-    const item = list.find(x => x.id === id);
+/* فتح إعلان من الرابط (#ad-REF) */
+function openAdFromHash(){
+  try{
+    const hash = window.location.hash;
+    if(!hash || !hash.startsWith('#ad-')) return;
+    const ref = decodeURIComponent(hash.slice(4)).trim();
+    if(!ref) return;
+    const item = ads.find(a => (a.ref_code || '') === ref);
     if(!item) return;
 
-    document.getElementById('e_id').value = item.id;
-    document.getElementById('e_sheet').value = type === 'pending' ? 'Pending' : 'Active';
-    document.getElementById('e_title').value = item.title;
-    document.getElementById('e_price').value = item.price;
-    document.getElementById('e_cat').value = item.category;
-    document.getElementById('e_phone').value = item.phone;
-    document.getElementById('e_desc').value = item.description;
+    // تفعيل تبويب الرئيسية وإظهار الفلاتر
+    document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
+    const home = document.getElementById('home');
+    if(home) home.classList.add('active');
+    if(listControls) listControls.style.display = 'flex';
+    document.querySelectorAll('.nav-btn').forEach(btn=>{
+      if(btn.dataset.target === 'home') btn.setAttribute('aria-current','true');
+      else btn.removeAttribute('aria-current');
+    });
 
-    document.getElementById('editModal').classList.add('open');
+    openDetails(item);
+  }catch(e){
+    console.warn('openAdFromHash error', e);
+  }
 }
 
-async function saveEdit() {
-    const payload = {
-        action: 'edit',
-        id: document.getElementById('e_id').value,
-        sheetName: document.getElementById('e_sheet').value,
-        title: document.getElementById('e_title').value,
-        price: document.getElementById('e_price').value,
-        category: document.getElementById('e_cat').value,
-        phone: document.getElementById('e_phone').value,
-        description: document.getElementById('e_desc').value
-    };
-    
-    document.getElementById('editModal').classList.remove('open');
-    await sendAdminRequest(payload);
-    
-    // Reload the list after saving
-    loadAds(true);
+/* Modal */
+const modal = document.getElementById('modal');
+const modalMainImg = document.getElementById('modalMainImg');
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalDescription = document.getElementById('modalDescription');
+const modalLoc = document.getElementById('modalLoc');
+const modalCat = document.getElementById('modalCat');
+const modalPrice = document.getElementById('modalPrice');
+const modalContact = document.getElementById('modalContact');
+const modalWhats = document.getElementById('modalWhats');
+const modalCall = document.getElementById('modalCall');
+const modalClose = document.getElementById('modalClose');
+
+// 💡 NEW: Store original modal content for restoration after admin edit
+const originalModalBody = document.querySelector('#modal .modalBody');
+const originalModalActions = document.querySelector('#modal .modalActions');
+const originalModalBodyHTML = originalModalBody.innerHTML;
+const originalModalActionsHTML = originalModalActions.innerHTML;
+
+
+function closeModal(){
+  modal.setAttribute('aria-hidden','true');
+  modal.classList.remove('open');
+  // 💡 NEW: Restore original content when closing
+  originalModalBody.innerHTML = originalModalBodyHTML;
+  originalModalActions.innerHTML = originalModalActionsHTML;
+}
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+// 💡 MODIFIED: openDetails now accepts an optional isEditing flag
+async function openDetails(item, isEditing = false){
+  // If editing, the calling function (openEditAdModal) will handle content population
+  if (isEditing) return;
+
+  modalTitle.textContent = item.name || 'بدون عنوان';
+  modalMeta.textContent = `رمز: ${item.ref_code||''}`;
+  modalDescription.textContent = item.description||'-';
+  modalLoc.textContent = item.location||'-';
+  modalCat.textContent = item.category||'عام';
+  modalPrice.textContent = item.price || '-';
+  modalContact.textContent = item.contact || '-';
+
+  if(item.image){
+    modalMainImg.src = item.image;
+    modalMainImg.style.display = 'block';
+  } else {
+    modalMainImg.src = '';
+    modalMainImg.style.display = 'none';
+  }
+
+  if(item.contact && item.contact.trim()){
+    modalCall.style.display = 'inline-block';
+    const phoneDigits = (item.contact.match(/[+0-9][0-9() \-]{4,}/) || [])[0] || item.contact;
+    modalCall.href = 'tel:' + phoneDigits.replace(/\s+/g,'').replace(/[^+0-9]/g,'');
+  } else {
+    modalCall.style.display = 'none';
+  }
+
+  const base = window.location.href.split('#')[0];
+  const deepLink = base + '#ad-' + (item.ref_code||'');
+  const msg = (item.name||'') + '\n' + (item.price||'') + '\n' + deepLink;
+  modalWhats.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  modalWhats.target = '_blank';
+
+  //  وح
+  try{
+    if(item.ref_code){
+      const newHash = '#ad-' + encodeURIComponent(item.ref_code);
+      if(window.location.hash !== newHash){
+        history.replaceState(null, '', base + newHash);
+      }
+    }
+  }catch(e){}
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
 }
 
-async function sendAdminRequest(data) {
-  const pass = document.getElementById('adminPass').value;
-  data.password = pass;
+/* تحميل الإعلانات من GitHub */
+
+
+
+async function loadAdsFromGithub(){
+  const noItemsEl = document.getElementById('noitems');
+  const loadMoreBtn = document.getElementById('loadMoreBtn'); // kept as fallback/status
+  const CACHE_KEY = 'eldelala_ads_cache_v2'; // تم التحديث: لإجبار المتصفح على تحميل الإعدادات الجديدة
+  const CACHE_TTL_MS = 60 * 60 * 1000; // تم التحديث: 60 دقيقة كاش
+  const MAX_ADS = 1000; // absolute cap
+  const PAGE_SIZE = 70; // تم التحديث: تحميل 50 إعلان في البداية
+  const CONCURRENCY = 8; // تم التحديث: زيادة عدد الطلبات المتزامنة
+  const FETCH_TIMEOUT_MS = 9000;
+  const RETRIES = 2;
+
+  let allFiles = [];
+  let pageIndex = 0;
+  let loadingPage = false;
+  let scrollHandlerAttached = false;
+
+  function timeoutFetch(url, opts = {}, ms = FETCH_TIMEOUT_MS){
+    const controller = new AbortController();
+    const id = setTimeout(()=>controller.abort(), ms);
+    const o = Object.assign({}, opts, { signal: controller.signal });
+    return fetch(url, o).finally(()=>clearTimeout(id));
+  }
+  function sleep(ms){ return new Promise(res=>setTimeout(res, ms)); }
+
+  // Try cache
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && Date.now() - (parsed.ts||0) < CACHE_TTL_MS && Array.isArray(parsed.ads)){
+        ads = parsed.ads;
+        try{
+          const cats = [...new Set(ads.map(a=>a.category||'عام'))];
+          cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
+          if(catFilter){
+            catFilter.innerHTML = '<option value="">كل الاقسام</option>' +
+              cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+          }
+        }catch(e){}
+        applyFiltersAndRender();
+        if(countEl) countEl.textContent = ads.length + ' إعلان  ';
+        // إذا كان التحميل من الكاش، لا ننتظر، بل نذهب إلى GitHub في الخلفية إذا لم نكن قد حملنا كل شيء
+        if(ads.length < allFiles.length){
+             // لا حاجة لانتظار تحميل الكل إذا كان الكاش جاهزاً
+        } else {
+             // كل الإعلانات في الكاش، لا حاجة للتحميل الإضافي
+             return; // مهم: الخروج هنا إذا كان كل شيء في الكاش
+        }
+      }
+    }
+  }catch(e){ console.warn('cache read failed', e); }
+
+  try{
+    const contentsUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${ADS_DIR}?ref=${GITHUB_BRANCH}`;
+    
+    // 🛑 تم التأكد من بقاء هذا التعديل 🛑
+    const res = await timeoutFetch(contentsUrl, {
+        headers: {
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    }, 7000); 
+
+    if(!res.ok){
+      console.warn('GitHub API status', res.status);
+      if(noItemsEl){
+        noItemsEl.style.display = 'block';
+        noItemsEl.innerHTML = 'تعذر تحميل الإعلانات (GitHub API). <br>status: ' + res.status;
+      }
+      if(countEl) countEl.textContent = '0 إعلان';
+      return;
+    }
+    const files = await res.json();
+    const jsonFiles = files.filter(f => f.type === 'file' && f.name.toLowerCase().endsWith('.json'));
+    allFiles = jsonFiles.slice(0, Math.min(jsonFiles.length, MAX_ADS));
+
+    // reset paging
+    pageIndex = 0;
+    
+    applyFiltersAndRender();
+
+    async function fetchPage(pageIdx){
+      const start = pageIdx * PAGE_SIZE;
+      const chunk = allFiles.slice(start, start + PAGE_SIZE);
+      if(!chunk.length) return [];
+      async function fetchWithRetries(url, tries = RETRIES){
+        let attempt = 0;
+        while(attempt <= tries){
+          try{
+            // لا )
+            const r = await timeoutFetch(url, {}, FETCH_TIMEOUT_MS); 
+            if(!r.ok) throw new Error('status ' + r.status);
+            const data = await r.json();
+            return data;
+          }catch(err){
+            attempt++;
+            if(attempt > tries) {
+              console.warn('fetch failed', url, err);
+              return null;
+            }
+            await sleep(200 * attempt);
+          }
+        }
+        return null;
+      }
+
+      const results = [];
+      for(let i=0;i<chunk.length;i+=CONCURRENCY){
+        const sub = chunk.slice(i, i+CONCURRENCY);
+        const promises = sub.map(async (f)=>{
+          try{
+            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${ADS_DIR}/${encodeURIComponent(f.name)}`;
+            const data = await fetchWithRetries(rawUrl);
+            if(!data) return null;
+            return {
+              ref_code: data.ref_code || data.ref || f.name.replace(/\.json$/i,''),
+              name: data.name || data.title || '',
+              price: data.price || data.amount || '',
+              description: data.description || data.desc || data.body || '',
+              location: data.location || data.city || data.loc || '',
+              contact: data.contact || data.phone || data.tel || '',
+              category: (data.category || data.cat || data.type || data.Category || '').toString().trim() || 'عام',
+              image: data.image || data.thumb || data.imageDataUrl || ''
+            };
+          }catch(e){
+            console.warn('error loading ad', f.name, e);
+            return null;
+          }
+        });
+        const loaded = await Promise.all(promises);
+        results.push(...loaded.filter(Boolean));
+        await sleep(80);
+      }
+      return results;
+    }
+
+    async function loadNext(){
+      if(loadingPage) return;
+      loadingPage = true;
+      // show small inline indicator (using loadMoreBtn as status element)
+      const isInitialLoad = ads.length === 0;
+      if(loadMoreBtn){
+        loadMoreBtn.style.display = 'inline-block';
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.textContent = 'جارِ التحميل...';
+      }
+      
+      const pageData = await fetchPage(pageIndex);
+      
+      if(pageData && pageData.length){
+        // إذا كان التحميل الأولي (بدون كاش)
+        if (isInitialLoad && pageIndex === 0) {
+            ads = pageData;
+        } else {
+            // وإلا، ندمج البيانات الجديدة
+            ads = ads.concat(pageData.filter(newAd => 
+              !ads.some(existingAd => existingAd.ref_code === newAd.ref_code)
+            ));
+        }
+        
+        try{
+          const cats = [...new Set(ads.map(a=>a.category||'عام'))];
+          cats.sort((a,b)=> a.toString().localeCompare(b.toString(), 'ar'));
+          if(catFilter){
+            catFilter.innerHTML = '<option value="">كل الاقسام</option>' +
+              cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+          }
+        }catch(e){}
+        applyFiltersAndRender();
+        try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), ads })); }catch(e){}
+      }
+      pageIndex++;
+      loadingPage = false;
+
+      const remaining = Math.max(0, allFiles.length - ads.length);
+      if(remaining <= 0){
+        // remove scroll listener if no more
+        detachScrollHandler();
+        if(loadMoreBtn) loadMoreBtn.style.display = 'none';
+      } else {
+        if(loadMoreBtn){
+          loadMoreBtn.style.display = 'inline-block';
+          loadMoreBtn.disabled = false;
+          loadMoreBtn.textContent = 'المزيد (' + remaining + ')';
+        }
+      }
+      if(countEl) countEl.textContent = ads.length + ' إعلان';
+      
+      // تم إزالة اس ub)
+    }
+
+    // infinite scroll: load when user is near page bottom
+    function shouldLoadMore(){
+      const scrollY = window.scrollY || window.pageYOffset;
+      const viewportH = window.innerHeight || document.documentElement.clientHeight;
+      const fullH = document.documentElement.scrollHeight;
+      // when within 1200px of bottom OR scrolled past 70% of content
+      if(fullH - (scrollY + viewportH) < 1200) return true;
+      if((scrollY + viewportH) / fullH > 0.7) return true;
+      return false;
+    }
+
+    async function onScroll(){
+      if(loadingPage) return;
+      if(shouldLoadMore()){
+        await loadNext();
+      }
+    }
+
+    function attachScrollHandler(){
+      if(scrollHandlerAttached) return;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      scrollHandlerAttached = true;
+    }
+    function detachScrollHandler(){
+      if(!scrollHandlerAttached) return;
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      scrollHandlerAttached = false;
+    }
+
+    // auto-load first page, then attach scroll handler
+    // إذا لم يكن هناك كاش، يجب تحميل أول صفحة على الأقل
+    if (ads.length === 0 || ads.length < PAGE_SIZE) {
+        await loadNext();
+    }
+    
+    // إذا كان هناك المزيد لتحميله، قم بربط أداة التمرير
+    if (allFiles.length > ads.length) {
+        attachScrollHandler();
+    } 
+    // تم إزالة استدعاء openAdFromHash() من هنا (لأنها ستستدعى بعد اكتمال loadAdsFromGithub)
+
+
+    if(allFiles.length > 0 && noItemsEl){
+      noItemsEl.style.display = 'none';
+    }
+
+  }catch(err){
+    console.error('loadAdsFromGithub failed', err);
+    if(noItemsEl){
+      noItemsEl.style.display='block';
+      noItemsEl.textContent = 'تعذر تحميل الإعلانات (خطأ اتصال أو إعدادات  ).';
+    }
+    if(countEl) countEl.textContent='0 إعلان';
+  }
+}
+
+
+
+
+/* = = */
+
+const MARKER = 'ELDELALA_PAYLOAD:';
+
+function dataUrlToBlob(dataUrl){
+  const parts = dataUrl.split(',');
+  const meta = parts[0];
+  const data = parts[1] || '';
+  const mimeMatch = meta.match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+  const bin = atob(data);
+  const len = bin.length;
+  const u8 = new Uint8Array(len);
+  for(let i=0;i<len;i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: mime });
+}
+
+async function blobToUint8(blob){
+  const ab = await blob.arrayBuffer();
+  return new Uint8Array(ab);
+}
+
+function jsonToBase64String(obj){
+  const json = JSON.stringify(obj);
+  const utf8 = unescape(encodeURIComponent(json));
+  return btoa(utf8);
+}
+
+async function embedJsonInImageBlob(imageBlob, payloadObj){
+  const origBytes = await blobToUint8(imageBlob);
+  const markerBytes = new TextEncoder().encode(MARKER);
+  const b64 = jsonToBase64String(payloadObj);
+  const b64Bytes = new TextEncoder().encode(b64);
+  const out = new Uint8Array(origBytes.length + markerBytes.length + b64Bytes.length);
+  out.set(origBytes,0);
+  out.set(markerBytes, origBytes.length);
+  out.set(b64Bytes, origBytes.length + markerBytes.length);
+  return new Blob([out], { type: imageBlob.type || 'image/png' });
+}
+
+async function fileOrBlobToDataUrl(fileOrBlob){
+  return new Promise((resolve,reject)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>resolve(fr.result);
+    fr.onerror = reject;
+    fr.readAsDataURL(fileOrBlob);
+  });
+}
+
+async function imageFileToWebpDataUrl(file, maxW = 900, maxH = 900, quality = 0.8){
+  const dataURL = await fileOrBlobToDataUrl(file);
+  const img = await new Promise((resolve, reject)=>{
+    const i = new Image();
+    i.onload = ()=>resolve(i);
+    i.onerror = reject;
+    i.src = dataURL;
+  });
+  let w = img.width, h = img.height;
+  const scale = Math.min(1, maxW / w, maxH / h);
+  const cw = Math.max(1, Math.round(w * scale));
+  const ch = Math.max(1, Math.round(h * scale));
+  const c = document.createElement('canvas');
+  c.width = cw; c.height = ch;
+  const ctx = c.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, cw, ch);
+  return c.toDataURL('image/webp', quality);
+}
+
+/* */
+async function createPlaceholderImageBlob(){
+  const c = document.createElement('canvas');
+  c.width = 900;
+  c.height = 900;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#e5f0ff';
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 40px Tajawal, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('الدلالة', c.width/2, c.height/2 - 10);
+  ctx.font = '20px Tajawal, sans-serif';
+  ctx.fillText('إعلان بدون صورة', c.width/2, c.height/2 + 30);
+  const dataURL = c.toDataURL('image/png');
+  return dataUrlToBlob(dataURL);
+}
+
+/* ت  */
+function canvasToPngBlob(canvas){
+  return new Promise((resolve,reject)=>{
+    if(canvas.toBlob){
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob returned null')), 'image/png');
+    }else{
+      try{
+        const dataURL = canvas.toDataURL('image/png');
+        resolve(dataUrlToBlob(dataURL));
+      }catch(e){
+        reject(e);
+      }
+    }
+  });
+}
+
+/* ك   */
+async function createCardPngFromImageFileOrBlob(fileOrBlob, payload){
+  const baseDataUrl = await fileOrBlobToDataUrl(fileOrBlob);
+  const img = await new Promise((resolve,reject)=>{
+    const i = new Image();
+    i.onload = ()=>resolve(i);
+    i.onerror = reject;
+    i.src = baseDataUrl;
+  });
+
+  const W = 900;
+  const H = 1100;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  //  ة
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'#f5f8ff');
+  grad.addColorStop(1,'#e8f5ff');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // إط حة
+  const cardX = 60;
+  const cardY = 60;
+  const cardW = W - 120;
+  const cardH = H - 120;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  const r = 30;
+  ctx.moveTo(cardX+r, cardY);
+  ctx.lineTo(cardX+cardW-r, cardY);
+  ctx.quadraticCurveTo(cardX+cardW, cardY, cardX+cardW, cardY+r);
+  ctx.lineTo(cardX+cardW, cardY+cardH-r);
+  ctx.quadraticCurveTo(cardX+cardW, cardY+cardH, cardX+cardW-r, cardY+cardH);
+  ctx.lineTo(cardX+r, cardY+cardH);
+  ctx.quadraticCurveTo(cardX, cardY+cardH, cardX, cardY+cardH-r);
+  ctx.lineTo(cardX, cardY+r);
+  ctx.quadraticCurveTo(cardX, cardY, cardX+r, cardY);
+  ctx.closePath();
+  ctx.fill();
+
+  //  
+  const imgMargin = 40;
+  const imgAreaX = cardX + imgMargin;
+  const imgAreaY = cardY + imgMargin;
+  const imgAreaW = cardW - imgMargin*2;
+  const imgAreaH = 550;
+
+  const ratio = Math.min(imgAreaW / img.width, imgAreaH / img.height);
+  const drawW = img.width * ratio;
+  const drawH = img.height * ratio;
+  const dx = imgAreaX + (imgAreaW - drawW)/2;
+  const dy = imgAreaY + (imgAreaH - drawH)/2;
+
+  ctx.save();
+  ctx.beginPath();
+  const ir = 26;
+  ctx.moveTo(imgAreaX+ir, imgAreaY);
+  ctx.lineTo(imgAreaX+imgAreaW-ir, imgAreaY);
+  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY, imgAreaX+imgAreaW, imgAreaY+ir);
+  ctx.lineTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH-ir);
+  ctx.quadraticCurveTo(imgAreaX+imgAreaW, imgAreaY+imgAreaH, imgAreaX+imgAreaW-ir, imgAreaY+imgAreaH);
+  ctx.lineTo(imgAreaX+ir, imgAreaY+imgAreaH);
+  ctx.quadraticCurveTo(imgAreaX, imgAreaY+imgAreaH, imgAreaX, imgAreaY+imgAreaH-ir);
+  ctx.lineTo(imgAreaX, imgAreaY+ir);
+  ctx.quadraticCurveTo(imgAreaX, imgAreaY, imgAreaX+ir, imgAreaY);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(img, dx, dy, drawW, drawH);
+  ctx.restore();
+
+  // ref co ورة
+  const refText = payload.ref_code || '';
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = '#111827';
+  ctx.font = 'bold 52px Tajawal, sans-serif';
+  ctx.fillText(refText, W/2, imgAreaY + imgAreaH + 120);
+
+  //  
+  ctx.fillStyle = '#4b5563';
+  ctx.font = '24px Tajawal, sans-serif';
+  ctx.fillText('نشكرك علي استخدامك موقع الدلالة', W/2, imgAreaY + imgAreaH + 170);
+
+  const pngBlob = await canvasToPngBlob(canvas);
+  const pngDataUrl = canvas.toDataURL('image/png');
+  return { blob: pngBlob, dataURL: pngDataUrl };
+}
+
+/* ========================================================== */
+/* 💡 NEW: MESSAGE SYSTEM FUNCTIONS */
+/* ========================================================== */
+const msgContainer = document.getElementById('msges-container');
+
+/**
+ * Checks the container's content and toggles its visibility.
+ * Requirement: "if no msgs make it disappear"
+ */
+function checkAndToggleVisibility() {
+    if (!msgContainer) return;
+    if (msgContainer.children.length === 0) {
+        msgContainer.style.display = 'none'; 
+    } else {
+        msgContainer.style.display = 'block'; 
+    }
+}
+
+/**
+ * Creates and displays a new message (MSEGS).
+ * @param {string} type - 'success' or 'error'
+ * @param {string} text - The Arabic message content
+ */
+function displayMessage(type, text) {
+    if (!msgContainer) return;
+    try {
+        // Clear existing messages for a fresh alert
+        msgContainer.innerHTML = '';
+
+        // Create elements
+        const newMsg = document.createElement('div');
+        newMsg.className = 'msges-box ' + type;
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = text;
+        newMsg.appendChild(textSpan);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'close-btn';
+        closeBtn.innerHTML = '&times;'; // 'x' symbol
+        
+        // Close button logic
+        closeBtn.addEventListener('click', function() {
+            newMsg.remove();
+            checkAndToggleVisibility(); // Re-check visibility after removal
+        });
+        
+        newMsg.appendChild(closeBtn);
+        
+        // Append the message and show the container
+        msgContainer.appendChild(newMsg);
+        checkAndToggleVisibility();
+
+        // Auto-hide after 7 seconds for success messages
+        if (type === 'success') {
+            setTimeout(() => {
+                if (newMsg.parentNode) {
+                    newMsg.remove();
+                    checkAndToggleVisibility();
+                }
+            }, 7000); 
+        }
+        
+    } catch (error) {
+        console.error("Critical error displaying message:", error);
+    }
+}
+/* 🛑 END NEW MESSAGE SYSTEM FUNCTIONS */
+/* ========================================================== */
+
+
+/* ========================================================== */
+/* 💡 NEW: ADMIN ACCESS AND MANAGEMENT LOGIC */
+/* ========================================================== */
+
+const adminLoginModal = document.getElementById('admin-login-modal');
+const adminPasswordEl = document.getElementById('adminPassword');
+const adminLoginBtn = document.getElementById('adminLoginBtn');
+const loginStatusEl = document.getElementById('loginStatus');
+const adminNavBtn = document.getElementById('adminNavBtn');
+const headerTitle = document.querySelector('header .brand .title');
+let logoClickCount = 0;
+let isAdminLoggedIn = false;
+
+// Mock pending ads array (for demonstration purposes, as there is no backend)
+let mockPendingAds = [];
+
+// --- Admin Panel Functions ---
+
+function openAdminLoginModal() {
+    if (isAdminLoggedIn) {
+        document.getElementById('adminNavBtn').click();
+        return;
+    }
+    adminPasswordEl.value = '';
+    loginStatusEl.textContent = '';
+    adminLoginModal.setAttribute('aria-hidden', 'false');
+    document.addEventListener('keydown', handleAdminLoginKeydown);
+}
+
+function closeAdminLoginModal() {
+    adminLoginModal.setAttribute('aria-hidden', 'true');
+    document.removeEventListener('keydown', handleAdminLoginKeydown);
+}
+
+function handleAdminLoginKeydown(e) {
+    if (e.key === 'Escape') {
+        closeAdminLoginModal();
+    } else if (e.key === 'Enter') {
+        attemptAdminLogin();
+    }
+}
+
+function attemptAdminLogin() {
+    const password = adminPasswordEl.value.trim();
+    if (password === ADMIN_PASSWORD) {
+        isAdminLoggedIn = true;
+        closeAdminLoginModal();
+        adminNavBtn.style.display = 'inline-block';
+        adminNavBtn.click(); // Switch to the admin panel
+        displayMessage('success', '✅ تم تسجيل الدخول بنجاح إلى لوحة المشرف.');
+        headerTitle.removeEventListener('click', handleLogoClick);
+
+    } else {
+        loginStatusEl.textContent = 'كلمة المرور غير صحيحة.';
+        adminPasswordEl.value = '';
+        displayMessage('error', '🚫 كلمة المرور غير صحيحة. حاول مرة أخرى.');
+    }
+}
+
+// Attach the click handler to the logo
+function handleLogoClick() {
+    if (isAdminLoggedIn) return;
+
+    logoClickCount++;
+    if (logoClickCount >= 7) {
+        logoClickCount = 0;
+        openAdminLoginModal();
+    }
+}
+headerTitle.addEventListener('click', handleLogoClick);
+adminLoginBtn.addEventListener('click', attemptAdminLogin);
+
+
+// --- Ad Management Logic ---
+
+/**
+ * Mocks the deletion of an ad by removing it from the local arrays.
+ */
+window.handleDeleteAd = function(refCode, isPending) { // Expose to window for inline onclick
+    if (!confirm(`هل أنت متأكد من حذف الإعلان ${refCode}؟\n(هذا الإجراء سيحذف الإعلان محلياً فقط في هذا العرض)`)) {
+        return;
+    }
+
+    if (isPending) {
+        mockPendingAds = mockPendingAds.filter(a => a.ref_code !== refCode);
+        displayMessage('success', `🗑️ تم حذف الإعلان المعلق ${refCode} محلياً.`);
+    } else {
+        ads = ads.filter(a => a.ref_code !== refCode);
+        displayMessage('success', `🗑️ تم حذف الإعلان المنشور ${refCode} محلياً.`);
+    }
+    
+    // NOTE: In a real application, you would make an API call here to delete the file on GitHub.
+    
+    applyFiltersAndRender();
+    renderAdminPanel();
+}
+
+
+/**
+ * Mocks the approval of a pending ad by moving it to the main 'ads' array.
+ */
+window.handleApproveAd = function(refCode) { // Expose to window for inline onclick
+    if (!confirm(`هل أنت متأكد من نشر الإعلان ${refCode}؟\n(سيتم نشره في لوحة التحكم محلياً)`)) {
+        return;
+    }
+    
+    const adToApprove = mockPendingAds.find(a => a.ref_code === refCode);
+    if (!adToApprove) return;
+
+    mockPendingAds = mockPendingAds.filter(a => a.ref_code !== refCode);
+    
+    const publishedAd = Object.assign({}, adToApprove);
+    delete publishedAd.image; // Assume published ads do not contain embedded image data
+    
+    ads.push(publishedAd);
+
+    // NOTE: In a real application, this would involve creating the JSON file on GitHub.
+
+    displayMessage('success', `✅ تم نشر الإعلان ${refCode} بنجاح.`);
+
+    applyFiltersAndRender();
+    renderAdminPanel();
+}
+
+
+/**
+ * Populates the Edit Ad Modal with data and opens it.
+ */
+window.openEditAdModal = function(ad, isPending) { // Expose to window for inline onclick
+    // 1. Setup the modal for editing by calling openDetails with the flag
+    openDetails(ad, true); 
+    
+    // 2. Clear standard view elements and replace with an edit form structure
+    originalModalBody.innerHTML = `
+        <div id="edit-ad-form">
+            <input type="text" id="edit_name" placeholder="اسم الإعلان" value="${escapeHtml(ad.name||'')}" />
+            <input type="text" id="edit_price" placeholder="السعر" value="${escapeHtml(ad.price||'')}" />
+            <textarea id="edit_desc" placeholder="وصف الإعلان" rows="4">${escapeHtml(ad.description||'')}</textarea>
+            <input type="text" id="edit_loc" placeholder="الموقع" value="${escapeHtml(ad.location||'')}" />
+            <input type="text" id="edit_contact" placeholder="رقم التواصل" value="${escapeHtml(ad.contact||'')}" />
+            <input type="text" id="edit_cat" placeholder="القسم" value="${escapeHtml(ad.category||'')}" />
+            <div class="small muted" style="margin-top:10px;">لتغيير الصورة، يجب إعادة تحميل ملف الإعلان بالكامل.</div>
+        </div>
+    `;
+
+    // 3. Modify modal actions to include save/cancel buttons
+    originalModalActions.innerHTML = `
+        <button id="saveEditBtn" class="btn" type="button" style="background: #0078d7;">حفظ التعديلات</button>
+        <button id="cancelEditBtn" class="btn" type="button" style="background: #dc2626;">إلغاء</button>
+    `;
+    
+    document.getElementById('saveEditBtn').addEventListener('click', () => {
+        const newAdData = {
+            ref_code: ad.ref_code,
+            name: document.getElementById('edit_name').value.trim(),
+            price: document.getElementById('edit_price').value.trim(),
+            description: document.getElementById('edit_desc').value.trim(),
+            location: document.getElementById('edit_loc').value.trim(),
+            contact: document.getElementById('edit_contact').value.trim(),
+            category: document.getElementById('edit_cat').value.trim(),
+            image: ad.image // keep original image reference
+        };
+        
+        // Update local arrays
+        if (isPending) {
+            const index = mockPendingAds.findIndex(a => a.ref_code === ad.ref_code);
+            if (index !== -1) mockPendingAds[index] = newAdData;
+        } else {
+            const index = ads.findIndex(a => a.ref_code === ad.ref_code);
+            if (index !== -1) ads[index] = newAdData;
+        }
+
+        // NOTE: In a real application, you would make an API call here to update the JSON file on GitHub.
+
+        displayMessage('success', `✏️ تم حفظ تعديلات الإعلان ${ad.ref_code} محلياً.`);
+        closeModal();
+        applyFiltersAndRender();
+        renderAdminPanel();
+    });
+    
+    document.getElementById('cancelEditBtn').addEventListener('click', closeModal);
+}
+
+
+/**
+ * Renders the Admin Panel with stats and ad lists.
+ */
+function renderAdminPanel() {
+    const adminStats = document.getElementById('admin-stats');
+    const adminPendingAds = document.getElementById('admin-pending-ads');
+    const adminPublishedAds = document.getElementById('admin-published-ads');
+    const pendingCount = document.getElementById('pending-count');
+    const publishedCount = document.getElementById('published-count');
+    
+    // --- 1. Populate Stats ---
+    const totalAds = ads.length + mockPendingAds.length;
+    const published = ads.length;
+    const pending = mockPendingAds.length;
+    
+    // Get last load time (using ref_code as timestamp mock)
+    const latestAd = ads.length > 0 ? ads.reduce((latest, ad) => 
+        (ad.ref_code || '').localeCompare(latest.ref_code || '') > 0 ? ad : latest, ads[0]
+    ) : null;
+    const lastLoadTime = latestAd ? new Date(parseInt(latestAd.ref_code.slice(1), 36)).toLocaleString('ar-EG') : '-';
+    
+    // Top Category (Simple logic)
+    const allCategories = ads.map(a => a.category || 'عام').concat(mockPendingAds.map(a => a.category || 'عام'));
+    const categoryCounts = allCategories.reduce((acc, cat) => { acc[cat] = (acc[cat] || 0) + 1; return acc; }, {});
+    let topCategory = '-';
+    let maxCount = 0;
+    for (const cat in categoryCounts) {
+        if (categoryCounts[cat] > maxCount) {
+            maxCount = categoryCounts[cat];
+            topCategory = cat;
+        }
+    }
+
+
+    adminStats.innerHTML = `
+        <div class="stat-card"><strong>${totalAds}</strong><span>إجمالي الإعلانات</span></div>
+        <div class="stat-card"><strong>${published}</strong><span>الإعلانات المنشورة</span></div>
+        <div class="stat-card"><strong>${pending}</strong><span>الإعلانات المعلقة</span></div>
+        <div class="stat-card"><strong>${topCategory}</strong><span>أكثر قسم</span></div>
+        <div class="stat-card"><strong>${lastLoadTime}</strong><span>آخر تعديل</span></div>
+    `;
+
+    // --- 2. Render Ad Tables ---
+    
+    // Helper to render a table row
+    function renderAdRow(ad, isPending) {
+        const adName = escapeHtml(ad.name || '');
+        const refCode = escapeHtml(ad.ref_code || '');
+        const category = escapeHtml(ad.category || 'عام');
+        const location = escapeHtml(ad.location || '-');
+        
+        // NOTE: The inline JSON.stringify is necessary for passing objects to the global function call
+        const adJsonString = JSON.stringify(ad).replace(/'/g, '&#39;').replace(/"/g, '&quot;'); 
+
+        const editBtn = `<button class="btn edit-btn" type="button" onclick="openEditAdModal(${adJsonString}, ${isPending})">تعديل</button>`;
+
+        const deleteBtn = `<button class="btn delete-btn" type="button" onclick="handleDeleteAd('${refCode}', ${isPending})">حذف</button>`;
+        
+        let actions = `${editBtn} ${deleteBtn}`;
+        if (isPending) {
+            const approveBtn = `<button class="btn approve-btn" type="button" onclick="handleApproveAd('${refCode}')">نشر</button>`;
+            actions = `${approveBtn} ${editBtn} ${deleteBtn}`;
+        }
+
+        return `
+            <tr>
+                <td>${refCode}</td>
+                <td>${adName}</td>
+                <td>${category}</td>
+                <td>${location}</td>
+                <td style="width:1%;">
+                    <div class="action-btns">${actions}</div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    // Pending Ads Table
+    pendingCount.textContent = mockPendingAds.length;
+    let pendingTableHtml = '<div style="text-align:center; padding:20px;" class="small muted">لا توجد إعلانات بانتظار المراجعة.</div>';
+    if (mockPendingAds.length > 0) {
+        // Sort by ref_code (newest first)
+        const sortedPending = mockPendingAds.slice().sort((A,B) => (B.ref_code || '').localeCompare((A.ref_code || '')));
+        pendingTableHtml = `
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th style="width:10%;">رمز</th>
+                        <th style="width:40%;">الاسم</th>
+                        <th style="width:20%;">القسم</th>
+                        <th style="width:20%;">الموقع</th>
+                        <th style="width:10%; text-align: left;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedPending.map(ad => renderAdRow(ad, true)).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    adminPendingAds.innerHTML = pendingTableHtml;
+
+
+    // Published Ads Table
+    publishedCount.textContent = ads.length;
+    let publishedTableHtml = '<div style="text-align:center; padding:20px;" class="small muted">لا توجد إعلانات منشورة.</div>';
+    if (ads.length > 0) {
+        // Sort by ref_code (newest first)
+        const sortedAds = ads.slice().sort((A,B) => (B.ref_code || '').localeCompare((A.ref_code || '')));
+        publishedTableHtml = `
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th style="width:10%;">رمز</th>
+                        <th style="width:40%;">الاسم</th>
+                        <th style="width:20%;">القسم</th>
+                        <th style="width:20%;">الموقع</th>
+                        <th style="width:10%; text-align: left;">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedAds.map(ad => renderAdRow(ad, false)).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    adminPublishedAds.innerHTML = publishedTableHtml;
+}
+
+
+// Override loadAdsFromGithub to create mock pending ads after loading
+const originalLoadAdsFromGithub = loadAdsFromGithub;
+loadAdsFromGithub = async function() {
+    await originalLoadAdsFromGithub();
+    
+    // Create mock pending ads from the first few loaded ads for demonstration
+    if (mockPendingAds.length === 0 && ads.length > 0) {
+        // Take the first 3 ads and move them to pending (and remove from published for a clean demo)
+        const numToMock = Math.min(3, ads.length);
+        mockPendingAds = ads.splice(0, numToMock).map(ad => Object.assign({}, ad, { is_pending: true }));
+        applyFiltersAndRender(); // Re-render the main grid after splicing
+    }
+    
+    // Now call renderAdminPanel if we are in the admin section
+    if (document.getElementById('admin').classList.contains('active')) {
+        renderAdminPanel();
+    }
+};
+
+// Ensure renderAdminPanel is called when switching to admin view
+document.getElementById('adminNavBtn').addEventListener('click', renderAdminPanel);
+
+/* 🛑 END NEW ADMIN ACCESS AND MANAGEMENT LOGIC */
+/* ========================================================== */
+
+
+/* " */
+(function(){
+  const submitBtn = document.getElementById('submitBtn');
+  const submitStatus = document.getElementById('submitStatus');
+  const afterSubmit = document.getElementById('afterSubmit');
+  const refCodeEl = document.getElementById('refCode');
+  const openWa = document.getElementById('openWa');
+  const downloadEmbeddedBtn = document.getElementById('downloadEmbeddedBtn');
+  const f_name = document.getElementById('f_name');
+  const f_price = document.getElementById('f_price');
+  const f_desc = document.getElementById('f_desc');
+  const f_loc = document.getElementById('f_loc');
+  const f_contact = document.getElementById('f_contact');
+  const f_cat = document.getElementById('f_cat');
+  const f_file = document.getElementById('f_file');
+  const agree = document.getElementById('agree');
+  const previewCanvasWrap = document.getElementById('previewCanvasWrap');
+  const fallbackBox = document.getElementById('fallbackJson');
+
+  function showStatus(msg, isError=false){
+    submitStatus.textContent = msg;
+    submitStatus.style.color = isError ? '#b45309' : '#0b84ff';
+  }
+
+  submitBtn && submitBtn.addEventListener('click', async ()=>{
+    try{
+      // 💡 NEW: Clear previous messages before starting
+      msgContainer.innerHTML = '';
+      checkAndToggleVisibility();
+      
+      if(submitBtn.disabled) return;
+      submitBtn.disabled = true;
+      showStatus('جارٍ تجهيز الإعلان...');
+
+      if(!f_name.value || f_name.value.trim().length < 2){
+        showStatus('الرجاء إدخال اسم للإعلان', true);
+        // 💡 NEW: Display Error Message in the unified container
+        displayMessage('error', '⚠️ الرجاء إدخال اسم واضح ومناسب للإعلان قبل البدء.');
+        submitBtn.disabled = false;
+        return;
+      }
+      if(!agree.checked){
+        showStatus('يجب الموافقة على الشروط', true);
+        // 💡 NEW: Display Error Message in the unified container
+        displayMessage('error', 'يجب عليك الموافقة على شروط النشر أولاً للمتابعة.');
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const ref = genRef();
+      refCodeEl.textContent = ref;
+      afterSubmit.style.display = 'block';
+      downloadEmbeddedBtn.style.display = 'none';
+      if(openWa) openWa.style.display = 'none';
+      fallbackBox.style.display = 'none';
+      showStatus('جاري إنشاء البطاقة...');
+
+      const payload = {
+        ref_code: ref,
+        name: f_name.value.trim(),
+        price: f_price.value.trim(),
+        description: f_desc.value.trim(),
+        location: f_loc.value.trim(),
+        contact: f_contact.value.trim(),
+        category: f_cat.value.trim(),
+        created_at: new Date().toISOString(),
+        image: ''
+      };
+
+      // تجهيز الصورة
+      let fileOrBlob;
+      if(f_file.files && f_file.files[0]){
+        fileOrBlob = f_file.files[0];
+      }else{
+        fileOrBlob = await createPlaceholderImageBlob();
+      }
+
+      // تخزين WEBP داخل JSON
+      try{
+        const webpDataUrl = await imageFileToWebpDataUrl(fileOrBlob, 900, 900, 0.8);
+        payload.image = webpDataUrl;
+      }catch(e){
+        console.warn('failed to convert to webp, keeping image empty', e);
+        payload.image = '';
+      }
+
+      // إنشاء الكرت
+      let card;
+      try{
+        card = await createCardPngFromImageFileOrBlob(fileOrBlob, payload);
+      }catch(e){
+        console.error('failed to create card png', e);
+        card = null;
+      }
+
+      // معاينة
+      previewCanvasWrap.innerHTML = '';
+      if(card && card.dataURL){
+        const imgEl = document.createElement('img');
+        imgEl.style.width='100%';
+        imgEl.style.borderRadius='12px';
+        imgEl.src = card.dataURL;
+        previewCanvasWrap.appendChild(imgEl);
+        document.getElementById('previewCard').style.display='block';
+      }else{
+        document.getElementById('previewCard').style.display='none';
+      }
+
+      // ت م 
+      if(card && card.blob){
+        try{
+          const embedded = await embedJsonInImageBlob(card.blob, payload);
+          const url = URL.createObjectURL(embedded);
+          downloadEmbeddedBtn.style.display = 'inline-block';
+          downloadEmbeddedBtn.onclick = function(){
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = payload.ref_code + '_eldelala.png';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(()=>{
+              URL.revokeObjectURL(url);
+              a.remove();
+              if(openWa){
+                openWa.style.display = 'inline-block';
+                const base = window.location.href.split('#')[0];
+                const adLink = base + '#ad-' + payload.ref_code;
+   const msg = `
+مرحباً! 👋
+
+معلومات إعلانك:
+- 📝 الاسم: ${payload.name}
+- 💰 السعر: ${payload.price}
+- 🔖 الرمز: ${payload.ref_code}
+- 📞 التواصل: ${payload.contact}
+رابط الإعلان بعد القبول:
+  ${adLink}
+
+لإتمام النشر، نرجو إرسال بطاقة الإعلان:
+📎 ${payload.ref_code}_eldelala.png
+`;
+
+
+                
+                // ✅ استخدام الرقم المحدد في رابط واتساب
+                openWa.href = `https://wa.me/${+249998615193}?text=` + encodeURIComponent(msg);
+                openWa.target = '_blank';
+              }
+            }, 800);
+          };
+        }catch(e){
+          console.error('failed to embed JSON into PNG', e);
+          downloadEmbeddedBtn.style.display = 'none';
+          fallbackBox.style.display = 'block';
+        }
+      }else{
+        downloadEmbeddedBtn.style.display = 'none';
+        fallbackBox.style.display = 'block';
+      }
+
+      showStatus('تم إنشاء البطاقة. يمكنك تحميلها الآن.', false);
+      // 💡 NEW: Display Success Message in the unified container
+      displayMessage('success', '✅ تم تجهيز بطاقة الإعلان! قم بتنزيلها وإرسالها عبر الواتساب لتأكيد النشر.');
+
+    }catch(err){
+      console.error(err);
+      showStatus('حدث خطأ أثناء الإنشاء (تفاصيل في Console).', true);
+      // 💡 NEW: Display General Error Message
+      displayMessage('error', 'حدث خطأ غير متوقع أثناء إنشاء البطاقة. يرجى المحاولة مرة أخرى.');
+    }finally{
+      submitBtn.disabled = false;
+    }
+  });
+})();
+
+/* ===== ت = */
+
+//  الأداء
+if(qEl){
+  qEl.addEventListener('input', debounce(applyFiltersAndRender, 300));
+}
+
+//  ر
+if(catFilter){
+  catFilter.addEventListener('change', applyFiltersAndRender);
+}
+
+//  
+const refreshBtn = document.getElementById('refresh');
+if(refreshBtn){
+  refreshBtn.addEventListener('click', loadAdsFromGithub);
+}
+
+// 💡 NEW JAVASCRIPT FOR TICKER TAPE LOGIC
+(function(){
+  const tickerTape = document.getElementById('tickerTape');
+  const tickerItems = tickerTape ? tickerTape.querySelectorAll('.ticker-item') : null;
   
-  showMsg('info', 'جاري التنفيذ...');
-  
-  try {
+  // Check if the ticker exists and has messages
+  if(tickerTape && tickerItems && tickerItems.length > 0){
+    // If there are messages, add the class to make it visible
+    tickerTape.classList.add('has-messages');
+  }
+})();
+// 💡 END OF NEW JAVASCRIPT
+
+/* == */
+window.addEventListener('load', async ()=>{ // تم إضافة async
+  document.getElementById('home').classList.add('active');
+  await loadAdsFromGithub(); // تم إضافة await لضمان تحميل البيانات الأولية
+  openAdFromHash(); // التحقق من الـ hash وفتح الإعلان إذا وجد
+  checkAndToggleVisibility(); // 💡 NEW: Initial check to hide the message container
+});
+
+/* */
+window.addEventListener('hashchange', openAdFromHash);
+</script>
+</body>
+</html>
