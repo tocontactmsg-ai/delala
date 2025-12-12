@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -690,7 +689,8 @@ async function openDetails(item){
 
 /* تحميل الإعلانات من Google Sheet */
 async function loadAdsFromGoogleSheet(){
-  if(APPS_SCRIPT_URL === ''){
+  // تم تغيير التحقق هنا ليكون أكثر مرونة
+  if(APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL_HERE')){
     displayMessage('error', '⚠️ الرجاء تحديث رابط سكربت Google Apps Script في ملف index.html.');
     return;
   }
@@ -791,7 +791,7 @@ function displayMessage(type, text) {
 /* ========================================================== */
 
 
-/* منطق تقديم الإعلان (بدون PNG) */
+/* منطق تقديم الإعلان (مع التحقق من الحقول الإلزامية) */
 (function(){
   const submitBtn = document.getElementById('submitBtn');
   const submitStatus = document.getElementById('submitStatus');
@@ -816,12 +816,28 @@ function displayMessage(type, text) {
       submitBtn.disabled = true;
       submitStatus.textContent = 'جارٍ إرسال الإعلان...';
 
-      if(!f_name.value || f_name.value.trim().length < 2){
-        submitStatus.textContent = 'الرجاء إدخال اسم للإعلان';
-        displayMessage('error', '⚠️ الرجاء إدخال اسم واضح ومناسب للإعلان قبل البدء.');
-        submitBtn.disabled = false;
-        return;
+      // 🛑 التحقق من جميع الحقول الإلزامية
+      const fields = [
+        { el: f_name, msg: 'اسم الإعلان' },
+        { el: f_price, msg: 'السعر' },
+        { el: f_desc, msg: 'وصف الإعلان' },
+        { el: f_loc, msg: 'الموقع' },
+        { el: f_contact, msg: 'رقم التواصل' },
+        { el: f_cat, msg: 'القسم' }
+      ];
+
+      for (const field of fields) {
+        if (!field.el.value || field.el.value.trim() === '') {
+          const errMsg = `⚠️ الرجاء ملء حقل: ${field.msg} (إلزامي)`;
+          submitStatus.textContent = errMsg;
+          displayMessage('error', errMsg);
+          submitBtn.disabled = false;
+          field.el.focus(); // توجيه التركيز للحقل الفارغ
+          return;
+        }
       }
+      
+      // التحقق من الموافقة على الشروط
       if(!agree.checked){
         submitStatus.textContent = 'يجب الموافقة على الشروط';
         displayMessage('error', 'يجب عليك الموافقة على شروط النشر أولاً للمتابعة.');
@@ -829,9 +845,9 @@ function displayMessage(type, text) {
         return;
       }
       
-      if(APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE'){
+      if(APPS_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbwumrGNkFr1t5wmSf5v22HnF7aF1X87rnXXg8BWEa2IvLphY_hcLx_lF1rnjVlMiBU/exec'){
         submitStatus.textContent = 'خطأ: لم يتم تعيين رابط السكربت.';
-        displayMessage('error', '⚠️ لم يتم تعيين رابط سكربت Google Apps Script في الكود.');
+        displayMessage('error', '⚠️ لم يتم تعيين رابط سكربت Google Apps Script بشكل صحيح.');
         submitBtn.disabled = false;
         return;
       }
@@ -841,6 +857,13 @@ function displayMessage(type, text) {
 
       if(f_file.files && f_file.files[0]){
           const file = f_file.files[0];
+          // التحقق من نوع الصورة
+          if (!file.type.startsWith('image/')) {
+              displayMessage('error', '⚠️ يجب أن يكون الملف المرفوع صورة (JPEG, PNG, إلخ).');
+              submitBtn.disabled = false;
+              return;
+          }
+          // التحقق من حجم الصورة
           if(file.size > 2 * 1024 * 1024){ 
              displayMessage('error', '⚠️ حجم الصورة كبير جداً (الحد الأقصى 2MB).');
              submitBtn.disabled = false;
