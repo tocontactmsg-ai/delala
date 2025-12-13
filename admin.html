@@ -82,7 +82,7 @@
 
 <script>
 /* ================= CONFIG ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbz8a_wsbQFgFR19y-VoxEx1qOYAlzmtpV0-DYVN3TJeuRT0piGKgoDMSfMXFjRiqEex/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxJTHDfDEno7dSsQQznuAh0gTr1ubM0gGmVoImIsCLXPMXWzqOXSafevPcn7g9g3cB2/exec";
 /* ========================================= */
 
 let token = sessionStorage.getItem("adminToken");
@@ -213,6 +213,40 @@ async function reject(ref) {
   });
   loadPendingAds();
 }
+
+async function login() {
+  loginError.textContent = "Logging in...";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "adminLogin",
+        email: email.value.trim(),
+        password: password.value
+      })
+    });
+
+    const text = await res.text();
+    console.log("RAW RESPONSE:", text);
+
+    const data = JSON.parse(text);
+
+    if (data.status !== "success") {
+      loginError.textContent = data.message || "Login failed";
+      return;
+    }
+
+    sessionStorage.setItem("adminToken", data.token);
+    location.reload();
+
+  } catch (err) {
+    loginError.textContent = "JS Error: " + err.message;
+    console.error(err);
+  }
+}
+
 </script>
 
 </body>
