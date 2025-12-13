@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eldelala Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, button, textarea {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-danger  { background: #dc2626; color: #fff; }
+    .btn-success { background: #16a34a; color: #fff; }
+    .btn-light   { background: #e5e7eb; }
+    .row {
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+    }
+    img {
+      max-width: 120px;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .hidden { display: none; }
+    .actions button {
+      width: auto;
+      margin-right: 5px;
+    }
+    .error { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+<div class="box">
+
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>Admin Login</h2>
+    <input id="email" placeholder="Admin Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button class="btn-primary" onclick="login()">Login</button>
+    <p class="error" id="loginError"></p>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="adminBox" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2>Pending Ads</h2>
+      <button class="btn-light" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="ads"></div>
+  </div>
+
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const API_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+/* ========================================= */
+
+let token = sessionStorage.getItem("adminToken");
+
+/* ================= INIT ================= */
+if (token) showAdmin();
+else showLogin();
+
+/* ================= UI ================= */
+function showLogin() {
+  loginBox.classList.remove("hidden");
+  adminBox.classList.add("hidden");
+}
+
+function showAdmin() {
+  loginBox.classList.add("hidden");
+  adminBox.classList.remove("hidden");
+  loadPendingAds();
+}
+
+/* ================= AUTH ================= */
+async function login() {
+  loginError.textContent = "";
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "adminLogin",
+      email: email.value.trim(),
+      password: password.value
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.status !== "success") {
+    loginError.textContent = data.message || "Login failed";
+    return;
+  }
+
+  token = data.token;
+  sessionStorage.setItem("adminToken", token);
+  showAdmin();
+}
+
+async function logout() {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "adminLogout",
+      token
+    })
+  });
+
+  sessionStorage.clear();
+  location.reload();
+}
+
+/* ================= DATA ================= */
+async function loadPendingAds() {
+  ads.innerHTML = "Loading...";
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "fetchPendingAds",
+      token
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.status === "error") {
+    ads.innerHTML = `<p class="error">${data.message}</p>`;
+    return;
+  }
+
+  if (!data.length) {
+    ads.innerHTML = "<p>No pending ads.</p>";
+    return;
+  }
+
+  ads.innerHTML = data.map(renderAd).join("");
+}
+
+function renderAd(ad) {
+  return `
+    <div class="row">
+      ${ad.image_url ? `<img src="${ad.image_url}">` : ""}
+      <strong>${ad.name}</strong><br>
+      Price: ${ad.price}<br>
+      Location: ${ad.location}<br>
+      Contact: ${ad.contact}<br>
+      Category: ${ad.category}<br>
+      <div class="actions">
+        <button class="btn-success" onclick="publish('${ad.ref_code}')">Publish</button>
+        <button class="btn-danger" onclick="reject('${ad.ref_code}')">Reject</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ================= ACTIONS ================= */
+async function publish(ref) {
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "publishAd",
+      token,
+      ref_code: ref
+    })
+  });
+  loadPendingAds();
+}
+
+async function reject(ref) {
+  const reason = prompt("Reason for rejection?");
+  if (!reason) return;
+
+  await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "rejectAd",
+      token,
+      ref_code: ref,
+      reason
+    })
+  });
+  loadPendingAds();
+}
+</script>
+
+</body>
+</html>
