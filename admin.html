@@ -85,6 +85,19 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxJTHDfDEno7dSsQQznuAh0gTr1ubM0gGmVoImIsCLXPMXWzqOXSafevPcn7g9g3cB2/exec";
 /* ========================================= */
 
+  fetch(API_URL, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  mode: "cors",
+  body: JSON.stringify({
+    action: "adminLogin",
+    email: email.value.trim(),
+    password: password.value
+  })
+});
+
 let token = sessionStorage.getItem("adminToken");
 
 /* ================= INIT ================= */
