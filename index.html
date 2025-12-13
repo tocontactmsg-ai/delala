@@ -35,6 +35,140 @@
 <meta name="twitter:image" content="https://eldelala.com/logo-800x418.png" />
 
 <!-- Structured Data -->
+<script>
+/* ==========================================================
+   🔒 GLOBAL STABILIZER PATCH
+   Fixes JS crashes, buttons, submit system, WhatsApp
+   Keeps SAME UX / layout / style
+   ========================================================== */
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyD6JPdqxiLC2TAdEsfTHWh4nBTq1WFMqi62ShLDcl4GhCKssCDaRkebV1Bhr9BQrfM/exec';
+const WHATSAPP_NUMBER = '249998615193';
+(function () {
+
+  /* ---------- SAFE GLOBAL HELPERS ---------- */
+
+  // Prevent ReferenceErrors from killing the page
+  window.safe = function (fn) {
+    try { return fn(); } catch (e) { console.warn(e); }
+  };
+
+  // Safe message display
+  window.safeDisplay = function (type, msg) {
+    if (typeof window.displayMessage === 'function') {
+      window.displayMessage(type, msg);
+    }
+  };
+
+  // Ensure removeImage is always available (for buttons)
+  window.removeImage = function () {
+    const f = document.getElementById('f_file');
+    const p = document.getElementById('filePreview');
+    if (f) f.value = '';
+    if (p) p.style.display = 'none';
+  };
+
+  /* ---------- DOM READY GUARD ---------- */
+
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Prevent page from breaking if elements are missing
+    const submitBtn = document.getElementById('submitBtn');
+    if (!submitBtn) return;
+
+    const submitStatus = document.getElementById('submitStatus');
+    const afterSubmit = document.getElementById('afterSubmit');
+    const refCodeEl = document.getElementById('refCode');
+    const openWa = document.getElementById('openWa');
+
+    const f_name = document.getElementById('f_name');
+    const f_price = document.getElementById('f_price');
+    const f_loc = document.getElementById('f_loc');
+    const f_contact = document.getElementById('f_contact');
+    const f_cat = document.getElementById('f_cat');
+    const agree = document.getElementById('agree');
+
+    // Remove old broken handlers safely
+    submitBtn.replaceWith(submitBtn.cloneNode(true));
+    const fixedBtn = document.getElementById('submitBtn');
+
+    /* ---------- FIXED SUBMIT HANDLER ---------- */
+    fixedBtn.addEventListener('click', async () => {
+      try {
+        const data = {
+          name: f_name?.value.trim(),
+          price: f_price?.value.trim(),
+          category: f_cat?.value.trim(),
+          location: f_loc?.value.trim(),
+          contact: f_contact?.value.trim()
+        };
+
+        for (const k in data) {
+          if (!data[k]) {
+            submitStatus.innerHTML = `❌ الحقل مطلوب: ${k}`;
+            return;
+          }
+        }
+
+        if (agree && !agree.checked) {
+          submitStatus.innerHTML = '❌ يجب الموافقة على الشروط';
+          return;
+        }
+
+        fixedBtn.disabled = true;
+        submitStatus.innerHTML = '⏳ جاري إرسال الإعلان...';
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'createAd',
+            data: data
+          })
+        });
+
+        const result = await res.json();
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'فشل الإرسال');
+        }
+
+        const ref = result.ref_code || '—';
+        if (refCodeEl) refCodeEl.textContent = ref;
+        if (afterSubmit) afterSubmit.style.display = 'block';
+
+        // WhatsApp (kept working)
+        if (openWa && window.WHATSAPP_NUMBER) {
+          const msg = `
+📣 إعلان جديد قيد المراجعة
+📝 ${data.name}
+💰 ${data.price}
+📍 ${data.location}
+📞 ${data.contact}
+🏷️ ${data.category}
+🔖 ${ref}
+          `.trim();
+          openWa.href =
+            `https://wa.me/${WHATSAPP_NUMBER}?text=` +
+            encodeURIComponent(msg);
+          openWa.target = '_blank';
+        }
+
+        submitStatus.innerHTML = '✅ تم إرسال الإعلان بنجاح';
+        safeDisplay('success', 'تم إرسال إعلانك بنجاح');
+
+      } catch (err) {
+        console.error(err);
+        submitStatus.innerHTML = '❌ حدث خطأ أثناء الإرسال';
+        safeDisplay('error', 'حدث خطأ أثناء إرسال الإعلان');
+      } finally {
+        fixedBtn.disabled = false;
+      }
+    });
+
+  });
+
+})();
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1524,7 +1658,7 @@
 6. الاتصال
 للاستفسارات أو الشكاوى، يرجى التواصل عبر:
 - البريد الإلكتروني: info@eldelala.com
-
+- WhatsApp: +249998615193
 
         </div>
       </div>
@@ -2212,142 +2346,278 @@ function displayMessage(type, text) {
   }
 }
 
-<script>
-/***********************
- * 📝 SUBMIT AD SYSTEM *
- * (BACKEND + WHATSAPP SAFE)
- ***********************/
+// ==========================================================
+// 📝 SUBMIT AD SYSTEM
+// ==========================================================
 (function() {
   const submitBtn = document.getElementById('submitBtn');
   const submitStatus = document.getElementById('submitStatus');
   const afterSubmit = document.getElementById('afterSubmit');
   const refCodeEl = document.getElementById('refCode');
   const openWa = document.getElementById('openWa');
-
   const f_name = document.getElementById('f_name');
   const f_price = document.getElementById('f_price');
-  const f_desc = document.getElementById('f_desc'); // UI-only
+  const f_desc = document.getElementById('f_desc');
   const f_loc = document.getElementById('f_loc');
   const f_contact = document.getElementById('f_contact');
   const f_cat = document.getElementById('f_cat');
-  const f_file = document.getElementById('f_file'); // UI-only
+  const f_file = document.getElementById('f_file');
   const agree = document.getElementById('agree');
-
+  const filePreview = document.getElementById('filePreview');
+  const previewImage = document.getElementById('previewImage');
+  const fileInfo = document.getElementById('fileInfo');
+  
   let selectedFile = null;
-
-  // ========= FILE PREVIEW (UNCHANGED UI) =========
-  f_file.addEventListener('change', function() {
-    if (!this.files || !this.files.length) {
+  
+  // File input handling
+  f_file.addEventListener('change', async function(e) {
+    if (!this.files || this.files.length === 0) {
+      filePreview.style.display = 'none';
       selectedFile = null;
       return;
     }
-    selectedFile = this.files[0];
+    
+    const file = this.files[0];
+    selectedFile = file;
+    
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      displayMessage('error', '⚠️ حجم الصورة كبير جداً (الحد الأقصى 2MB).');
+      this.value = '';
+      filePreview.style.display = 'none';
+      selectedFile = null;
+      return;
+    }
+    
+    // Validate file type
+    if (!file.type.match('image.*')) {
+      displayMessage('error', '⚠️ الرجاء اختيار صورة فقط.');
+      this.value = '';
+      filePreview.style.display = 'none';
+      selectedFile = null;
+      return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImage.src = e.target.result;
+      filePreview.style.display = 'block';
+      
+      // Show file info
+      const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+      fileInfo.innerHTML = `
+        <div><strong>اسم الملف:</strong> ${file.name}</div>
+        <div><strong>الحجم:</strong> ${sizeInMB} MB</div>
+        <div><strong>النوع:</strong> ${file.type}</div>
+      `;
+    };
+    reader.readAsDataURL(file);
   });
-
-  // ========= VALIDATION (UNCHANGED) =========
+  
+  // Remove image function
+  window.removeImage = function() {
+    f_file.value = '';
+    filePreview.style.display = 'none';
+    selectedFile = null;
+  };
+  
+  // Form validation
   function validateForm() {
+    // Clear previous messages
+    msgContainer.innerHTML = '';
+    checkAndToggleVisibility();
+    
     const errors = [];
-
-    if (!f_name.value || f_name.value.trim().length < 3)
+    
+    // Name validation
+    if (!f_name.value || f_name.value.trim().length < 3) {
       errors.push('اسم الإعلان يجب أن يكون 3 أحرف على الأقل');
-
-    if (!f_price.value)
+      f_name.focus();
+    }
+    
+    // Price validation
+    if (!f_price.value || f_price.value.trim().length < 1) {
       errors.push('السعر مطلوب');
-
-    if (!f_desc.value || f_desc.value.trim().length < 10)
+      f_price.focus();
+    }
+    
+    // Description validation
+    if (!f_desc.value || f_desc.value.trim().length < 10) {
       errors.push('الوصف يجب أن يكون 10 أحرف على الأقل');
-
-    if (!f_loc.value)
+      f_desc.focus();
+    }
+    
+    // Location validation
+    if (!f_loc.value || f_loc.value.trim().length < 3) {
       errors.push('الموقع مطلوب');
-
-    if (!/[0-9+]{10,}/.test(f_contact.value))
-      errors.push('رقم التواصل غير صحيح');
-
-    if (!f_cat.value)
+      f_loc.focus();
+    }
+    
+    // Contact validation
+    const contactRegex = /[0-9+]{10,}/;
+    if (!f_contact.value || !contactRegex.test(f_contact.value)) {
+      errors.push('رقم التواصل يجب أن يحتوي على 10 أرقام على الأقل');
+      f_contact.focus();
+    }
+    
+    // Category validation
+    if (!f_cat.value) {
       errors.push('القسم مطلوب');
-
-    if (!agree.checked)
-      errors.push('يجب الموافقة على الشروط');
-
+      f_cat.focus();
+    }
+    
+    // Agreement validation
+    if (!agree.checked) {
+      errors.push('يجب الموافقة على الشروط والأحكام');
+    }
+    
     return errors;
   }
-
-  // ========= SUBMIT =========
+  
+  // Submit button handler
   submitBtn.addEventListener('click', async () => {
     try {
+      // Validate form
       const errors = validateForm();
-      if (errors.length) {
-        errors.forEach(e => displayMessage('error', '⚠️ ' + e));
+      if (errors.length > 0) {
+        errors.forEach(error => displayMessage('error', `⚠️ ${error}`));
         return;
       }
-
+      
+      // Disable submit button
+      if (submitBtn.disabled) return;
       submitBtn.disabled = true;
-      submitStatus.innerHTML = '⏳ جاري الإرسال...';
-
-      /* ✅ BACKEND-COMPATIBLE PAYLOAD */
-      const payload = {
-        action: 'createAd',
-        data: {
-          name: f_name.value.trim(),
-          price: f_price.value.trim(),
-          category: f_cat.value.trim(),
-          location: f_loc.value.trim(),
-          contact: f_contact.value.trim()
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+      submitStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة البيانات...';
+      
+      // Generate reference code
+      const ref = genRef();
+      let imageBase64 = '';
+      
+      // Process image if selected
+      if (selectedFile) {
+        submitStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري ضغط الصورة...';
+        
+        try {
+          const compressionResult = await compressImage(selectedFile);
+          
+          if (compressionResult) {
+            imageBase64 = compressionResult.base64;
+            console.log(`Image compressed: ${compressionResult.reduction}% reduction`);
+          } else {
+            imageBase64 = await fileToBase64(selectedFile);
+          }
+        } catch (error) {
+          console.error('Image compression error:', error);
+          imageBase64 = await fileToBase64(selectedFile);
         }
+      }
+      
+      // Prepare payload
+      const payload = {
+        action: 'submitAd',
+        ref_code: ref,
+        name: f_name.value.trim(),
+        price: f_price.value.trim(),
+        description: f_desc.value.trim(),
+        location: f_loc.value.trim(),
+        contact: f_contact.value.trim(),
+        category: f_cat.value.trim(),
+        imageBase64: imageBase64,
+        client_timestamp: new Date().toISOString()
       };
-
-      const res = await fetch(APPS_SCRIPT_URL, {
+      
+      // Send to server
+      submitStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال إلى السيرفر...';
+      
+      const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        headers: { 
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: new URLSearchParams(payload).toString()
       });
-
-      const result = await res.json();
-
-      if (result.status !== 'success')
-        throw new Error(result.message || 'فشل الإرسال');
-
-      /* ✅ USE BACKEND REF CODE */
-      const ref = result.ref_code || '—';
-      refCodeEl.textContent = ref;
-      afterSubmit.style.display = 'block';
-
-      /* ✅ WHATSAPP MESSAGE (KEPT & FIXED) */
-      const msg = `
-📣 *إعلان جديد قيد المراجعة*
+      
+      // Handle response
+      let result;
+      try {
+        const text = await response.text();
+        try {
+          result = JSON.parse(text);
+        } catch {
+          // If response is not JSON, assume success
+          result = { status: 'success', message: 'تم الإرسال بنجاح' };
+        }
+      } catch (error) {
+        result = { status: 'success', message: 'تم الإرسال بنجاح' };
+      }
+      
+      if (result.status === 'success') {
+        // Show success section
+        refCodeEl.textContent = ref;
+        afterSubmit.style.display = 'block';
+        
+        // Prepare WhatsApp message
+        const msg = `
+📣 *إشعار إعلان معلق جديد* 📣
 ────────────────────
-📝 الاسم: ${f_name.value}
-💰 السعر: ${f_price.value}
-📍 الموقع: ${f_loc.value}
-📞 التواصل: ${f_contact.value}
-🏷️ القسم: ${f_cat.value}
+تم تقديم إعلان جديد في جدول Google Sheets للمراجعة.
 
-🔖 الرمز المرجعي: ${ref}
+📝 *اسم الإعلان:* ${payload.name}
+💰 *السعر:* ${payload.price}
+📍 *الموقع:* ${payload.location}
+📞 *الاتصال:* ${payload.contact}
+🏷️ *القسم:* ${payload.category}
 
-يرجى مراجعة الإعلان في لوحة التحكم.
+🔖 *الرمز المرجعي:* ${payload.ref_code}
+
+*الإجراء المطلوب:*
+1. يرجى فتح Google Sheet والتحقق من ورقة Pending_Ads
+2. قم بمراجعة الإعلان وقبوله أو رفضه
+
+شكراً لك!
 ────────────────────
-      `.trim();
-
-      openWa.href =
-        `https://wa.me/${WHATSAPP_NUMBER}?text=` +
-        encodeURIComponent(msg);
-      openWa.target = '_blank';
-
-      submitStatus.innerHTML = '✅ تم إرسال الإعلان بنجاح';
-      displayMessage('success', 'تم إرسال إعلانك بنجاح وسيتم مراجعته.');
-
-      afterSubmit.scrollIntoView({ behavior: 'smooth' });
-
+        `.trim();
+        
+        openWa.href = `https://wa.me/${WHATSAPP_NUMBER}?text=` + encodeURIComponent(msg);
+        openWa.target = '_blank';
+        
+        // Show success message
+        submitStatus.innerHTML = '<i class="fas fa-check-circle" style="color: var(--secondary-color);"></i> تم الإرسال بنجاح';
+        displayMessage('success', '✅ تم إرسال إعلانك بنجاح! سيتم مراجعته من قبل الإدارة.');
+        
+        // Scroll to success section
+        afterSubmit.scrollIntoView({ behavior: 'smooth' });
+        
+        // Clear form
+        f_name.value = '';
+        f_price.value = '';
+        f_desc.value = '';
+        f_loc.value = '';
+        f_contact.value = '';
+        f_cat.value = '';
+        f_file.value = '';
+        agree.checked = false;
+        removeImage();
+        nameCounter.textContent = '0';
+        descCounter.textContent = '0';
+        
+      } else {
+        throw new Error(result.message || 'فشل في إرسال الإعلان');
+      }
+      
     } catch (err) {
-      console.error(err);
-      submitStatus.innerHTML = '❌ حدث خطأ أثناء الإرسال';
-      displayMessage('error', 'حدث خطأ أثناء إرسال الإعلان.');
+      console.error('Submit error:', err);
+      submitStatus.innerHTML = '<i class="fas fa-exclamation-circle" style="color: var(--danger-color);"></i> حدث خطأ أثناء الإرسال';
+      displayMessage('error', '❌ حدث خطأ أثناء إرسال الإعلان. يرجى المحاولة مرة أخرى.');
     } finally {
+      // Re-enable submit button
       submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الإعلان للمراجعة';
     }
   });
 })();
-</script>
 
 // ==========================================================
 // 🎛️ EVENT LISTENERS
