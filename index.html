@@ -27,7 +27,7 @@
 <meta property="og:title" content="الدلالة — اعلن ببساطة وسهولة" />
 <meta property="og:description" content="سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
 <meta property="og:url" content="https://eldelala.com/" />
-
+<meta property="og:image" content="https://eldelala.com/logo-1200x630.png" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="الدلالة — سوق إلكتروني للبيع والشراء داخل السودان – الدلالة" />
@@ -35,138 +35,6 @@
 <meta name="twitter:image" content="https://eldelala.com/logo-800x418.png" />
 
 <!-- Structured Data -->
-<script>
-/* ==========================================================
-   🔒 GLOBAL STABILIZER PATCH
-   Fixes JS crashes, buttons, submit system, WhatsApp
-   Keeps SAME UX / layout / style
-   ========================================================== */
-
-
-  /* ---------- SAFE GLOBAL HELPERS ---------- */
-
-  // Prevent ReferenceErrors from killing the page
-  window.safe = function (fn) {
-    try { return fn(); } catch (e) { console.warn(e); }
-  };
-
-  // Safe message display
-  window.safeDisplay = function (type, msg) {
-    if (typeof window.displayMessage === 'function') {
-      window.displayMessage(type, msg);
-    }
-  };
-
-  // Ensure removeImage is always available (for buttons)
-  window.removeImage = function () {
-    const f = document.getElementById('f_file');
-    const p = document.getElementById('filePreview');
-    if (f) f.value = '';
-    if (p) p.style.display = 'none';
-  };
-
-  /* ---------- DOM READY GUARD ---------- */
-
-  document.addEventListener('DOMContentLoaded', () => {
-
-    // Prevent page from breaking if elements are missing
-    const submitBtn = document.getElementById('submitBtn');
-    if (!submitBtn) return;
-
-    const submitStatus = document.getElementById('submitStatus');
-    const afterSubmit = document.getElementById('afterSubmit');
-    const refCodeEl = document.getElementById('refCode');
-    const openWa = document.getElementById('openWa');
-
-    const f_name = document.getElementById('f_name');
-    const f_price = document.getElementById('f_price');
-    const f_loc = document.getElementById('f_loc');
-    const f_contact = document.getElementById('f_contact');
-    const f_cat = document.getElementById('f_cat');
-    const agree = document.getElementById('agree');
-
-    // Remove old broken handlers safely
-    submitBtn.replaceWith(submitBtn.cloneNode(true));
-    const fixedBtn = document.getElementById('submitBtn');
-
-    /* ---------- FIXED SUBMIT HANDLER ---------- */
-    fixedBtn.addEventListener('click', async () => {
-      try {
-        const data = {
-          name: f_name?.value.trim(),
-          price: f_price?.value.trim(),
-          category: f_cat?.value.trim(),
-          location: f_loc?.value.trim(),
-          contact: f_contact?.value.trim()
-        };
-
-        for (const k in data) {
-          if (!data[k]) {
-            submitStatus.innerHTML = `❌ الحقل مطلوب: ${k}`;
-            return;
-          }
-        }
-
-        if (agree && !agree.checked) {
-          submitStatus.innerHTML = '❌ يجب الموافقة على الشروط';
-          return;
-        }
-
-        fixedBtn.disabled = true;
-        submitStatus.innerHTML = '⏳ جاري إرسال الإعلان...';
-
-        const res = await fetch(APPS_SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'createAd',
-            data: data
-          })
-        });
-
-        const result = await res.json();
-        if (result.status !== 'success') {
-          throw new Error(result.message || 'فشل الإرسال');
-        }
-
-        const ref = result.ref_code || '—';
-        if (refCodeEl) refCodeEl.textContent = ref;
-        if (afterSubmit) afterSubmit.style.display = 'block';
-
-        // WhatsApp (kept working)
-        if (openWa && window.WHATSAPP_NUMBER) {
-          const msg = `
-📣 إعلان جديد قيد المراجعة
-📝 ${data.name}
-💰 ${data.price}
-📍 ${data.location}
-📞 ${data.contact}
-🏷️ ${data.category}
-🔖 ${ref}
-          `.trim();
-          openWa.href =
-            `https://wa.me/${WHATSAPP_NUMBER}?text=` +
-            encodeURIComponent(msg);
-          openWa.target = '_blank';
-        }
-
-        submitStatus.innerHTML = '✅ تم إرسال الإعلان بنجاح';
-        safeDisplay('success', 'تم إرسال إعلانك بنجاح');
-
-      } catch (err) {
-        console.error(err);
-        submitStatus.innerHTML = '❌ حدث خطأ أثناء الإرسال';
-        safeDisplay('error', 'حدث خطأ أثناء إرسال الإعلان');
-      } finally {
-        fixedBtn.disabled = false;
-      }
-    });
-
-  });
-
-})();
-</script>
-
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1782,7 +1650,7 @@
 // ==========================================================
 // 🎯 CONFIGURATION
 // ==========================================================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyD6JPdqxiLC2TAdEsfTHWh4nBTq1WFMqi62ShLDcl4GhCKssCDaRkebV1Bhr9BQrfM/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxat4QoIhLmm1oBar0iWhsCuXf--s97i6i1bTRTZhZLaupjT9dEuciz7sb0IfGCzjNg/exec';
 const WHATSAPP_NUMBER = '249998615193';
 
 // Cache configuration
