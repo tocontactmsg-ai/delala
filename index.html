@@ -90,7 +90,7 @@ let ads = [], displayed=0, batch=20, loading=false;
 async function fetchAdList(){
   // list ads via GitHub API
   try{
-    const res = await fetch("https://api.github.com/repos/tocontactmsg-ai/de/contents/ads");
+    const res = await fetch("https://api.github.com/repos/tocontactmsg-ai/delala/ads");
     const data = await res.json();
     return data.filter(f=>f.name.endsWith(".json")).map(f=>f.name);
   }catch(e){ console.error("Fetch list error",e); return []; }
