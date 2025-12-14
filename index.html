@@ -150,7 +150,7 @@
   .detailsItem{background:#f9fafb;border-radius:10px;padding:6px 8px;font-size:13px}
   .detailsItem strong{display:block;font-size:11px;color:#6b7280;margin-bottom:2px}
 
-  /* --- MODAL ENHANCEMENTS (STICKY DETAILS) --- */
+/* --- MODAL ENHANCEMENTS (STICKY DETAILS) --- */
   main > section{display:none}
   main > section.active{display:block}
 
@@ -162,7 +162,8 @@
     max-width:900px;
     width:100%;
     max-height:90vh;
-    overflow-y:auto; /* تم التغيير من overflow:hidden; */
+    overflow-y: auto; /* ✅ FIX: السماح بالتمرير على مستوى البطاقة بالكامل */
+    overflow-x: hidden;
     box-shadow:0 18px 40px rgba(15,23,42,0.5);
     display:flex;
     flex-direction:column
@@ -172,7 +173,7 @@
   .modalMain{display:grid;grid-template-columns:1fr;gap:12px;padding:12px}
   .modalImage{background:#020617;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden; order:-1}
   .modalImage img{max-width:100%;max-height:360px;display:block}
-  .modalBody{overflow-y: auto;} /* Allow body to scroll */
+  .modalBody{overflow-y: visible;} /* تم التعديل: التمرير أصبح على مستوى البطاقة */
 
   .modalFooter{padding:10px 12px;border-top:1px solid #e5e7eb;background:#f9fafb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;gap:8px;align-items:center}
   .modalActions{display:flex;gap:8px;flex-wrap:wrap}
@@ -181,15 +182,15 @@
     /* Desktop layout with sticky details/actions sidebar */
     .modalMain{
       grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); 
-      max-height: 80vh; 
-      overflow-y: hidden; /* Prevent modal main scroll */
+      max-height: unset; /* FIX: إزالة تحديد الارتفاع لمنع مشكلات التمرير */
+      overflow-y: visible; /* FIX: لا نحتاج تمرير هنا */
     }
     .modalBody {
       position: sticky;
       top: 0;
       align-self: flex-start;
       padding-top: 10px;
-      overflow-y: auto; /* Scroll only on the details side */
+      overflow-y: auto; /* Scroll only on the details side (now working as intended) */
       max-height: 75vh;
     }
     .detailsList{grid-template-columns: 1fr;} /* Single column details on large screen */
