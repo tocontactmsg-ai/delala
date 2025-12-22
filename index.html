@@ -14,12 +14,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; overflow-x: hidden; }
-        .card-tender { background: white; border-radius: 2rem; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
+        .card-tender { background: white; border-radius: 2rem; border: 1px solid #e2e8f0; transition: all 0.3s ease; }
         .mono { font-family: 'Roboto Mono', monospace; }
         .nav-active { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 900; }
-        .input-box { width: 100%; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; outline: none; }
-        .input-box:focus { border-color: #2563eb; background: white; }
+        .search-input { width: 100%; padding: 1rem 3rem 1rem 1rem; background: white; border-radius: 1.2rem; border: 1px solid #e2e8f0; outline: none; transition: 0.3s; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .search-input:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-feed { animation: fadeIn 0.4s ease forwards; }
     </style>
 </head>
 <body>
@@ -39,6 +41,7 @@
             const [lang, setLang] = useState("ar");
             const [view, setView] = useState("feed");
             const [tenders, setTenders] = useState([]);
+            const [search, setSearch] = useState("");
             const [loading, setLoading] = useState(false);
             const [expanded, setExpanded] = useState({});
             const [items, setItems] = useState([{ name: "", qty: "" }]);
@@ -47,18 +50,13 @@
             const t = {
                 title: isAr ? "الدلالة" : "ELDELALA",
                 sub: isAr ? "للخدمات اللوجستية" : "Logistics Services",
+                searchPlaceholder: isAr ? "ابحث بالكود، الموقع، أو الصنف..." : "Search by Ref, Loc, or Item...",
                 ref: isAr ? "المرجع" : "REF",
-                loc: isAr ? "الموقع" : "Location",
-                count: isAr ? "الأصناف" : "Items",
                 bid: isAr ? "تقديم عرض" : "Offer Bid",
                 share: isAr ? "مشاركة" : "Share",
                 pdf: isAr ? "تحميل" : "PDF",
                 post: isAr ? "إضافة طلب" : "Post Request",
-                feed: isAr ? "العطاءات" : "Tenders",
-                name: isAr ? "الاسم الكريم" : "Contact Name",
-                phone: isAr ? "رقم الهاتف" : "Phone Number",
-                entity: isAr ? "اسم الجهة (المستشفى)" : "Hospital/Entity Name",
-                submit: isAr ? "إرسال الطلب عبر واتساب" : "Submit via WhatsApp"
+                feed: isAr ? "العطاءات" : "Tenders"
             };
 
             useEffect(() => {
@@ -77,143 +75,124 @@
                 }
             }, [view, lang]);
 
+            // Filter Logic
+            const filteredTenders = tenders.filter(item => {
+                const query = search.toLowerCase();
+                return item.id.toString().toLowerCase().includes(query) || 
+                       item.location.toLowerCase().includes(query) ||
+                       item.items.some(i => i.name.toLowerCase().includes(query));
+            });
+
             const generatePDF = (tender) => {
                 const doc = new jspdf.jsPDF();
                 doc.setFontSize(22); doc.text("ELDELALA MEDICAL", 105, 20, {align:"center"});
                 doc.setFontSize(10); doc.text(`Ref: ${tender.id} | Location: ${tender.location}`, 105, 30, {align:"center"});
                 doc.autoTable({
                     startY: 40,
-                    head: [['#', 'Item Description', 'Qty']],
+                    head: [['#', 'Description', 'Qty']],
                     body: tender.items.map((it, i) => [i+1, it.name, it.qty]),
                 });
                 doc.save(`Eldelala-${tender.id}.pdf`);
             };
 
-            const toggleExpand = (id) => {
-                setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+            const shareTender = (tender) => {
+                const siteUrl = window.location.href.split('?')[0];
+                const shareLink = `${siteUrl}?ref=${tender.id}`;
+                const message = `📌 *عطاء طبي من الدلالة*\n*المرجع:* ${tender.id}\n*الموقع:* ${tender.location}\n*الأصناف:* ${tender.items.length}\n\n🔗 *رابط العطاء:*\n${shareLink}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
             };
 
             const handlePost = (e) => {
                 e.preventDefault();
                 const fd = new FormData(e.target);
-                const refCode = "REF-" + Math.floor(Math.random()*9000 + 1000);
+                const refCode = "EL-" + Math.floor(Math.random()*9000 + 1000);
                 const itemList = items.map((it, i) => `${i+1}. ${it.name} (${it.qty})`).join('\n');
-                
-                const message = `📌 *طلب توريد جديد - الدلالة*\n` +
-                                `--------------------------\n` +
-                                `*المرجع:* ${refCode}\n` +
-                                `*الجهة:* ${fd.get("hosp")}\n` +
-                                `*الموقع:* ${fd.get("loc")}\n` +
-                                `*المرسل:* ${fd.get("user")}\n` +
-                                `*الهاتف:* ${fd.get("phone")}\n` +
-                                `--------------------------\n` +
-                                `*الأصناف:*\n${itemList}\n` +
-                                `--------------------------\n` +
-                                `_يرجى تحويل هذا الطلب إلى رابط_`;
-
+                const message = `📌 *طلب جديد - الدلالة*\n*المرجع:* ${refCode}\n*الجهة:* ${fd.get("hosp")}\n*الموقع:* ${fd.get("loc")}\n*المرسل:* ${fd.get("user")}\n*الهاتف:* ${fd.get("phone")}\n----------\n*الأصناف:*\n${itemList}`;
                 window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(message)}`);
             };
 
             return (
-                <div className="max-w-xl mx-auto px-4 py-8 pb-20">
-                    <header className="flex justify-between items-center mb-8">
+                <div className="max-w-xl mx-auto px-4 py-8">
+                    <header className="flex justify-between items-center mb-6">
                         <div>
-                            <h1 className="text-4xl font-black tracking-tighter italic text-slate-900">{t.title}</h1>
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em]">{t.sub}</p>
+                            <h1 className="text-4xl font-black italic tracking-tighter text-slate-900">{t.title}</h1>
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{t.sub}</p>
                         </div>
-                        <button onClick={() => setLang(isAr ? "en" : "ar")} className="bg-white border text-[10px] font-black px-4 py-2 rounded-xl shadow-sm uppercase">
+                        <button onClick={() => setLang(isAr ? "en" : "ar")} className="bg-white border text-[10px] font-black px-4 py-2 rounded-xl shadow-sm uppercase uppercase">
                             {isAr ? "English" : "العربية"}
                         </button>
                     </header>
 
-                    <nav className="flex justify-around mb-8 border-b border-slate-200 text-sm font-bold">
+                    <nav className="flex justify-around mb-6 border-b border-slate-200 text-sm font-bold">
                         <button onClick={() => setView("feed")} className={`pb-3 ${view==='feed'?'nav-active':'text-slate-400'}`}>{t.feed}</button>
                         <button onClick={() => setView("post")} className={`pb-3 ${view==='post'?'nav-active':'text-slate-400'}`}>{t.post}</button>
                     </nav>
 
+                    {view === "feed" && (
+                        <div className="relative mb-8">
+                            <span className={`absolute ${isAr?'right-4':'left-4'} top-4 text-slate-400`}>
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                            <input 
+                                type="text" 
+                                placeholder={t.searchPlaceholder}
+                                className="search-input text-sm font-medium"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                    )}
+
                     {view === "feed" ? (
                         <div className="space-y-6">
-                            {loading ? <div className="text-center py-20 animate-pulse text-blue-600 font-bold">Loading...</div> : 
-                             tenders.map(tndr => (
-                                <div key={tndr.id} className="card-tender p-6 shadow-xl shadow-slate-200/50">
-                                    <div className="flex justify-between items-start mb-4">
+                            {loading ? <div className="text-center py-10 animate-pulse text-blue-600 font-bold">Loading...</div> : 
+                             filteredTenders.map(tndr => (
+                                <div key={tndr.id} className="card-tender p-6 shadow-xl shadow-slate-200/40 animate-feed">
+                                    <div className="flex justify-between mb-4">
                                         <div>
                                             <span className="mono text-[10px] bg-slate-900 text-white px-3 py-1 rounded-full">{t.ref}: {tndr.id}</span>
                                             <h3 className="text-xl font-black text-slate-800 mt-2">📍 {tndr.location}</h3>
                                         </div>
-                                        <div className="text-center bg-blue-50 px-4 py-2 rounded-2xl">
-                                            <p className="text-[9px] text-blue-400 font-bold uppercase">{t.count}</p>
+                                        <div className="text-center bg-blue-50 px-3 py-1 rounded-xl border border-blue-100 h-fit">
                                             <p className="text-xl font-black text-blue-600">{tndr.items.length}</p>
                                         </div>
                                     </div>
 
-                                    {/* Collapsible Item List */}
-                                    <div onClick={() => toggleExpand(tndr.id)} className="cursor-pointer">
-                                        <div className="space-y-2">
-                                            {tndr.items.slice(0, 3).map((it, idx) => (
-                                                <div key={idx} className="flex justify-between text-sm bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                                    <span className="font-bold text-slate-700">{it.name}</span>
-                                                    <span className="font-black text-blue-700">{it.qty}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        
-                                        {!expanded[tndr.id] && tndr.items.length > 3 && (
-                                            <div className="text-center mt-3 text-blue-600 font-bold text-[11px] animate-bounce">
-                                                ⬇ {isAr ? "اضغط لعرض كافة الأصناف" : "Click to view full list"}
+                                    <div onClick={() => setExpanded({...expanded, [tndr.id]: !expanded[tndr.id]})} className="cursor-pointer space-y-2">
+                                        {tndr.items.slice(0, expanded[tndr.id] ? undefined : 3).map((it, idx) => (
+                                            <div key={idx} className="flex justify-between text-sm bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                <span className="font-bold text-slate-700">{it.name}</span>
+                                                <span className="font-black text-blue-700">{it.qty}</span>
                                             </div>
-                                        )}
-
-                                        {expanded[tndr.id] && (
-                                            <div className="mt-2 space-y-2 pt-2 border-t border-dashed border-slate-200">
-                                                {tndr.items.slice(3).map((it, idx) => (
-                                                    <div key={idx} className="flex justify-between text-sm bg-blue-50 p-3 rounded-xl">
-                                                        <span className="font-bold text-slate-700">{it.name}</span>
-                                                        <span className="font-black text-blue-700">{it.qty}</span>
-                                                    </div>
-                                                ))}
-                                                <div className="text-center mt-2 text-slate-400 font-bold text-[11px]">⬆ {isAr ? "إغلاق" : "Collapse"}</div>
+                                        ))}
+                                        {tndr.items.length > 3 && (
+                                            <div className="text-center mt-2 text-[10px] font-black text-blue-500 uppercase tracking-tighter">
+                                                {expanded[tndr.id] ? "⬆ Collapse / إغلاق" : `⬇ +${tndr.items.length-3} More / المزيد`}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Action Buttons: 3 Column */}
                                     <div className="grid grid-cols-3 gap-2 mt-6">
-                                        <button onClick={() => {
-                                            const text = `عطاء طبي من الدلالة\nالمرجع: ${tndr.id}\nالموقع: ${tndr.location}`;
-                                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-                                        }} className="bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-slate-200 transition-all">
-                                            {t.share}
-                                        </button>
-                                        
-                                        <button onClick={() => generatePDF(tndr)} className="bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-red-100 transition-all flex items-center justify-center gap-1">
-                                            {t.pdf}
-                                        </button>
-
-                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`أود تقديم عرض للطلب ${tndr.id} في ${tndr.location}`)}`} 
-                                           className="bg-blue-600 text-white py-3 rounded-xl font-black text-xs text-center shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-                                            {t.bid}
-                                        </a>
+                                        <button onClick={() => shareTender(tndr)} className="bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-slate-200">{t.share}</button>
+                                        <button onClick={() => generatePDF(tndr)} className="bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-red-100">{t.pdf}</button>
+                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`Offer for ${tndr.id}`)}`} className="bg-blue-600 text-white py-3 rounded-xl font-black text-xs text-center shadow-lg shadow-blue-200 uppercase">{t.bid}</a>
                                     </div>
                                 </div>
                              ))
                             }
                         </div>
                     ) : (
-                        <div className="card-tender p-8 shadow-2xl shadow-slate-200">
-                            <form onSubmit={handlePost} className="space-y-5">
-                                <div className="grid grid-cols-1 gap-4">
-                                    <input required name="user" placeholder={t.name} className="input-box font-bold" />
-                                    <input required name="phone" placeholder={t.phone} className="input-box" />
-                                    <input required name="hosp" placeholder={t.entity} className="input-box font-bold" />
-                                    <input required name="loc" placeholder={t.loc} className="input-box" />
-                                </div>
+                        <div className="card-tender p-8 shadow-2xl">
+                            <form onSubmit={handlePost} className="space-y-4">
+                                <input required name="user" placeholder={isAr?"اسمك":"Your Name"} className="w-full p-4 bg-slate-50 border rounded-xl outline-none" />
+                                <input required name="phone" placeholder={isAr?"رقم الهاتف":"Phone"} className="w-full p-4 bg-slate-50 border rounded-xl outline-none" />
+                                <input required name="hosp" placeholder={isAr?"اسم المستشفى":"Hospital Name"} className="w-full p-4 bg-slate-50 border rounded-xl outline-none font-bold" />
+                                <input required name="loc" placeholder={isAr?"الموقع":"Location"} className="w-full p-4 bg-slate-50 border rounded-xl outline-none" />
                                 
-                                <div className="pt-4 border-t border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">{t.count}</p>
+                                <div className="pt-4 border-t">
                                     {items.map((it, idx) => (
-                                        <div key={idx} className="flex gap-2 mb-3">
-                                            <input required placeholder="Item / الصنف" className="flex-1 p-3 border rounded-xl text-sm" onChange={e => {
+                                        <div key={idx} className="flex gap-2 mb-2">
+                                            <input required placeholder="Item" className="flex-1 p-3 border rounded-xl text-sm" onChange={e => {
                                                 const n = [...items]; n[idx].name = e.target.value; setItems(n);
                                             }} />
                                             <input required placeholder="Qty" className="w-20 p-3 border rounded-xl text-sm font-bold text-center" onChange={e => {
@@ -221,11 +200,9 @@
                                             }} />
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 border-2 border-dashed rounded-xl text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all">+ Add Row / إضافة صنف</button>
+                                    <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 border-2 border-dashed rounded-xl text-[10px] font-bold text-slate-400">+ Add Row</button>
                                 </div>
-                                <button type="submit" className="w-full py-5 bg-[#128C7E] text-white rounded-2xl font-black text-sm uppercase shadow-xl tracking-widest italic hover:scale-[1.02] transition-all">
-                                    {t.submit}
-                                </button>
+                                <button type="submit" className="w-full py-5 bg-[#128C7E] text-white rounded-2xl font-black text-sm uppercase shadow-xl italic tracking-widest">Submit via WhatsApp</button>
                             </form>
                         </div>
                     )}
