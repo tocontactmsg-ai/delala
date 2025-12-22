@@ -85,7 +85,7 @@
 
             const generatePDF = (tender) => {
                 const doc = new jspdf.jsPDF();
-                doc.setFontSize(22); doc.text("ELDELALA MEDICAL", 105, 20, {align:"center"});
+                doc.setFontSize(22); doc.text("eldelala.com", 105, 20, {align:"center"});
                 doc.setFontSize(10); doc.text(`Ref: ${tender.id} | Location: ${tender.location}`, 105, 30, {align:"center"});
                 doc.autoTable({
                     startY: 40,
