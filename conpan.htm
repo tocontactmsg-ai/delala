@@ -2,21 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Eldelala Admin | Security Suite</title>
+    <title>Eldelala Admin | Security</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 </head>
 <body class="bg-slate-900 p-4 flex items-center justify-center min-h-screen font-['Cairo']">
-    <div class="max-w-xl w-full bg-white rounded-[2.5rem] p-8 shadow-2xl border-4 border-blue-500">
-        <h1 class="text-3xl font-black mb-2 text-slate-800 italic uppercase">Eldelala <span class="text-blue-600">Secure</span></h1>
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-6 underline">المحول الأمني: حذف البيانات الحساسة من الملف العام</p>
+    <div class="max-w-xl w-full bg-white rounded-[2.5rem] p-8 shadow-2xl border-4 border-slate-800">
+        <div class="flex items-center gap-4 mb-8">
+            <img src="favicon.ico" class="w-14 h-14 rounded-lg shadow-sm" />
+            <div>
+                <h1 class="text-3xl font-[900] italic leading-none">
+                    <span style="color: #1e3a8a;">EL</span><span style="color: #10b981;">DELALA</span>
+                    <span class="text-slate-300 text-lg ml-2 uppercase font-black">Secure</span>
+                </h1>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">المحول الأمني لإخفاء البيانات</p>
+            </div>
+        </div>
         
         <textarea id="box" rows="8" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl mb-4 font-mono text-xs outline-none focus:border-blue-600 transition-all" 
-        placeholder="الصق رسالة الواتساب الكاملة هنا..."></textarea>
+        placeholder="الصق رسالة الواتساب هنا..."></textarea>
         
-        <button onclick="processSecure()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">
-            تجهيز الملف (حذف الهوية)
-        </button>
+        <button onclick="processSecure()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">تجهيز الملف العام</button>
         
         <div id="adminLog" class="hidden mt-6 p-5 bg-red-50 border-2 border-red-100 rounded-2xl">
             <p class="text-[11px] font-black text-red-600 mb-2 uppercase italic">🔐 مفتاحك الخاص (احفظه في ملاحظات هاتفك):</p>
@@ -24,55 +30,33 @@
         </div>
 
         <div id="out" class="hidden mt-6 text-center border-t pt-6">
-            <p class="text-green-600 font-black text-xs uppercase mb-4">✅ تم حذف الاسم والهاتف بنجاح</p>
-            <a id="dl" class="inline-block w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm">Download Anonymous JSON</a>
+            <p class="text-green-600 font-black text-xs uppercase mb-4">✅ تم تشفير البيانات الحساسة</p>
+            <a id="dl" class="inline-block w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm">Download JSON</a>
         </div>
     </div>
 
     <script>
         function processSecure() {
             const val = document.getElementById('box').value;
+            const clean = (t) => t ? t.replace(/[*_]/g, '').trim() : "";
             
-            // Helper to remove WhatsApp stars and whitespace
-            const clean = (txt) => txt ? txt.replace(/[*_]/g, '').trim() : "";
+            const ref = clean(val.match(/(?:المرجع|REF):\s*(.*)/)?.[1] || "EL-" + Date.now());
+            const hosp = clean(val.match(/(?:الجهة|Entity|المستشفى):\s*(.*)/)?.[1] || "Unknown");
+            const user = clean(val.match(/(?:المرسل|User|الاسم):\s*(.*)/)?.[1] || "N/A");
+            const phone = clean(val.match(/(?:الهاتف|Phone|رقم):\s*(.*)/)?.[1] || "N/A");
+            const loc = clean(val.match(/(?:الموقع|Location|موقع):\s*(.*)/)?.[1] || "Sudan");
 
-            // 1. EXTRACT AND CLEAN
-            const rawRef = val.match(/(?:المرجع|REF):\s*(.*)/)?.[1] || "EL-" + Date.now();
-            const ref = clean(rawRef);
-
-            const rawHosp = val.match(/(?:الجهة|Entity|المستشفى):\s*(.*)/)?.[1] || "Unknown Hosp";
-            const hosp = clean(rawHosp);
-
-            const rawUser = val.match(/(?:المرسل|User|الاسم):\s*(.*)/)?.[1] || "N/A";
-            const user = clean(rawUser);
-
-            const rawPhone = val.match(/(?:الهاتف|Phone|رقم):\s*(.*)/)?.[1] || "N/A";
-            const phone = clean(rawPhone);
-
-            const rawLoc = val.match(/(?:الموقع|Location|موقع):\s*(.*)/)?.[1] || "General Sudan";
-            const loc = clean(rawLoc);
-
-            // 2. EXTRACT ITEMS
             const items = [];
             val.split('\n').forEach(line => {
-                const cleanLine = line.replace(/[*]/g, '');
-                const match = cleanLine.match(/\d+\.\s*(.*?)\s*\((.*?)\)/);
+                const match = line.replace(/[*]/g, '').match(/\d+\.\s*(.*?)\s*\((.*?)\)/);
                 if(match) items.push({ name: match[1].trim(), qty: match[2].trim() });
             });
 
-            // 3. CREATE PUBLIC JSON
-            const publicData = { 
-                id: ref, 
-                location: loc, 
-                items: items,
-                date: new Date().toLocaleDateString('ar-EG')
-            };
+            const publicData = { id: ref, location: loc, items: items, date: new Date().toLocaleDateString('ar-EG') };
 
-            // 4. DISPLAY PRIVATE KEY
             document.getElementById('adminLog').classList.remove('hidden');
             document.getElementById('logText').innerText = `${ref} — ${hosp} — (${user} / ${phone})`;
 
-            // 5. DOWNLOAD
             const blob = new Blob([JSON.stringify(publicData, null, 2)], {type: "application/json"});
             document.getElementById('out').classList.remove('hidden');
             const link = document.getElementById('dl');
