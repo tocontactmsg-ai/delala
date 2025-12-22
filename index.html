@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>الدلالة | Eldelala Medical</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -11,11 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
+        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; overflow-x: hidden; }
+        .card-tender { background: white; border-radius: 2rem; border: 1px solid #e2e8f0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .mono { font-family: 'Roboto Mono', monospace; }
-        .card-shadow { box-shadow: 0 10px 30px -12px rgba(0,0,0,0.1); }
         .nav-active { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 900; }
+        .input-box { width: 100%; padding: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; outline: none; }
+        .input-box:focus { border-color: #2563eb; background: white; }
     </style>
 </head>
 <body>
@@ -26,9 +30,9 @@
 
         const CONFIG = {
             user: "tocontactmsg-ai",
-            repo: "delala",
+            repo: "De",
             path: "ads",
-            wa: "249998615193" // Your WhatsApp
+            wa: "249998615193" 
         };
 
         function App() {
@@ -40,18 +44,21 @@
             const [items, setItems] = useState([{ name: "", qty: "" }]);
 
             const isAr = lang === "ar";
-            const text = {
+            const t = {
                 title: isAr ? "الدلالة" : "ELDELALA",
-                sub: isAr ? "للخدمات الطبية واللوجستية" : "Medical Logistics Services",
-                ref: isAr ? "كود المرجع" : "Ref Code",
+                sub: isAr ? "للخدمات اللوجستية" : "Logistics Services",
+                ref: isAr ? "المرجع" : "REF",
                 loc: isAr ? "الموقع" : "Location",
-                count: isAr ? "عدد الأصناف" : "Items Count",
-                details: isAr ? "عرض التفاصيل" : "View Details",
-                hide: isAr ? "إخفاء" : "Hide",
+                count: isAr ? "الأصناف" : "Items",
                 bid: isAr ? "تقديم عرض" : "Offer Bid",
-                download: isAr ? "تحميل PDF" : "Download PDF",
+                share: isAr ? "مشاركة" : "Share",
+                pdf: isAr ? "تحميل" : "PDF",
                 post: isAr ? "إضافة طلب" : "Post Request",
-                feed: isAr ? "العطاءات" : "Tenders"
+                feed: isAr ? "العطاءات" : "Tenders",
+                name: isAr ? "الاسم الكريم" : "Contact Name",
+                phone: isAr ? "رقم الهاتف" : "Phone Number",
+                entity: isAr ? "اسم الجهة (المستشفى)" : "Hospital/Entity Name",
+                submit: isAr ? "إرسال الطلب عبر واتساب" : "Submit via WhatsApp"
             };
 
             useEffect(() => {
@@ -70,106 +77,143 @@
                 }
             }, [view, lang]);
 
-            const generatePDF = (t) => {
+            const generatePDF = (tender) => {
                 const doc = new jspdf.jsPDF();
                 doc.setFontSize(22); doc.text("ELDELALA MEDICAL", 105, 20, {align:"center"});
-                doc.setFontSize(12);
-                doc.text(`Ref: ${t.id}`, 20, 40);
-                doc.text(`Location: ${t.location}`, 20, 50);
+                doc.setFontSize(10); doc.text(`Ref: ${tender.id} | Location: ${tender.location}`, 105, 30, {align:"center"});
                 doc.autoTable({
-                    startY: 60,
-                    head: [['Item Name', 'Quantity']],
-                    body: t.items.map(i => [i.name, i.qty]),
+                    startY: 40,
+                    head: [['#', 'Item Description', 'Qty']],
+                    body: tender.items.map((it, i) => [i+1, it.name, it.qty]),
                 });
-                doc.save(`${t.id}.pdf`);
+                doc.save(`Eldelala-${tender.id}.pdf`);
+            };
+
+            const toggleExpand = (id) => {
+                setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
             };
 
             const handlePost = (e) => {
                 e.preventDefault();
                 const fd = new FormData(e.target);
-                const ref = "EL-" + Math.floor(1000 + Math.random() * 9000);
-                const msg = `*📌 طلب جديد - الدلالة*\n*المرجع:* ${ref}\n*الموقع:* ${fd.get("loc")}\n*الأصناف:* ${items.length}\n----------\n` + 
-                            items.map((it, i) => `${i+1}. ${it.name} (${it.qty})`).join('\n');
-                window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(msg)}`);
+                const refCode = "REF-" + Math.floor(Math.random()*9000 + 1000);
+                const itemList = items.map((it, i) => `${i+1}. ${it.name} (${it.qty})`).join('\n');
+                
+                const message = `📌 *طلب توريد جديد - الدلالة*\n` +
+                                `--------------------------\n` +
+                                `*المرجع:* ${refCode}\n` +
+                                `*الجهة:* ${fd.get("hosp")}\n` +
+                                `*الموقع:* ${fd.get("loc")}\n` +
+                                `*المرسل:* ${fd.get("user")}\n` +
+                                `*الهاتف:* ${fd.get("phone")}\n` +
+                                `--------------------------\n` +
+                                `*الأصناف:*\n${itemList}\n` +
+                                `--------------------------\n` +
+                                `_يرجى تحويل هذا الطلب إلى رابط_`;
+
+                window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(message)}`);
             };
 
             return (
-                <div className="max-w-xl mx-auto px-4 py-6">
-                    <div className="flex justify-between items-center mb-10">
-                        <div className="text-right">
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tighter italic">{text.title}</h1>
-                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{text.sub}</p>
+                <div className="max-w-xl mx-auto px-4 py-8 pb-20">
+                    <header className="flex justify-between items-center mb-8">
+                        <div>
+                            <h1 className="text-4xl font-black tracking-tighter italic text-slate-900">{t.title}</h1>
+                            <p className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em]">{t.sub}</p>
                         </div>
-                        <button onClick={() => setLang(isAr ? "en" : "ar")} className="bg-white border p-2 rounded-lg text-[10px] font-bold shadow-sm uppercase">
+                        <button onClick={() => setLang(isAr ? "en" : "ar")} className="bg-white border text-[10px] font-black px-4 py-2 rounded-xl shadow-sm uppercase">
                             {isAr ? "English" : "العربية"}
                         </button>
-                    </div>
+                    </header>
 
-                    <nav className="flex justify-around mb-8 border-b border-slate-200">
-                        <button onClick={() => setView("feed")} className={`pb-3 text-sm font-bold ${view==='feed'?'nav-active':'text-slate-400'}`}>{text.feed}</button>
-                        <button onClick={() => setView("post")} className={`pb-3 text-sm font-bold ${view==='post'?'nav-active':'text-slate-400'}`}>{text.post}</button>
+                    <nav className="flex justify-around mb-8 border-b border-slate-200 text-sm font-bold">
+                        <button onClick={() => setView("feed")} className={`pb-3 ${view==='feed'?'nav-active':'text-slate-400'}`}>{t.feed}</button>
+                        <button onClick={() => setView("post")} className={`pb-3 ${view==='post'?'nav-active':'text-slate-400'}`}>{t.post}</button>
                     </nav>
 
                     {view === "feed" ? (
                         <div className="space-y-6">
-                            {tenders.map(tndr => (
-                                <div key={tndr.id} className="card-shadow bg-white rounded-3xl p-6 border border-slate-100">
+                            {loading ? <div className="text-center py-20 animate-pulse text-blue-600 font-bold">Loading...</div> : 
+                             tenders.map(tndr => (
+                                <div key={tndr.id} className="card-tender p-6 shadow-xl shadow-slate-200/50">
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <span className="mono text-[11px] bg-slate-900 text-white px-3 py-1 rounded-full">{text.ref}: {tndr.id}</span>
-                                            <h3 className="text-lg font-black text-slate-800 mt-3">📍 {tndr.location}</h3>
+                                            <span className="mono text-[10px] bg-slate-900 text-white px-3 py-1 rounded-full">{t.ref}: {tndr.id}</span>
+                                            <h3 className="text-xl font-black text-slate-800 mt-2">📍 {tndr.location}</h3>
                                         </div>
-                                        <div className="text-center">
-                                            <p className="text-[9px] text-slate-400 font-bold uppercase">{text.count}</p>
+                                        <div className="text-center bg-blue-50 px-4 py-2 rounded-2xl">
+                                            <p className="text-[9px] text-blue-400 font-bold uppercase">{t.count}</p>
                                             <p className="text-xl font-black text-blue-600">{tndr.items.length}</p>
                                         </div>
                                     </div>
 
-                                    {/* Preview of first 3 items */}
-                                    <div className="space-y-2 mb-4">
-                                        {tndr.items.slice(0, 3).map((it, idx) => (
-                                            <div key={idx} className="flex justify-between text-sm bg-slate-50 p-2 rounded-lg">
-                                                <span>{it.name}</span>
-                                                <span className="font-bold">{it.qty}</span>
-                                            </div>
-                                        ))}
-                                        {tndr.items.length > 3 && !expanded[tndr.id] && <p className="text-[10px] text-center text-slate-400 font-bold italic">...+{tndr.items.length - 3} More items</p>}
-                                    </div>
-
-                                    {/* Expanded Full List */}
-                                    {expanded[tndr.id] && (
-                                        <div className="border-t pt-4 space-y-2 mb-4 animate-fadeIn">
-                                            {tndr.items.slice(3).map((it, idx) => (
-                                                <div key={idx} className="flex justify-between text-sm bg-blue-50 p-2 rounded-lg">
-                                                    <span>{it.name}</span>
-                                                    <span className="font-bold">{it.qty}</span>
+                                    {/* Collapsible Item List */}
+                                    <div onClick={() => toggleExpand(tndr.id)} className="cursor-pointer">
+                                        <div className="space-y-2">
+                                            {tndr.items.slice(0, 3).map((it, idx) => (
+                                                <div key={idx} className="flex justify-between text-sm bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                                    <span className="font-bold text-slate-700">{it.name}</span>
+                                                    <span className="font-black text-blue-700">{it.qty}</span>
                                                 </div>
                                             ))}
                                         </div>
-                                    )}
+                                        
+                                        {!expanded[tndr.id] && tndr.items.length > 3 && (
+                                            <div className="text-center mt-3 text-blue-600 font-bold text-[11px] animate-bounce">
+                                                ⬇ {isAr ? "اضغط لعرض كافة الأصناف" : "Click to view full list"}
+                                            </div>
+                                        )}
 
-                                    <div className="flex gap-2 pt-2">
-                                        <button onClick={() => setExpanded({...expanded, [tndr.id]: !expanded[tndr.id]})} className="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-xs uppercase">
-                                            {expanded[tndr.id] ? text.hide : text.details}
+                                        {expanded[tndr.id] && (
+                                            <div className="mt-2 space-y-2 pt-2 border-t border-dashed border-slate-200">
+                                                {tndr.items.slice(3).map((it, idx) => (
+                                                    <div key={idx} className="flex justify-between text-sm bg-blue-50 p-3 rounded-xl">
+                                                        <span className="font-bold text-slate-700">{it.name}</span>
+                                                        <span className="font-black text-blue-700">{it.qty}</span>
+                                                    </div>
+                                                ))}
+                                                <div className="text-center mt-2 text-slate-400 font-bold text-[11px]">⬆ {isAr ? "إغلاق" : "Collapse"}</div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Action Buttons: 3 Column */}
+                                    <div className="grid grid-cols-3 gap-2 mt-6">
+                                        <button onClick={() => {
+                                            const text = `عطاء طبي من الدلالة\nالمرجع: ${tndr.id}\nالموقع: ${tndr.location}`;
+                                            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+                                        }} className="bg-slate-100 text-slate-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-slate-200 transition-all">
+                                            {t.share}
                                         </button>
-                                        <button onClick={() => generatePDF(tndr)} className="bg-red-50 text-red-600 px-4 rounded-xl">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        
+                                        <button onClick={() => generatePDF(tndr)} className="bg-red-50 text-red-600 py-3 rounded-xl font-bold text-xs uppercase hover:bg-red-100 transition-all flex items-center justify-center gap-1">
+                                            {t.pdf}
                                         </button>
-                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`Offer for ${text.ref}: ${tndr.id}`)}`} className="flex-[2] bg-blue-600 text-white py-3 rounded-xl font-bold text-xs text-center shadow-lg shadow-blue-100 uppercase">
-                                            {text.bid}
+
+                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`أود تقديم عرض للطلب ${tndr.id} في ${tndr.location}`)}`} 
+                                           className="bg-blue-600 text-white py-3 rounded-xl font-black text-xs text-center shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                            {t.bid}
                                         </a>
                                     </div>
                                 </div>
-                            ))}
+                             ))
+                            }
                         </div>
                     ) : (
-                        <div className="card-shadow bg-white p-8 rounded-3xl">
-                            <form onSubmit={handlePost} className="space-y-6">
-                                <input required name="loc" placeholder={text.loc} className="w-full p-4 bg-slate-50 border rounded-2xl outline-none" />
-                                <div className="space-y-3">
+                        <div className="card-tender p-8 shadow-2xl shadow-slate-200">
+                            <form onSubmit={handlePost} className="space-y-5">
+                                <div className="grid grid-cols-1 gap-4">
+                                    <input required name="user" placeholder={t.name} className="input-box font-bold" />
+                                    <input required name="phone" placeholder={t.phone} className="input-box" />
+                                    <input required name="hosp" placeholder={t.entity} className="input-box font-bold" />
+                                    <input required name="loc" placeholder={t.loc} className="input-box" />
+                                </div>
+                                
+                                <div className="pt-4 border-t border-slate-100">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">{t.count}</p>
                                     {items.map((it, idx) => (
-                                        <div key={idx} className="flex gap-2">
-                                            <input required placeholder="Item" className="flex-1 p-3 border rounded-xl text-sm" onChange={e => {
+                                        <div key={idx} className="flex gap-2 mb-3">
+                                            <input required placeholder="Item / الصنف" className="flex-1 p-3 border rounded-xl text-sm" onChange={e => {
                                                 const n = [...items]; n[idx].name = e.target.value; setItems(n);
                                             }} />
                                             <input required placeholder="Qty" className="w-20 p-3 border rounded-xl text-sm font-bold text-center" onChange={e => {
@@ -177,9 +221,11 @@
                                             }} />
                                         </div>
                                     ))}
-                                    <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 border-2 border-dashed rounded-xl text-[10px] font-bold text-slate-400 uppercase">+ Add Item</button>
+                                    <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 border-2 border-dashed rounded-xl text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all">+ Add Row / إضافة صنف</button>
                                 </div>
-                                <button type="submit" className="w-full py-5 bg-[#128C7E] text-white rounded-2xl font-black text-sm uppercase shadow-xl tracking-widest italic">Submit to Eldelala</button>
+                                <button type="submit" className="w-full py-5 bg-[#128C7E] text-white rounded-2xl font-black text-sm uppercase shadow-xl tracking-widest italic hover:scale-[1.02] transition-all">
+                                    {t.submit}
+                                </button>
                             </form>
                         </div>
                     )}
