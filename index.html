@@ -2,224 +2,166 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Medical Hub | منصة التوريدات الطبية</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Hub | نظام التوريدات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto+Mono:wght@500;700&family=Cairo:wght@700;900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0284c7; } /* Trustworthy Medical Blue */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: #f1f5f9;
-            color: #1e293b;
-        }
-        .ar-title { font-family: 'Cairo', sans-serif; }
-        .glass-card { 
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .input-formal {
-            transition: all 0.15s ease-in-out;
-            border: 1px solid #cbd5e1;
-            font-size: 0.875rem;
-        }
-        .input-formal:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
-            outline: none;
-        }
-        .animate-fade { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: 'Cairo', sans-serif; background: #f8fafc; }
+        .glass { background: white; border: 1px solid #e2e8f0; border-radius: 1rem; }
+        .active-tab { border-bottom: 3px solid #0284c7; color: #0284c7; }
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-<div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-<script type="text/babel">
-const { useState, useEffect } = React;
+        // --- CONFIG ---
+        const USER = "tocontactmsg-ai";
+        const REPO = "De";
+        const FOLDER = "ads";
+        const MY_WA = "249998615193";
 
-// Configuration for GitHub "Database"
-const GITHUB_CONFIG = {
-    owner: 'tocontactmsg-ai',
-    repo: 'De',
-    path: 'ads'
-};
+        function App() {
+            const [view, setView] = useState("feed");
+            const [demands, setDemands] = useState([]);
+            const [loading, setLoading] = useState(false);
+            const [log, setLog] = useState("System Ready...");
+            const [items, setItems] = useState([{ name: "", qty: "" }]);
+            const [download, setDownload] = useState(null);
 
-function App() {
-    const [view, setView] = useState("home"); // "home" = Active Tenders, "post" = Hospital Request Form
-    const [requests, setRequests] = useState([]);
-    const [submittedData, setSubmittedData] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (view === "home") {
-            setLoading(true);
-            fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`)
-                .then(res => res.json())
-                .then(async files => {
-                    const jsonFiles = files.filter(f => f.name.endsWith('.json'));
-                    const data = await Promise.all(jsonFiles.map(f => fetch(f.download_url).then(r => r.json())));
-                    // Sort by date or ID
-                    setRequests(data.sort((a,b) => b.id - a.id));
+            // Fetch Logic with Debug Logging
+            const fetchDemands = async () => {
+                setLoading(true);
+                setLog("Connecting to GitHub...");
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}`);
+                    if (!res.ok) throw new Error("Folder not found or Repo is Private");
+                    
+                    const files = await res.json();
+                    setLog(`Found ${files.length} files. Downloading content...`);
+                    
+                    const data = await Promise.all(
+                        files.filter(f => f.name.endsWith('.json')).map(async f => {
+                            const r = await fetch(f.download_url);
+                            return r.json();
+                        })
+                    );
+                    setDemands(data.sort((a,b) => b.id - a.id));
+                    setLog("Data synced successfully.");
+                } catch (err) {
+                    setLog("ERROR: " + err.message);
+                } finally {
                     setLoading(false);
-                })
-                .catch(err => {
-                    console.error(err);
-                    setLoading(false);
-                });
-        }
-    }, [view]);
+                }
+            };
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        const requestObject = {
-            id: Date.now(),
-            hospital: fd.get("hospital"),
-            category: fd.get("category"),
-            items: fd.get("items"),
-            deadline: fd.get("deadline"),
-            wa: "249998615193", // Your business WhatsApp for fee collection
-            date: new Date().toLocaleDateString('ar-EG')
-        };
+            useEffect(() => { if(view === "feed") fetchDemands(); }, [view]);
 
-        const blob = new Blob([JSON.stringify(requestObject, null, 2)], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        setSubmittedData({ ...requestObject, downloadUrl: url });
-    };
+            const handleCreate = (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.target);
+                const order = {
+                    id: Date.now(),
+                    hospital: fd.get("hosp"),
+                    location: fd.get("loc"),
+                    items: items,
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+                const blob = new Blob([JSON.stringify(order, null, 2)], {type: "application/json"});
+                setDownload({ url: URL.createObjectURL(blob), name: `order-${order.id}.json` });
+            };
 
-    return (
-        <div className="max-w-5xl mx-auto px-6 py-8">
-            {/* Professional Header */}
-            <header className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-                <div className="text-center md:text-right">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tighter ar-title">
-                        MEDICAL <span className="text-sky-600 uppercase">HUB</span>
-                    </h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">المنصة المركزية لتوريدات المستشفيات والجامعات</p>
-                </div>
-                <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                    <button onClick={() => {setView("home"); setSubmittedData(null)}} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${view === 'home' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-500 hover:text-sky-600'}`}>طلبات التوريد النشطة</button>
-                    <button onClick={() => setView("post")} className={`px-6 py-2 rounded-lg text-xs font-bold transition-all ${view === 'post' ? 'bg-sky-600 text-white shadow-md' : 'text-slate-500 hover:text-sky-600'}`}>تقديم طلب شراء جديد</button>
-                </div>
-            </header>
+            return (
+                <div className="max-w-xl mx-auto p-4 min-h-screen">
+                    <header className="text-center py-6">
+                        <h1 className="text-2xl font-black text-slate-800">MEDICAL <span className="text-sky-600">HUB</span></h1>
+                        <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">مركز تنسيق طلبات المستشفيات</p>
+                    </header>
 
-            {view === "home" ? (
-                <div className="animate-fade">
-                    <div className="mb-8 border-b border-slate-200 pb-4 flex justify-between items-end">
-                        <h2 className="text-xl font-bold text-slate-800">العطاءات المتاحة للموردين</h2>
-                        <span className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full">{requests.length} طلب متاح</span>
+                    {/* Navigation */}
+                    <div className="flex justify-around mb-6 border-b border-slate-200 text-sm font-bold">
+                        <button onClick={() => setView("feed")} className={`pb-2 px-4 ${view==='feed'?'active-tab':'text-slate-400'}`}>طلبات الموردين</button>
+                        <button onClick={() => setView("post")} className={`pb-2 px-4 ${view==='post'?'active-tab':'text-slate-400'}`}>إضافة طلب شراء</button>
                     </div>
 
-                    {loading ? (
-                        <div className="flex flex-col items-center py-20 text-slate-300">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-sky-600 mb-4"></div>
-                            <span className="text-sm font-bold tracking-widest uppercase">جاري تحديث البيانات...</span>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {requests.map(req => (
-                                <div key={req.id} className="glass-card rounded-2xl flex flex-col hover:border-sky-300 transition-colors">
-                                    <div className="p-6 flex-1">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <span className="bg-slate-100 text-slate-600 text-[9px] font-black px-2 py-1 rounded uppercase tracking-tighter">REF: {req.id.toString().slice(-6)}</span>
-                                            <span className="text-[10px] text-sky-600 font-bold">نشط</span>
-                                        </div>
-                                        <h3 className="text-lg font-bold text-slate-800 mb-1">{req.hospital}</h3>
-                                        <p className="text-[10px] text-slate-400 font-bold uppercase mb-4 tracking-widest">{req.category}</p>
-                                        <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-4">
-                                            <p className="text-xs text-slate-600 leading-relaxed font-medium whitespace-pre-wrap line-clamp-4">{req.items}</p>
-                                        </div>
+                    {/* View: Feed */}
+                    {view === "feed" ? (
+                        <div className="space-y-4">
+                            {loading && <div className="text-center p-10 animate-pulse text-sky-600">جاري التحديث...</div>}
+                            {demands.length === 0 && !loading && <div className="text-center py-20 text-slate-400 glass">لا توجد عطاءات نشطة</div>}
+                            
+                            {demands.map(d => (
+                                <div key={d.id} className="glass p-5 border-r-4 border-sky-600 shadow-sm">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <h3 className="font-bold text-slate-800">{d.hospital}</h3>
+                                        <span className="text-[9px] font-mono text-slate-400">{d.date}</span>
                                     </div>
-                                    <div className="px-6 pb-6 mt-auto">
-                                        <div className="flex justify-between items-center mb-4 text-[11px] font-bold">
-                                            <span className="text-slate-400">آخر موعد للتقديم:</span>
-                                            <span className="text-red-500">{req.deadline}</span>
-                                        </div>
-                                        <a href={`https://wa.me/${req.wa}?text=بخصوص طلب التوريد رقم (${req.id}) لجهة (${req.hospital}). نود تقديم عرض سعر أولي.`} 
-                                           target="_blank" 
-                                           className="block w-full text-center bg-slate-900 text-white py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-sky-600 transition-all shadow-lg shadow-slate-200">
-                                            ارسال الفاتورة المبدئية
-                                        </a>
+                                    <div className="bg-slate-50 rounded-lg p-3 mb-4 space-y-1">
+                                        {d.items.map((it, i) => (
+                                            <div key={i} className="text-xs flex justify-between">
+                                                <span>• {it.name}</span>
+                                                <span className="font-bold text-sky-700">{it.qty}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[10px] text-slate-500">📍 {d.location}</span>
+                                        <a href={`https://wa.me/${MY_WA}?text=${encodeURIComponent(`أود تقديم عرض سعر للطلب (${d.id}) لجهة (${d.hospital})`)}`}
+                                           className="bg-[#128C7E] text-white px-5 py-2 rounded-lg font-bold text-xs shadow-md">تقديم عرض</a>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    )}
-                </div>
-            ) : (
-                <div className="max-w-2xl mx-auto">
-                    {!submittedData ? (
-                        <div className="glass-card rounded-3xl overflow-hidden animate-fade">
-                            <div className="bg-slate-900 px-8 py-5 text-white flex justify-between items-center">
-                                <h2 className="text-[11px] font-bold tracking-widest uppercase">نموذج طلب عرض سعر (RFQ)</h2>
-                                <span className="text-[9px] bg-sky-500 px-2 py-1 rounded font-black">OFFICIAL FORM</span>
-                            </div>
-                            <form onSubmit={handleFormSubmit} className="p-8 space-y-6">
-                                <div>
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase mb-2 block tracking-widest">الجهة الطالبة (مستشفى / جامعة / مركز)</label>
-                                    <input required name="hospital" className="w-full p-4 rounded-xl input-formal font-bold text-slate-800" placeholder="مثال: جامعة الخرطوم - كلية الطب" />
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-2 block tracking-widest">تصنيف المواد</label>
-                                        <select name="category" className="w-full p-4 rounded-xl input-formal font-bold text-slate-800">
-                                            <option>أجهزة طبية</option>
-                                            <option>مستهلكات معملية</option>
-                                            <option>أدوية ومحاليل</option>
-                                            <option>أثاث طبي</option>
-                                            <option>أخرى</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase mb-2 block tracking-widest">آخر موعد لاستلام العروض</label>
-                                        <input required name="deadline" type="date" className="w-full p-4 rounded-xl input-formal" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase mb-2 block tracking-widest">قائمة الأصناف والكميات المطلوبة</label>
-                                    <textarea required name="items" rows="6" className="w-full p-4 rounded-xl input-formal text-sm" placeholder="1. جهاز ضغط ديجيتال (عدد 10)&#10;2. شرايح فحص سكري (عدد 50 كرتونة)..."></textarea>
-                                </div>
-                                <button type="submit" className="w-full py-5 bg-sky-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-sky-100 hover:bg-sky-700 transition-all active:scale-[0.98]">
-                                    اعتماد الطلب وتوليد الملف
-                                </button>
-                            </form>
-                        </div>
                     ) : (
-                        <div className="glass-card rounded-[2.5rem] p-12 text-center animate-fade shadow-2xl">
-                            <div className="w-24 h-24 bg-sky-50 text-sky-600 rounded-full mx-auto mb-8 flex items-center justify-center border border-sky-100 shadow-inner">
-                                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <h2 className="text-2xl font-black text-slate-900 mb-3">تم تجهيز بيانات التوريد</h2>
-                            <p className="text-slate-500 text-sm mb-10 leading-relaxed">الخطوة الأخيرة: قم بتحميل الملف ورفعه لمجلد النظام في GitHub ليظهر لجميع الموردين المعتمدين.</p>
-                            
-                            <a href={submittedData.downloadUrl} download={`tender-${submittedData.id}.json`} className="block w-full bg-slate-900 text-white py-6 rounded-2xl font-black text-xs uppercase tracking-widest mb-4 hover:bg-sky-600 transition-all shadow-xl">
-                                تحميل ملف البيانات (JSON)
-                            </a>
-                            <button onClick={() => setSubmittedData(null)} className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] hover:text-sky-600 transition-colors">إلغاء والعودة للنموذج</button>
+                        <div className="glass p-6">
+                            {!download ? (
+                                <form onSubmit={handleCreate} className="space-y-4">
+                                    <input required name="hosp" placeholder="اسم المستشفى / الجامعة" className="w-full p-3 border rounded-xl text-sm" />
+                                    <input required name="loc" placeholder="المدينة / الموقع" className="w-full p-3 border rounded-xl text-sm" />
+                                    <div className="space-y-2 border-t pt-4">
+                                        <p className="text-[10px] font-bold text-slate-400 mb-2">الأصناف المطلوبة</p>
+                                        {items.map((it, idx) => (
+                                            <div key={idx} className="flex gap-2">
+                                                <input placeholder="الصنف" className="flex-1 p-2 border rounded-lg text-sm" onChange={e => {
+                                                    let n = [...items]; n[idx].name = e.target.value; setItems(n);
+                                                }} />
+                                                <input placeholder="الكمية" className="w-20 p-2 border rounded-lg text-sm text-center font-bold" onChange={e => {
+                                                    let n = [...items]; n[idx].qty = e.target.value; setItems(n);
+                                                }} />
+                                            </div>
+                                        ))}
+                                        <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 text-[10px] border-2 border-dashed rounded-lg text-slate-400 font-bold hover:text-sky-600">+ إضافة صنف</button>
+                                    </div>
+                                    <button type="submit" className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-sm shadow-xl">توليد ملف الطلب</button>
+                                </form>
+                            ) : (
+                                <div className="text-center py-10">
+                                    <div className="w-16 h-16 bg-sky-50 text-sky-600 rounded-full mx-auto mb-4 flex items-center justify-center">✓</div>
+                                    <h2 className="font-bold mb-6">جاهز للتحميل</h2>
+                                    <a href={download.url} download={download.name} className="block w-full bg-sky-600 text-white py-4 rounded-xl font-bold mb-4 shadow-lg shadow-sky-100">تحميل ملف JSON</a>
+                                    <button onClick={() => setDownload(null)} className="text-xs text-slate-400">إلغاء</button>
+                                </div>
+                            )}
                         </div>
                     )}
+
+                    {/* DEBUG CONSOLE (Remove after testing) */}
+                    <div className="mt-20 p-3 bg-black text-green-500 font-mono text-[9px] rounded-lg overflow-hidden">
+                        <p>DEBUG CONSOLE:</p>
+                        <p>> {log}</p>
+                    </div>
                 </div>
-            )}
-            
-            <footer className="mt-20 py-10 border-t border-slate-200 text-center opacity-40">
-                <p className="text-[8px] font-black text-slate-500 uppercase tracking-[0.5em]">MEDICAL HUB • PROCUREMENT COORDINATION SYSTEM • 2025</p>
-            </footer>
-        </div>
-    );
-}
+            );
+        }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-</script>
-
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
 </body>
 </html>
