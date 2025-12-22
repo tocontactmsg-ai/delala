@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Hub | المنصة المتكاملة</title>
+    <title>Medical Hub | Global Portal</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -14,12 +14,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Roboto+Mono&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f8fafc; color: #1e293b; }
-        .tender-card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px -5px rgba(0,0,0,0.05); }
-        .btn-primary { background: #2563eb; color: white; transition: 0.3s; }
-        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; color: #1e293b; transition: all 0.3s ease; }
+        .tender-card { background: white; border-radius: 1.5rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .nav-active { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 900; }
         .mono { font-family: 'Roboto Mono', monospace; }
+        .glass-input { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 0.8rem; width: 100%; outline: none; }
+        .glass-input:focus { border-color: #2563eb; background: white; }
     </style>
 </head>
 <body>
@@ -35,15 +35,42 @@
             wa: "249998615193"
         };
 
+        const translations = {
+            ar: {
+                title: "المركز", hub: "الطبي",
+                subtitle: "نظام التنسيق والخدمات اللوجستية الموحد",
+                tabFeed: "العطاءات النشطة", tabPost: "إضافة طلب", tabAdmin: "محول البيانات",
+                ref: "رقم المرجع", entity: "الجهة الطالبة", loc: "الموقع", date: "التاريخ",
+                items: "الأصناف المطلوبة", qty: "الكمية", bid: "تقديم عرض سعر",
+                share: "مشاركة", addRow: "+ إضافة صنف", submit: "إرسال عبر واتساب",
+                convTitle: "محول البيانات (للأدمن)", convPlaceholder: "الصق رسالة الواتساب هنا...",
+                convBtn: "توليد ملف JSON للنشر"
+            },
+            en: {
+                title: "MEDICAL", hub: "HUB",
+                subtitle: "Unified Logistics & Coordination System",
+                tabFeed: "Live Tenders", tabPost: "Post Request", tabAdmin: "Admin Converter",
+                ref: "REF CODE", entity: "Requesting Entity", loc: "Location", date: "Date",
+                items: "Requested Items", qty: "Qty", bid: "Offer Bid",
+                share: "Share", addRow: "+ Add Row", submit: "Send via WhatsApp",
+                convTitle: "Admin Data Converter", convPlaceholder: "Paste WhatsApp message here...",
+                convBtn: "Generate JSON for Upload"
+            }
+        };
+
         function App() {
+            const [lang, setLang] = useState("ar");
             const [view, setView] = useState("feed");
             const [tenders, setTenders] = useState([]);
             const [loading, setLoading] = useState(false);
             const [items, setItems] = useState([{ name: "", qty: "" }]);
-            const [downloadJson, setDownloadJson] = useState(null);
+            const [convText, setConvText] = useState("");
+            const [jsonOutput, setJsonOutput] = useState(null);
 
-            // 1. Load Data
+            const t = translations[lang];
+
             useEffect(() => {
+                document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
                 if (view === "feed") {
                     setLoading(true);
                     fetch(`https://api.github.com/repos/${CONFIG.user}/${CONFIG.repo}/contents/${CONFIG.path}`)
@@ -56,151 +83,162 @@
                             setLoading(false);
                         }).catch(() => setLoading(false));
                 }
-            }, [view]);
+            }, [view, lang]);
 
-            // 2. Generate PDF Logic
-            const downloadPDF = (t) => {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                doc.setFontSize(20);
-                doc.text("Medical Procurement Hub", 105, 20, { align: "center" });
-                doc.setFontSize(12);
-                doc.text(`Ref Code: ${t.id}`, 20, 40);
-                doc.text(`Entity: ${t.hospital}`, 20, 50);
-                doc.text(`Location: ${t.location}`, 20, 60);
-                doc.text(`Date: ${t.date}`, 20, 70);
-
-                const tableData = t.items.map(it => [it.name, it.qty]);
-                doc.autoTable({
-                    startY: 80,
-                    head: [['Item Description', 'Quantity']],
-                    body: tableData,
-                });
-
-                doc.save(`Tender-${t.id}.pdf`);
-            };
-
-            // 3. Handle Submit
-            const handlePost = (e) => {
+            // --- Handler: Visitor Post to WhatsApp ---
+            const handleVisitorSubmit = (e) => {
                 e.preventDefault();
                 const fd = new FormData(e.target);
-                const order = {
-                    id: "MD-" + Math.floor(1000 + Math.random() * 9000),
-                    hospital: fd.get("hosp"),
-                    location: fd.get("loc"),
-                    items: items,
+                const refCode = "REF-" + Math.floor(1000 + Math.random() * 9000);
+                
+                let itemTable = `*${t.items}:*\n\`\`\`\n`;
+                items.forEach((it, i) => {
+                    itemTable += `${(i+1).toString().padStart(2,'0')} | ${it.name.padEnd(15)} | ${it.qty.padStart(5)}\n`;
+                });
+                itemTable += `\`\`\``;
+
+                const message = `📌 *${t.title} ${t.hub} - طلب جديد*\n` +
+                                `--------------------------\n` +
+                                `*${t.ref}:* ${refCode}\n` +
+                                `*${t.entity}:* ${fd.get("hosp")}\n` +
+                                `*${t.loc}:* ${fd.get("loc")}\n` +
+                                `*${t.date}:* ${new Date().toLocaleDateString(lang==='ar'?'ar-EG':'en-US')}\n` +
+                                `--------------------------\n` +
+                                `${itemTable}\n` +
+                                `--------------------------\n` +
+                                `_تم الإرسال عبر المنصة الطبية_`;
+
+                window.open(`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(message)}`);
+            };
+
+            // --- Handler: Admin Converter ---
+            const convertToJSON = () => {
+                const hospital = convText.match(/(?:الجهة|Entity|مستشفى):\s*(.*)/)?.[1] || "Unknown";
+                const location = convText.match(/(?:الموقع|Location|موقع):\s*(.*)/)?.[1] || "Not Specified";
+                const ref = convText.match(/(?:Reference|المرجع|REF):\s*(.*)/)?.[1] || Date.now();
+                
+                const parsedItems = [];
+                const lines = convText.split('\n');
+                lines.forEach(line => {
+                    if (line.includes('|')) {
+                        const p = line.split('|');
+                        if(p.length >= 3) parsedItems.push({ name: p[1].trim(), qty: p[2].trim() });
+                    }
+                });
+
+                const data = {
+                    id: ref.trim(),
+                    hospital: hospital.trim(),
+                    location: location.trim(),
+                    items: parsedItems.length > 0 ? parsedItems : [{name: "Check Message", qty: "1"}],
                     date: new Date().toLocaleDateString('ar-EG')
                 };
-                const blob = new Blob([JSON.stringify(order, null, 2)], {type: "application/json"});
-                setDownloadJson({ url: URL.createObjectURL(blob), id: order.id });
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+                setJsonOutput({ url: URL.createObjectURL(blob), filename: `order-${data.id}.json`, raw: JSON.stringify(data, null, 2)});
             };
 
             return (
-                <div className="max-w-2xl mx-auto px-4 py-8">
-                    <header className="text-center mb-8">
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tighter italic">MEDICAL <span className="text-blue-600">PORTAL</span></h1>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] mt-2">نظام إدارة التوريدات الطبية المتقدم</p>
-                    </header>
+                <div className="max-w-2xl mx-auto px-4 py-6">
+                    {/* Header & Toggle */}
+                    <div className="flex justify-between items-start mb-8">
+                        <div>
+                            <h1 className="text-3xl font-black text-slate-900 tracking-tighter">
+                                {t.title} <span className="text-blue-600">{t.hub}</span>
+                            </h1>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{t.subtitle}</p>
+                        </div>
+                        <button onClick={() => setLang(lang === "ar" ? "en" : "ar")} className="bg-white border px-4 py-2 rounded-xl text-xs font-black shadow-sm uppercase">
+                            {lang === "ar" ? "English" : "العربية"}
+                        </button>
+                    </div>
 
-                    <nav className="flex justify-around mb-10 border-b border-slate-200">
-                        <button onClick={() => setView("feed")} className={`pb-3 text-sm font-bold ${view === 'feed' ? 'nav-active' : 'text-slate-400'}`}>عرض العطاءات</button>
-                        <button onClick={() => setView("post")} className={`pb-3 text-sm font-bold ${view === 'post' ? 'nav-active' : 'text-slate-400'}`}>إضافة طلب</button>
+                    {/* Navigation */}
+                    <nav className="flex justify-around mb-8 border-b border-slate-200 text-sm font-bold">
+                        <button onClick={() => setView("feed")} className={`pb-3 ${view==='feed'?'nav-active':'text-slate-400'}`}>{t.tabFeed}</button>
+                        <button onClick={() => setView("post")} className={`pb-3 ${view==='post'?'nav-active':'text-slate-400'}`}>{t.tabPost}</button>
+                        <button onClick={() => setView("admin")} className={`pb-3 ${view==='admin'?'nav-active':'text-slate-400'}`}>{t.tabAdmin}</button>
                     </nav>
 
-                    {view === "feed" ? (
-                        <div className="space-y-8">
-                            {loading ? <div className="text-center py-20 animate-spin text-blue-600">...</div> : 
-                             tenders.map(t => (
-                                <div key={t.id} className="tender-card p-8 relative overflow-hidden">
-                                    <div className="flex justify-between items-start mb-6">
+                    {/* Feed View */}
+                    {view === "feed" && (
+                        <div className="space-y-6">
+                            {loading ? <div className="text-center py-20 animate-pulse text-blue-600 font-bold">Loading...</div> : 
+                             tenders.map(req => (
+                                <div key={req.id} className="tender-card p-6">
+                                    <div className="flex justify-between mb-4">
                                         <div>
-                                            <span className="mono text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">REF: {t.id}</span>
-                                            <h2 className="text-2xl font-black text-slate-800 mt-2">{t.hospital}</h2>
-                                            <p className="text-sm font-bold text-slate-400">📍 {t.location}</p>
+                                            <span className="mono text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded font-bold">{t.ref}: {req.id}</span>
+                                            <h2 className="text-xl font-black text-slate-800 mt-2">{req.hospital}</h2>
+                                            <p className="text-xs font-bold text-slate-400">📍 {req.location}</p>
                                         </div>
-                                        <button onClick={() => downloadPDF(t)} className="bg-slate-100 p-3 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all shadow-sm">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                        </button>
+                                        <span className="text-[10px] text-slate-400 font-bold">{req.date}</span>
                                     </div>
-
-                                    <div className="border rounded-2xl overflow-hidden mb-6 bg-slate-50">
-                                        <table className="w-full text-right text-sm">
-                                            <thead className="bg-slate-100 text-[10px] font-black uppercase text-slate-500">
-                                                <tr>
-                                                    <th className="p-3">الصنف</th>
-                                                    <th className="p-3 text-center">الكمية</th>
-                                                </tr>
+                                    <div className="bg-slate-50 rounded-xl overflow-hidden mb-6 border">
+                                        <table className="w-full text-sm text-right">
+                                            <thead className="bg-slate-100 text-[9px] font-black text-slate-500 uppercase">
+                                                <tr><th className="p-2">{t.items}</th><th className="p-2 text-center">{t.qty}</th></tr>
                                             </thead>
                                             <tbody>
-                                                {t.items.map((it, i) => (
+                                                {req.items.map((it, i) => (
                                                     <tr key={i} className="border-t border-slate-200">
-                                                        <td className="p-3 font-bold text-slate-700">{it.name}</td>
-                                                        <td className="p-3 text-center font-black text-blue-700 mono">{it.qty}</td>
+                                                        <td className="p-2 font-bold">{it.name}</td>
+                                                        <td className="p-2 text-center font-black text-blue-600 mono">{it.qty}</td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
                                     </div>
-
-                                    <div className="flex gap-3">
-                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`أود تقديم عرض للطلب ${t.id} - ${t.hospital}`)}`} 
-                                           className="flex-1 btn-primary py-4 rounded-2xl font-black text-xs text-center shadow-lg shadow-blue-200 uppercase tracking-widest">
-                                            تقديم عرض سعر
-                                        </a>
-                                        <button onClick={() => {
-                                            const txt = `عطاء طبي جديد\nالجهة: ${t.hospital}\nالرابط: ${window.location.href}`;
-                                            window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
-                                        }} className="bg-slate-100 px-6 rounded-2xl text-slate-500 hover:bg-slate-200 transition-all">
-                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2v-2zm0-10h2v8h-2V6z"/></svg>
-                                        </button>
+                                    <div className="flex gap-2">
+                                        <a href={`https://wa.me/${CONFIG.wa}?text=${encodeURIComponent(`Offer for ${req.id} - ${req.hospital}`)}`} className="flex-1 bg-blue-600 text-white py-3 rounded-xl text-center font-black text-xs shadow-lg">{t.bid}</a>
+                                        <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`${t.title} ${t.hub}\nEntity: ${req.hospital}\nRef: ${req.id}`)}`)} className="bg-slate-100 px-4 rounded-xl text-slate-500 hover:bg-slate-200">Share</button>
                                     </div>
                                 </div>
-                             ))
-                            }
+                             ))}
                         </div>
-                    ) : (
-                        <div className="tender-card p-8">
-                            {!downloadJson ? (
-                                <form onSubmit={handlePost} className="space-y-6">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="col-span-2">
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">اسم الجهة الطالبة</label>
-                                            <input required name="hosp" className="w-full p-4 bg-slate-50 border rounded-2xl focus:bg-white outline-none transition-all font-bold" />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">الموقع</label>
-                                            <input required name="loc" className="w-full p-4 bg-slate-50 border rounded-2xl outline-none" />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">التاريخ</label>
-                                            <input disabled value={new Date().toLocaleDateString('ar-EG')} className="w-full p-4 bg-slate-200 border rounded-2xl text-slate-500 font-bold" />
-                                        </div>
-                                    </div>
+                    )}
 
-                                    <div className="pt-4 border-t">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase mb-4">قائمة الأصناف المطلوبة</p>
-                                        {items.map((it, idx) => (
-                                            <div key={idx} className="flex gap-2 mb-3">
-                                                <input required placeholder="الصنف" className="flex-1 p-3 bg-white border rounded-xl text-sm" onChange={e => {
-                                                    const n = [...items]; n[idx].name = e.target.value; setItems(n);
-                                                }} />
-                                                <input required placeholder="الكمية" className="w-24 p-3 bg-white border rounded-xl text-sm font-bold text-center" onChange={e => {
-                                                    const n = [...items]; n[idx].qty = e.target.value; setItems(n);
-                                                }} />
-                                            </div>
-                                        ))}
-                                        <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-3 border-2 border-dashed rounded-2xl text-[10px] font-bold text-slate-400 hover:text-blue-600 transition-all">+ إضافة سطر جديد</button>
-                                    </div>
-                                    <button type="submit" className="w-full py-5 btn-primary rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl">إنشاء ونشر الطلب</button>
-                                </form>
-                            ) : (
-                                <div className="text-center py-10">
-                                    <div className="w-20 h-20 bg-green-50 text-green-600 rounded-full mx-auto mb-6 flex items-center justify-center">✓</div>
-                                    <h2 className="text-2xl font-black text-slate-800 mb-2">تم تجهيز البيانات</h2>
-                                    <p className="text-sm text-slate-500 mb-8">قم بتحميل الملف ورفعه لمجلد ads في GitHub.</p>
-                                    <a href={downloadJson.url} download={`tender-${downloadJson.id}.json`} className="block w-full py-5 btn-primary rounded-2xl font-bold shadow-lg mb-4">تحميل ملف JSON</a>
-                                    <button onClick={() => setDownloadJson(null)} className="text-xs font-bold text-slate-400 uppercase underline">إنشاء طلب جديد</button>
+                    {/* Post View (WhatsApp Only) */}
+                    {view === "post" && (
+                        <div className="tender-card p-8">
+                            <form onSubmit={handleVisitorSubmit} className="space-y-4">
+                                <input required name="hosp" placeholder={t.entity} className="glass-input font-bold" />
+                                <input required name="loc" placeholder={t.loc} className="glass-input" />
+                                <div className="space-y-2 border-t pt-4">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase">{t.items}</p>
+                                    {items.map((it, idx) => (
+                                        <div key={idx} className="flex gap-2">
+                                            <input required placeholder={t.items} className="flex-1 glass-input text-sm" onChange={e => {
+                                                const n = [...items]; n[idx].name = e.target.value; setItems(n);
+                                            }} />
+                                            <input required placeholder={t.qty} className="w-20 glass-input text-sm text-center font-bold" onChange={e => {
+                                                const n = [...items]; n[idx].qty = e.target.value; setItems(n);
+                                            }} />
+                                        </div>
+                                    ))}
+                                    <button type="button" onClick={() => setItems([...items, {name:"", qty:""}])} className="w-full py-2 border-2 border-dashed rounded-xl text-[10px] font-bold text-slate-400">{t.addRow}</button>
+                                </div>
+                                <button type="submit" className="w-full py-4 bg-[#128C7E] text-white rounded-xl font-black text-sm uppercase tracking-widest shadow-xl">{t.submit}</button>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* Admin Converter View */}
+                    {view === "admin" && (
+                        <div className="tender-card p-8">
+                            <h2 className="text-xl font-black mb-4">{t.convTitle}</h2>
+                            <textarea 
+                                value={convText}
+                                onChange={(e) => setConvText(e.target.value)}
+                                className="w-full h-48 glass-input font-mono text-xs mb-4" 
+                                placeholder={t.convPlaceholder}>
+                            </textarea>
+                            <button onClick={convertToJSON} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold uppercase text-sm mb-6">{t.convBtn}</button>
+                            
+                            {jsonOutput && (
+                                <div className="p-4 bg-slate-100 rounded-xl">
+                                    <pre className="text-[10px] mb-4 overflow-auto max-h-32">{jsonOutput.raw}</pre>
+                                    <a href={jsonOutput.url} download={jsonOutput.filename} className="block text-center w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-xs">Download JSON for GitHub</a>
                                 </div>
                             )}
                         </div>
